@@ -1,2 +1,2 @@
-# OWLBenchGen
+# LPBenchGen
 OWL explainable structural learning problem Benchmark Generator
