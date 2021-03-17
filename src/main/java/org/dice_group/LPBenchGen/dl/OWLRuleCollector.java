@@ -1,17 +1,18 @@
-package org.dice_group.OWLBenchGen.dl;
+package org.dice_group.LPBenchGen.dl;
 
 
 import org.semanticweb.owlapi.model.*;
 
-public class OWL2SPARQLVisitor implements OWLClassExpressionVisitor {
+import java.util.HashSet;
+import java.util.Collection;
 
-    private StringBuilder whereClause=new StringBuilder();
 
-    private String var="?s";
+public class OWLRuleCollector implements OWLClassExpressionVisitor {
+
+    public Collection<String> rules = new HashSet<String>();
 
     public void visit(OWLClass ce) {
 
-        whereClause.append(var).append(" rdf:type <").append(ce.getIRI().toString()).append(">");
     }
 
     public void visit(OWLObjectIntersectionOf ce) {
@@ -55,30 +56,45 @@ public class OWL2SPARQLVisitor implements OWLClassExpressionVisitor {
     }
 
     public void visit(OWLObjectOneOf ce) {
-        this.doDefault(ce);
+        ce.getObjectPropertiesInSignature().forEach(prop -> {
+            rules.add(prop.getIRI().toString());
+        });
     }
 
     public void visit(OWLDataSomeValuesFrom ce) {
-        this.doDefault(ce);
+        ce.getObjectPropertiesInSignature().forEach(prop -> {
+            rules.add(prop.getIRI().toString());
+        });
     }
 
     public void visit(OWLDataAllValuesFrom ce) {
-        this.doDefault(ce);
+        ce.getObjectPropertiesInSignature().forEach(prop -> {
+            rules.add(prop.getIRI().toString());
+        });
     }
 
     public void visit(OWLDataHasValue ce) {
-        this.doDefault(ce);
+        ce.getObjectPropertiesInSignature().forEach(prop -> {
+            rules.add(prop.getIRI().toString());
+        });
     }
 
     public void visit(OWLDataMinCardinality ce) {
-        this.doDefault(ce);
+        ce.getObjectPropertiesInSignature().forEach(prop -> {
+            rules.add(prop.getIRI().toString());
+        });
+
     }
 
     public void visit(OWLDataExactCardinality ce) {
-        this.doDefault(ce);
+        ce.getObjectPropertiesInSignature().forEach(prop -> {
+            rules.add(prop.getIRI().toString());
+        });
     }
 
     public void visit(OWLDataMaxCardinality ce) {
-        this.doDefault(ce);
+        ce.getObjectPropertiesInSignature().forEach(prop -> {
+            rules.add(prop.getIRI().toString());
+        });
     }
 }

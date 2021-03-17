@@ -1,11 +1,12 @@
 endpoint: http://dbpedia.org/sparql
-owlFile: ./OWLBenchGen/dbpedia_2016-10.owl
+owlFile: ./dbpedia_2016-10.owl
 seed: 123
 types:
   - http://dbpedia.org/ontology/MusicalGroup
   - http://dbpedia.org/ontology/MusicalArtist
   - http://dbpedia.org/ontology/Album
   - http://dbpedia.org/ontology/Actor
+  - http://dbpedia.org/ontology/MusicGenre
 maxNoOfIndividuals: 5
 percentageOfPositiveExamples: 0.1
 percentageOfNegativeExamples: 0.1

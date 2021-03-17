@@ -1,4 +1,4 @@
-package org.dice_group.OWLBenchGen.dl;
+package org.dice_group.LPBenchGen.dl;
 
 import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -12,6 +12,8 @@ import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
 
 public class Parser {
 
@@ -43,5 +45,16 @@ public class Parser {
 
         ManchesterOWLSyntaxClassExpressionParser parser = new ManchesterOWLSyntaxClassExpressionParser(dataFactory, checker);
         return parser.parse(concept);
+    }
+
+    public Collection<String> getRulesInExpr(OWLClassExpression ce){
+        Collection<String> rules = new HashSet<String>();
+
+        //only Object Properties for now.
+        //TODO think of something for data properties as well
+        ce.getObjectPropertiesInSignature().forEach(prop -> {
+            rules.add(prop.getIRI().toString());
+        });
+        return rules;
     }
 }

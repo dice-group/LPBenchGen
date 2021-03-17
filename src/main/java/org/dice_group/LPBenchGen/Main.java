@@ -1,8 +1,8 @@
-package org.dice_group.OWLBenchGen;
+package org.dice_group.LPBenchGen;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.dice_group.OWLBenchGen.lp.LPGenerator;
+import org.dice_group.LPBenchGen.lp.LPGenerator;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.IOException;

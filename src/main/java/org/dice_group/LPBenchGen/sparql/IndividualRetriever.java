@@ -1,4 +1,4 @@
-package org.dice_group.OWLBenchGen.sparql;
+package org.dice_group.LPBenchGen.sparql;
 
 import org.aksw.owl2sparql.OWLClassExpressionToSPARQLConverter;
 import org.apache.jena.query.*;
@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 public class IndividualRetriever {
@@ -66,5 +67,19 @@ public class IndividualRetriever {
 
     public Collection<String> retrieveTypesForIndividual(String uri) {
         return createRequest(createTypesQuery(uri));
+    }
+
+    public Collection<String[]> retrieveIndividualsForRule(String uri, Collection<String> rules) {
+        Collection<String[]> ret = new HashSet<String[]>();
+        for(String rule: rules){
+            for(String r : createRequest(createRuleQuery(uri, rule))){
+                ret.add(new String[]{rule, r});
+            }
+        }
+        return ret;
+    }
+
+    private String createRuleQuery(String uri, String rule) {
+        return "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?"+DEFAULT_VARIABLE_NAME+" { <"+uri+"> <"+rule+"> ?"+DEFAULT_VARIABLE_NAME+"}";
     }
 }

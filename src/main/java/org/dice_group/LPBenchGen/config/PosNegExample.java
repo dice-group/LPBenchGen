@@ -1,4 +1,4 @@
-package org.dice_group.OWLBenchGen.config;
+package org.dice_group.LPBenchGen.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

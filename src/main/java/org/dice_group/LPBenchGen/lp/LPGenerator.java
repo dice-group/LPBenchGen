@@ -1,9 +1,9 @@
-package org.dice_group.OWLBenchGen.lp;
+package org.dice_group.LPBenchGen.lp;
 
-import org.dice_group.OWLBenchGen.config.Configuration;
-import org.dice_group.OWLBenchGen.config.PosNegExample;
-import org.dice_group.OWLBenchGen.dl.Parser;
-import org.dice_group.OWLBenchGen.sparql.IndividualRetriever;
+import org.dice_group.LPBenchGen.config.Configuration;
+import org.dice_group.LPBenchGen.config.PosNegExample;
+import org.dice_group.LPBenchGen.dl.Parser;
+import org.dice_group.LPBenchGen.sparql.IndividualRetriever;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
@@ -20,6 +20,7 @@ public class LPGenerator {
     private int minExamples;
     private int maxExamples;
     private Parser parser;
+    private Map<String, Collection<String[]>> rulesMapping = new HashMap<String, Collection<String[]>>();
 
 
     public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
@@ -30,6 +31,7 @@ public class LPGenerator {
         minExamples=conf.getMinNoOfExamples();
         maxExamples=conf.getMaxNoOfExamples();
         Collection<LPProblem> problems = new ArrayList<LPProblem>();
+
         for(PosNegExample concept : conf.getConcepts()){
             problems.add(generateLPProblem(concept, parser));
         }
@@ -57,6 +59,20 @@ public class LPGenerator {
             ret.addAll(problem.negatives);
             ret.addAll(getRandom(removedNegatives, maxNoOfIndividuals));
             ret.addAll(getRandom(removedPositives, maxNoOfIndividuals));
+
+            for(String uri : problem.positives) {
+                Collection<String[]> rules = retriever.retrieveIndividualsForRule(uri, problem.rules);
+                rulesMapping.put(uri, rules);
+                rules.forEach(rule ->{
+                    ret.add(rule[1]);
+                });
+            }
+            for(String uri : problem.negatives) {
+                Collection<String[]> rules = retriever.retrieveIndividualsForRule(uri, problem.rules);
+                rulesMapping.put(uri, rules);
+                rules.forEach(rule ->{
+                    ret.add(rule[1]);
+                });            }
         }
         return ret;
     }
@@ -94,9 +110,14 @@ public class LPGenerator {
         LPProblem problem = new LPProblem();
         problem.goldStandardConcept=concept.getPositive();
 
-        problem.positives.addAll(retriever.retrieveIndividualsForConcept(parser.parseManchesterConcept(concept.getPositive())));
+        OWLClassExpression pos = parser.parseManchesterConcept(concept.getPositive());
+        problem.rules = parser.getRulesInExpr(pos);
+
+        problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos));
         for(String negative : concept.getNegatives()){
-            problem.negatives.addAll(retriever.retrieveIndividualsForConcept(parser.parseManchesterConcept(negative)));
+            OWLClassExpression neg =parser.parseManchesterConcept(negative);
+            problem.negatives.addAll(retriever.retrieveIndividualsForConcept(neg));
+            problem.rules.addAll(parser.getRulesInExpr(neg));
         }
         return problem;
     }
@@ -119,6 +140,16 @@ public class LPGenerator {
             OWLClassExpression expr = factory.getOWLClass(IRI.create(type));
             OWLAxiom axiom = factory.getOWLClassAssertionAxiom(expr, individual);
             axioms.add(axiom);
+        }
+
+        if(rulesMapping.containsKey(uri)) {
+            for (String[] rule : rulesMapping.get(uri)) {
+                OWLNamedIndividual obj = factory.getOWLNamedIndividual(IRI.create(rule[1]));
+                OWLObjectProperty prop = factory.getOWLObjectProperty(IRI.create(rule[0]));
+                OWLAxiom axiom = factory.getOWLObjectPropertyAssertionAxiom(prop, individual, obj);
+                axioms.add(axiom);
+
+            }
         }
         return axioms;
     }
