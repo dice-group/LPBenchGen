@@ -1,0 +1,22 @@
+endpoint: http://dbpedia.org/sparql
+owlFile: ./OBSCENE/dbpedia_2016-10.owl
+seed: 123
+types:
+  - http://dbpedia.org/ontology/MusicalGroup
+  - http://dbpedia.org/ontology/MusicalArtist
+  - http://dbpedia.org/ontology/Album
+  - http://dbpedia.org/ontology/Actor
+maxNoOfIndividuals: 5
+percentageOfPositiveExamples: 0.1
+percentageOfNegativeExamples: 0.1
+maxNoOfExamples: 50
+minNoOfExamples: 5
+concepts:
+  - positive: MusicalArtist and genre min 3
+    negatives:
+      - Album
+      - MusicalArtist and genre max 2
+  - positive: Actor and MusicalArtist
+    negatives:
+      - MusicalArtist and not Actor
+      - Actor and not MusicalArtist
