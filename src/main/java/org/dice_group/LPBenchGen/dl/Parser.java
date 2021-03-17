@@ -47,13 +47,16 @@ public class Parser {
         return parser.parse(concept);
     }
 
-    public Collection<String> getRulesInExpr(OWLClassExpression ce){
+    public Collection<String> getRulesInExpr(OWLClassExpression ce, Collection<OWLDataProperty> dataRules){
         Collection<String> rules = new HashSet<String>();
 
         //only Object Properties for now.
         //TODO think of something for data properties as well
         ce.getObjectPropertiesInSignature().forEach(prop -> {
             rules.add(prop.getIRI().toString());
+        });
+        ce.getDataPropertiesInSignature().forEach(prop->{
+            dataRules.add(prop);
         });
         return rules;
     }

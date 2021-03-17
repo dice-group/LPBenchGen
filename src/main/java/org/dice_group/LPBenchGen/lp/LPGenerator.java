@@ -21,6 +21,7 @@ public class LPGenerator {
     private int maxExamples;
     private Parser parser;
     private Map<String, Collection<String[]>> rulesMapping = new HashMap<String, Collection<String[]>>();
+    private Map<String, Collection<Object[]>> dataRulesMapping = new HashMap<String, Collection<Object[]>>();
 
 
     public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
@@ -60,8 +61,11 @@ public class LPGenerator {
             ret.addAll(getRandom(removedNegatives, maxNoOfIndividuals));
             ret.addAll(getRandom(removedPositives, maxNoOfIndividuals));
 
+            //TODO add dataRulesMapping
             for(String uri : problem.positives) {
                 Collection<String[]> rules = retriever.retrieveIndividualsForRule(uri, problem.rules);
+                Collection<Object[]> dataRules = retriever.retrieveIndividualsForDataRule(uri, problem.dataRules);
+                dataRulesMapping.put(uri, dataRules);
                 rulesMapping.put(uri, rules);
                 rules.forEach(rule ->{
                     ret.add(rule[1]);
@@ -69,6 +73,8 @@ public class LPGenerator {
             }
             for(String uri : problem.negatives) {
                 Collection<String[]> rules = retriever.retrieveIndividualsForRule(uri, problem.rules);
+                Collection<Object[]> dataRules = retriever.retrieveIndividualsForDataRule(uri, problem.dataRules);
+                dataRulesMapping.put(uri, dataRules);
                 rulesMapping.put(uri, rules);
                 rules.forEach(rule ->{
                     ret.add(rule[1]);
@@ -76,6 +82,8 @@ public class LPGenerator {
         }
         return ret;
     }
+
+
 
     private Collection<String> getRandom(List<String> list, Integer max) {
         int maxNoOfIndividuals = Math.min(max, list.size());
@@ -111,13 +119,14 @@ public class LPGenerator {
         problem.goldStandardConcept=concept.getPositive();
 
         OWLClassExpression pos = parser.parseManchesterConcept(concept.getPositive());
-        problem.rules = parser.getRulesInExpr(pos);
+
+        problem.rules = parser.getRulesInExpr(pos, problem.dataRules);
 
         problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos));
         for(String negative : concept.getNegatives()){
             OWLClassExpression neg =parser.parseManchesterConcept(negative);
             problem.negatives.addAll(retriever.retrieveIndividualsForConcept(neg));
-            problem.rules.addAll(parser.getRulesInExpr(neg));
+            problem.rules.addAll(parser.getRulesInExpr(neg, problem.dataRules));
         }
         return problem;
     }
@@ -151,6 +160,15 @@ public class LPGenerator {
 
             }
         }
+
+        if(dataRulesMapping.containsKey(uri)) {
+            for (Object[] rule : dataRulesMapping.get(uri)) {
+                OWLDataProperty prop = (OWLDataProperty) rule[0];
+                OWLAxiom axiom = factory.getOWLDataPropertyAssertionAxiom(prop, individual, (OWLLiteral)rule[1]);
+                axioms.add(axiom);
+
+            }
+        }
         return axioms;
     }
 
@@ -179,9 +197,9 @@ public class LPGenerator {
                 pw.print(problem.goldStandardConcept);
                 pw.print("\",\n\t\"positives\": [\n");
                 writeCollection(problem.positives, pw);
-                pw.print("\t\n],\n\t\"negatives\": [\n");
+                pw.print("\n\t],\n\t\"negatives\": [\n");
                 writeCollection(problem.negatives, pw);
-                pw.print("\t\n]\n\t}");
+                pw.print("\n\t]\n\t}");
                 count++;
                 if(count<problems.size()){
                     pw.print(",\n");

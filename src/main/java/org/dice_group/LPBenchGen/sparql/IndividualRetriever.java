@@ -1,8 +1,16 @@
 package org.dice_group.LPBenchGen.sparql;
 
 import org.aksw.owl2sparql.OWLClassExpressionToSPARQLConverter;
+import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Literal;
+import org.dice_group.LPBenchGen.dl.OWL2SPARQL;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImplString;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +30,23 @@ public class IndividualRetriever {
         String sparqlQuery = createTypeQuery(uriType);
 
         return createRequest(sparqlQuery);
+    }
+
+    private List<OWLLiteral> createDataRequest(String sparqlQuery){
+        List<OWLLiteral> ret =  new ArrayList<OWLLiteral>();
+
+        Query q = QueryFactory.create(sparqlQuery);
+        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, q);
+        ResultSet res = qexec.execSelect();
+        while(res.hasNext()){
+            ret.add(transformLiteral(res.next().getLiteral(DEFAULT_VARIABLE_NAME)));
+        }
+        return ret;
+    }
+
+    private OWLLiteral transformLiteral(Literal literal) {
+        return new OWLDataFactoryImpl().getOWLLiteral(literal.getValue().toString(), literal.getDatatypeURI());
+
     }
 
     private List<String> createRequest(String sparqlQuery){
@@ -61,7 +86,7 @@ public class IndividualRetriever {
         // female and (not (isR President or artist)) -> {?s type female . FILTER (?s not in {{?s isR ?o . ?o type president} UNION { ?s type artist }})
         // female and (President or artist)) -> {?s type female . {{?s type president} UNION { ?s type artist }}} ???
         //                                      {?s type female . FILTER ( ?s in {?s type artist} OR ?s in {?s type president})}
-        OWLClassExpressionToSPARQLConverter converter = new OWLClassExpressionToSPARQLConverter();
+        OWL2SPARQL converter = new OWL2SPARQL();
         return converter.asQuery(concept, "?var").serialize();
     }
 
@@ -78,6 +103,17 @@ public class IndividualRetriever {
         }
         return ret;
     }
+
+    public Collection<Object[]> retrieveIndividualsForDataRule(String uri, Collection<OWLDataProperty> rules) {
+        Collection<Object[]> ret = new ArrayList<Object[]>();
+        for(OWLDataProperty rule: rules){
+            for(OWLLiteral r : createDataRequest(createRuleQuery(uri, rule.getIRI().toString()))){
+                ret.add(new Object[]{rule, r});
+            }
+        }
+        return ret;
+    }
+
 
     private String createRuleQuery(String uri, String rule) {
         return "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?"+DEFAULT_VARIABLE_NAME+" { <"+uri+"> <"+rule+"> ?"+DEFAULT_VARIABLE_NAME+"}";

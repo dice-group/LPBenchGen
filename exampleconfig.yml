@@ -21,3 +21,6 @@ concepts:
     negatives:
       - MusicalArtist and not Actor
       - Actor and not MusicalArtist
+  - positive: MusicalArtist and alias min 2
+    negatives:
+      - MusicalArtist and alias max 1
