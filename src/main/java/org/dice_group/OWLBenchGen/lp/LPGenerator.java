@@ -1,9 +1,9 @@
-package org.dice_group.obscene.lp;
+package org.dice_group.OWLBenchGen.lp;
 
-import org.dice_group.obscene.config.Configuration;
-import org.dice_group.obscene.config.PosNegExample;
-import org.dice_group.obscene.dl.Parser;
-import org.dice_group.obscene.sparql.IndividualRetriever;
+import org.dice_group.OWLBenchGen.config.Configuration;
+import org.dice_group.OWLBenchGen.config.PosNegExample;
+import org.dice_group.OWLBenchGen.dl.Parser;
+import org.dice_group.OWLBenchGen.sparql.IndividualRetriever;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 

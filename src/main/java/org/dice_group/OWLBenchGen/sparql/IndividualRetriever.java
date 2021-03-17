@@ -1,4 +1,4 @@
-package org.dice_group.obscene.sparql;
+package org.dice_group.OWLBenchGen.sparql;
 
 import org.aksw.owl2sparql.OWLClassExpressionToSPARQLConverter;
 import org.apache.jena.query.*;

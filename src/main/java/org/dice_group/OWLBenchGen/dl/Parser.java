@@ -1,4 +1,4 @@
-package org.dice_group.obscene.dl;
+package org.dice_group.OWLBenchGen.dl;
 
 import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.apibinding.OWLManager;

@@ -1,5 +1,5 @@
 endpoint: http://dbpedia.org/sparql
-owlFile: ./OBSCENE/dbpedia_2016-10.owl
+owlFile: ./OWLBenchGen/dbpedia_2016-10.owl
 seed: 123
 types:
   - http://dbpedia.org/ontology/MusicalGroup

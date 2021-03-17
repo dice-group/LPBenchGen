@@ -1,4 +1,4 @@
-package org.dice_group.obscene.config;
+package org.dice_group.OWLBenchGen.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

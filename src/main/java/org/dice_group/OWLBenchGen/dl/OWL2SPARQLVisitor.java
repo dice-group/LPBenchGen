@@ -1,4 +1,4 @@
-package org.dice_group.obscene.dl;
+package org.dice_group.OWLBenchGen.dl;
 
 
 import org.semanticweb.owlapi.model.*;

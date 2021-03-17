@@ -1,4 +1,4 @@
-package org.dice_group.obscene.lp;
+package org.dice_group.OWLBenchGen.lp;
 
 import java.util.Collection;
 import java.util.HashSet;

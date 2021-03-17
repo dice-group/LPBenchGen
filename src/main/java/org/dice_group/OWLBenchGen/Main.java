@@ -1,8 +1,8 @@
-package org.dice_group.obscene;
+package org.dice_group.OWLBenchGen;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.dice_group.obscene.lp.LPGenerator;
+import org.dice_group.OWLBenchGen.lp.LPGenerator;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.IOException;
