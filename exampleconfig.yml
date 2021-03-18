@@ -2,7 +2,7 @@ endpoint: http://dbpedia.org/sparql
 owlFile: ./dbpedia_2016-10.owl
 seed: 123
 types:
-  - http://dbpedia.org/ontology/MusicalGroup
+  - http://dbpedia.org/ontology/Band
   - http://dbpedia.org/ontology/MusicalArtist
   - http://dbpedia.org/ontology/Album
   - http://dbpedia.org/ontology/Actor

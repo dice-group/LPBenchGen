@@ -25,6 +25,7 @@ public class LPGenerator {
     private Parser parser;
     private Map<String, Collection<String[]>> rulesMapping = new HashMap<String, Collection<String[]>>();
     private Map<String, Collection<Object[]>> dataRulesMapping = new HashMap<String, Collection<Object[]>>();
+    private List<String> types;
 
 
     public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
@@ -32,6 +33,7 @@ public class LPGenerator {
         parser = new Parser(conf.getOwlFile());
         retriever = new IndividualRetriever(conf.getEndpoint());
         seed= conf.getSeed();
+        types = conf.getTypes();
         minExamples=conf.getMinNoOfExamples();
         maxExamples=conf.getMaxNoOfExamples();
         Collection<LPProblem> problems = new ArrayList<LPProblem>();
@@ -61,6 +63,7 @@ public class LPGenerator {
         OWLNegationCreator creator = new OWLNegationCreator();
         expr.accept(creator);
         creator.prune();
+        creator.addNeccTypes(types);
         List<OWLClassExpression> concepts= creator.negationConcepts;
 
         List<String> ret = new ArrayList<String>();
@@ -146,6 +149,7 @@ public class LPGenerator {
 
         problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos));
         for(String negative : concept.getNegatives()){
+
             OWLClassExpression neg =parser.parseManchesterConcept(negative);
             problem.negatives.addAll(retriever.retrieveIndividualsForConcept(neg));
             problem.rules.addAll(parser.getRulesInExpr(neg, problem.dataRules));

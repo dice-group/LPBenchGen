@@ -87,6 +87,7 @@ public class IndividualRetriever {
         // female and (President or artist)) -> {?s type female . {{?s type president} UNION { ?s type artist }}} ???
         //                                      {?s type female . FILTER ( ?s in {?s type artist} OR ?s in {?s type president})}
         OWL2SPARQL converter = new OWL2SPARQL();
+
         return converter.asQuery(concept, "?var").serialize();
     }
 

@@ -1,9 +1,12 @@
 package org.dice_group.LPBenchGen.dl;
 
 
+import com.google.common.collect.Lists;
 import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectComplementOfImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectUnionOfImpl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,10 +16,29 @@ import java.util.List;
 
 public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityVisitor {
 
-    //TODO
+
     public List<OWLClassExpression> negationConcepts = new ArrayList<OWLClassExpression>();
 
     boolean currentNegation=false;
+
+    public void addNeccTypes(Collection<String> types){
+        List<OWLClassExpression> finalConcepts = new ArrayList<OWLClassExpression>();
+        OWLClassExpression typeExpr = getTypeExpr(types);
+
+        for(OWLClassExpression expr : negationConcepts){
+
+            finalConcepts.add(new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, typeExpr)).getNNF());
+        }
+        negationConcepts=finalConcepts;
+    }
+
+    private OWLClassExpression getTypeExpr(Collection<String> types) {
+        List<OWLClassExpression> classes = new ArrayList<OWLClassExpression>();
+        for(String type: types){
+            classes.add(new OWLDataFactoryImpl().getOWLClass(IRI.create(type)));
+        }
+        return new OWLObjectUnionOfImpl(classes);
+    }
 
     public void prune(){
         List<OWLClassExpression> unions = new ArrayList<OWLClassExpression>();
@@ -34,10 +56,13 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
                 }
             }
         }
+
         negationConcepts.removeAll(remove);
         if(negationConcepts.size()> unions.size()){
             negationConcepts.removeAll(unions);
         }
+
+
     }
 
     public boolean contains(OWLObjectUnionOf union, OWLClassExpression expr){
