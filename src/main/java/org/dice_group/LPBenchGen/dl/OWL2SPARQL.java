@@ -838,9 +838,11 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
     }
 
     private void processDataRange(OWLDataRange dataRange) {
-        sparql += "FILTER(";
-        dataRange.accept(this);
-        sparql += ")";
+        if(ignoreGenericTypeStatements && !dataRange.asOWLDatatype().isRDFPlainLiteral() && !dataRange.asOWLDatatype().isTopDatatype()) {
+            sparql += "FILTER(";
+            dataRange.accept(this);
+            sparql += ")";
+        }
     }
 
     @Override
@@ -853,13 +855,7 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
                             (negatedDataRange ? "!=" : "="),
                             node.getIRI().toQuotedString());
         }
-        else if(node.getIRI().toString().equals("http://www.w3.org/2000/01/rdf-schema#Literal")) {
-            String var = variables.peek();
-            sparql +=
-                    String.format("%s = %s",
-                            var,
-                            var);
-        }
+
     }
 
     @Override

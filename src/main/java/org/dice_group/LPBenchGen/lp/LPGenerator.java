@@ -1,5 +1,6 @@
 package org.dice_group.LPBenchGen.lp;
 
+import com.google.common.collect.Lists;
 import org.dice_group.LPBenchGen.config.Configuration;
 import org.dice_group.LPBenchGen.config.PosNegExample;
 import org.dice_group.LPBenchGen.dl.Parser;
@@ -38,15 +39,23 @@ public class LPGenerator {
         }
         //for all individuals in LP problem add them
 
-        Collection<String> individuals = getIndividuals(problems, conf.getTypes(), conf.getMaxNoOfIndividuals(), conf.getPercentageOfNegativeExamples(), conf.getPercentageOfPositiveExamples());
+        Collection<String> individuals = getIndividuals(problems, conf.getTypes(), conf.getMaxNoOfIndividuals(), conf.getMaxIndividualsPerExampleConcept());
         for(String individual : individuals){
             addIndividuals(parser.getOntology(), createIndividual(individual, conf.getTypes()));
+        }
+        for(LPProblem problem : problems) {
+            cutProblems(problem, conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
         }
         saveOntology(name+"-ontology.owl", parser.getOntology());
         saveLPProblem(name+"-lp.json", problems);
     }
 
-    private Collection<String> getIndividuals(Collection<LPProblem> problems, List<String> types, Integer maxNoOfIndividuals,Double percentageOfNegativeExamples, Double percentageOfPositiveExamples) {
+    private void cutProblems(LPProblem problem, Double percentageOfPositiveExamples, Double percentageOfNegativeExamples) {
+        keepPercentage(problem.positives, percentageOfPositiveExamples);
+        keepPercentage(problem.negatives, percentageOfNegativeExamples);
+    }
+
+    private Collection<String> getIndividuals(Collection<LPProblem> problems, List<String> types, Integer maxNoOfIndividuals,Integer maxNoOfIndividualsPerExampleConcept) {
         Collection<String> ret = new TreeSet<String>();
 
         for(String type : types){
@@ -54,35 +63,28 @@ public class LPGenerator {
             ret.addAll(getRandom(typeIndividuals, maxNoOfIndividuals));
         }
         for(LPProblem problem : problems){
-            List<String> removedPositives = keepPercentage(problem.positives, percentageOfPositiveExamples);
-            List<String> removedNegatives = keepPercentage(problem.negatives, percentageOfNegativeExamples);
+            problem.positives = getRandom(new ArrayList<>(problem.positives), maxNoOfIndividualsPerExampleConcept);
+            problem.negatives = getRandom(new ArrayList<>(problem.negatives), maxNoOfIndividualsPerExampleConcept);
             ret.addAll(problem.positives);
             ret.addAll(problem.negatives);
-            ret.addAll(getRandom(removedNegatives, maxNoOfIndividuals));
-            ret.addAll(getRandom(removedPositives, maxNoOfIndividuals));
 
-            //TODO add dataRulesMapping
-            for(String uri : problem.positives) {
-                Collection<String[]> rules = retriever.retrieveIndividualsForRule(uri, problem.rules);
-                Collection<Object[]> dataRules = retriever.retrieveIndividualsForDataRule(uri, problem.dataRules);
-                dataRulesMapping.put(uri, dataRules);
-                rulesMapping.put(uri, rules);
-                rules.forEach(rule ->{
-                    ret.add(rule[1]);
-                });
-            }
-            for(String uri : problem.negatives) {
-                Collection<String[]> rules = retriever.retrieveIndividualsForRule(uri, problem.rules);
-                Collection<Object[]> dataRules = retriever.retrieveIndividualsForDataRule(uri, problem.dataRules);
-                dataRulesMapping.put(uri, dataRules);
-                rulesMapping.put(uri, rules);
-                rules.forEach(rule ->{
-                    ret.add(rule[1]);
-                });            }
+            addRules(ret, problem.positives, problem.rules, problem.dataRules);
+            addRules(ret, problem.negatives, problem.rules, problem.dataRules);
         }
         return ret;
     }
 
+    private void addRules(Collection<String> addTo, Collection<String> examples, Collection<String> rules, Collection<OWLDataProperty> dataRules) {
+        for (String uri : examples) {
+            Collection<String[]> retrvRules = retriever.retrieveIndividualsForRule(uri, rules);
+            Collection<Object[]> retrvDataRules = retriever.retrieveIndividualsForDataRule(uri, dataRules);
+            dataRulesMapping.put(uri, retrvDataRules);
+            rulesMapping.put(uri, retrvRules);
+            retrvRules.forEach(rule -> {
+                addTo.add(rule[1]);
+            });
+        }
+    }
 
 
     private Collection<String> getRandom(List<String> list, Integer max) {

@@ -48,7 +48,8 @@ seed:
     private Double percentageOfNegativeExamples;
     @JsonProperty(required = false, defaultValue = "1")
     private Integer seed;
-
+    @JsonProperty(required = false, defaultValue = "500")
+    private Integer maxIndividualsPerExampleConcept;
     @JsonProperty(required = false, defaultValue = "100")
     private Integer maxNoOfExamples;
     @JsonProperty(required = false, defaultValue = "5")
@@ -59,6 +60,14 @@ seed:
     private String endpoint;
     @JsonProperty(required = true)
     private String owlFile;
+
+    public Integer getMaxIndividualsPerExampleConcept() {
+        return maxIndividualsPerExampleConcept;
+    }
+
+    public void setMaxIndividualsPerExampleConcept(Integer maxIndividualsPerExampleConcept) {
+        this.maxIndividualsPerExampleConcept = maxIndividualsPerExampleConcept;
+    }
 
     public Integer getMaxNoOfExamples() {
         return maxNoOfExamples;

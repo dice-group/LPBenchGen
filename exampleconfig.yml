@@ -8,9 +8,10 @@ types:
   - http://dbpedia.org/ontology/Actor
   - http://dbpedia.org/ontology/MusicGenre
 maxNoOfIndividuals: 5
+maxIndividualsPerExampleConcept: 200
 percentageOfPositiveExamples: 0.1
 percentageOfNegativeExamples: 0.1
-maxNoOfExamples: 50
+maxNoOfExamples: 30
 minNoOfExamples: 5
 concepts:
   - positive: MusicalArtist and genre min 3
