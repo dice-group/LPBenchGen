@@ -5,6 +5,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxPrefixNameShortFormProvider;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
@@ -20,6 +21,7 @@ public class Parser {
 
     private OWLOntology ontology;
     private OWLOntology owlOntology;
+    private BidirectionalShortFormProviderAdapter provider;
 
 
     public OWLOntology getOntology() {
@@ -37,7 +39,7 @@ public class Parser {
     }
 
     public  OWLClassExpression parseManchesterConcept(String concept){
-        BidirectionalShortFormProvider provider = new BidirectionalShortFormProviderAdapter(Sets.newHashSet(ontology, owlOntology), new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology));
+        provider = new BidirectionalShortFormProviderAdapter(Sets.newHashSet(ontology, owlOntology), new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology));
         OWLEntityChecker checker = new ShortFormEntityChecker(provider);
 
         OWLDataFactory dataFactory = new OWLDataFactoryImpl();
@@ -59,5 +61,11 @@ public class Parser {
             dataRules.add(prop);
         });
         return rules;
+    }
+
+    public String render(OWLClassExpression concept) {
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        renderer.setShortFormProvider(provider);
+        return renderer.render(concept);
     }
 }

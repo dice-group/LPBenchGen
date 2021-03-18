@@ -2,14 +2,15 @@ package org.dice_group.LPBenchGen.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PosNegExample {
 
     @JsonProperty(required = true)
     private String positive;
-    @JsonProperty(required = true)
-    private List<String> negatives;
+    @JsonProperty(required = false)
+    private List<String> negatives = new ArrayList<String>();
 
     public String getPositive() {
         return positive;

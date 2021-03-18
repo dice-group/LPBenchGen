@@ -48,9 +48,9 @@ seed:
     private Double percentageOfNegativeExamples;
     @JsonProperty(required = false, defaultValue = "1")
     private Integer seed;
-    @JsonProperty(required = false, defaultValue = "500")
+    @JsonProperty(required = false, defaultValue = "200")
     private Integer maxIndividualsPerExampleConcept;
-    @JsonProperty(required = false, defaultValue = "100")
+    @JsonProperty(required = false, defaultValue = "30")
     private Integer maxNoOfExamples;
     @JsonProperty(required = false, defaultValue = "5")
     private Integer minNoOfExamples;

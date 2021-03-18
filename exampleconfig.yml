@@ -14,6 +14,7 @@ percentageOfNegativeExamples: 0.1
 maxNoOfExamples: 30
 minNoOfExamples: 5
 concepts:
+  - positive: MusicalArtist and genre min 5
   - positive: MusicalArtist and genre min 3
     negatives:
       - Album

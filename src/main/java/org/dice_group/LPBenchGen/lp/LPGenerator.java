@@ -3,8 +3,10 @@ package org.dice_group.LPBenchGen.lp;
 import com.google.common.collect.Lists;
 import org.dice_group.LPBenchGen.config.Configuration;
 import org.dice_group.LPBenchGen.config.PosNegExample;
+import org.dice_group.LPBenchGen.dl.OWLNegationCreator;
 import org.dice_group.LPBenchGen.dl.Parser;
 import org.dice_group.LPBenchGen.sparql.IndividualRetriever;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
@@ -35,6 +37,9 @@ public class LPGenerator {
         Collection<LPProblem> problems = new ArrayList<LPProblem>();
 
         for(PosNegExample concept : conf.getConcepts()){
+            if(concept.getNegatives() == null || concept.getNegatives().size()==0){
+                concept.setNegatives(generateNegativeConcepts(concept.getPositive()));
+            }
             problems.add(generateLPProblem(concept, parser));
         }
         //for all individuals in LP problem add them
@@ -48,6 +53,21 @@ public class LPGenerator {
         }
         saveOntology(name+"-ontology.owl", parser.getOntology());
         saveLPProblem(name+"-lp.json", problems);
+    }
+
+    private List<String> generateNegativeConcepts(String positiveConcept){
+        //concept -> Expr -> visit -> negations
+        OWLClassExpression expr = parser.parseManchesterConcept(positiveConcept);
+        OWLNegationCreator creator = new OWLNegationCreator();
+        expr.accept(creator);
+        creator.prune();
+        List<OWLClassExpression> concepts= creator.negationConcepts;
+
+        List<String> ret = new ArrayList<String>();
+        for(OWLClassExpression concept: concepts){
+            ret.add(parser.render(concept));
+        }
+        return ret;
     }
 
     private void cutProblems(LPProblem problem, Double percentageOfPositiveExamples, Double percentageOfNegativeExamples) {
