@@ -41,6 +41,7 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
     private static final Logger logger = LoggerFactory.getLogger(OWLClassExpressionToSPARQLConverter.class);
 
     private static final String TRIPLE_PATTERN = "%s %s %s .\n";
+    private boolean useStar=false;
 
     private OWLDataFactory df = new OWLDataFactoryImpl();
 
@@ -80,6 +81,8 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
     private boolean negatedDataRange = false;
 
     public OWL2SPARQL() {}
+
+    public OWL2SPARQL(boolean useStar) {this.useStar=useStar;}
 
     public OWL2SPARQL(VariablesMapping mapping) {
         this.mapping = mapping;
@@ -170,7 +173,9 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
         String triplePattern = asGroupGraphPattern(ce, rootVariable);
 
         if(variableEntities.isEmpty()){
-            queryString += rootVariable + " WHERE {";
+            queryString+=rootVariable;
+
+            queryString +=  " WHERE {";
         } else {
             for (OWLEntity owlEntity : variableEntities) {
                 String var = mapping.get(owlEntity);
@@ -178,7 +183,8 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
             }
             if(countQuery){
                 queryString += "(COUNT(DISTINCT " + rootVariable + ") AS ?cnt)";
-            } else {
+            }
+            else {
                 queryString += rootVariable;
             }
             queryString += " WHERE {";

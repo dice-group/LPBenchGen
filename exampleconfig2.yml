@@ -1,0 +1,23 @@
+endpoint: http://dbpedia.org/sparql
+owlFile: ./dbpedia_2016-10.owl
+seed: 123
+types:
+  - http://dbpedia.org/ontology/MusicalArtist
+  - http://dbpedia.org/ontology/Band
+  - http://dbpedia.org/ontology/Politician
+  - http://dbpedia.org/ontology/MilitaryUnit
+  - http://dbpedia.org/ontology/Country
+  - http://dbpedia.org/ontology/City
+  - http://dbpedia.org/ontology/Settlement
+maxNoOfIndividuals: 5
+maxIndividualsPerExampleConcept: 30
+percentageOfPositiveExamples: 0.5
+percentageOfNegativeExamples: 0.5
+maxNoOfExamples: 30
+minNoOfExamples: 5
+maxGenerateConcepts: 40
+
+#maxDepth: 2
+#maxConceptLength: 8
+#minConceptLength: 4
+#inferDirectSuperClasses: true

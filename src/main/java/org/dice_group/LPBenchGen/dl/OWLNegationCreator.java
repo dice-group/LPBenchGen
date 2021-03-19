@@ -21,13 +21,12 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
     boolean currentNegation=false;
 
-    public void addNeccTypes(Collection<String> types){
+    public void addNeccTypes(Collection<String> types, OWLClassExpression typesExpr){
         List<OWLClassExpression> finalConcepts = new ArrayList<OWLClassExpression>();
-        OWLClassExpression typeExpr = getTypeExpr(types);
 
         for(OWLClassExpression expr : negationConcepts){
 
-            finalConcepts.add(new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, typeExpr)).getNNF());
+            finalConcepts.add(new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, typesExpr)));
         }
         negationConcepts=finalConcepts;
     }

@@ -1,20 +1,23 @@
 package org.dice_group.LPBenchGen.lp;
 
-import com.google.common.collect.Lists;
 import org.dice_group.LPBenchGen.config.Configuration;
 import org.dice_group.LPBenchGen.config.PosNegExample;
+import org.dice_group.LPBenchGen.dl.ABoxFiller;
 import org.dice_group.LPBenchGen.dl.OWLNegationCreator;
+import org.dice_group.LPBenchGen.dl.OWLTBoxPositiveCreator;
 import org.dice_group.LPBenchGen.dl.Parser;
 import org.dice_group.LPBenchGen.sparql.IndividualRetriever;
-import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
+import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectUnionOfImpl;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LPGenerator {
 
@@ -26,6 +29,7 @@ public class LPGenerator {
     private Map<String, Collection<String[]>> rulesMapping = new HashMap<String, Collection<String[]>>();
     private Map<String, Collection<Object[]>> dataRulesMapping = new HashMap<String, Collection<Object[]>>();
     private List<String> types;
+    private OWLClassExpression typesExpr;
 
 
     public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
@@ -36,41 +40,137 @@ public class LPGenerator {
         types = conf.getTypes();
         minExamples=conf.getMinNoOfExamples();
         maxExamples=conf.getMaxNoOfExamples();
+        createTypesExpr();
+
         Collection<LPProblem> problems = new ArrayList<LPProblem>();
 
+        if(conf.getConcepts()==null) {
+
+            conf.setConcepts(generateConcepts(conf.getMaxGenerateConcepts(), conf.getMinConceptLength(), conf.getMaxConceptLength(), conf.getMaxDepth(), conf.getInferDirectSuperClasses()));
+        }
+        int count=0;
         for(PosNegExample concept : conf.getConcepts()){
+            boolean negativeGenerated=false;
             if(concept.getNegatives() == null || concept.getNegatives().size()==0){
                 concept.setNegatives(generateNegativeConcepts(concept.getPositive()));
+                negativeGenerated=true;
             }
-            problems.add(generateLPProblem(concept, parser));
+            try {
+                problems.add(generateLPProblem(concept, parser,negativeGenerated));
+                count++;
+                System.out.println("Finished concept " + count + "/" + conf.getConcepts().size());
+            }catch(Exception e ){
+                e.printStackTrace();
+            }
         }
         //for all individuals in LP problem add them
-
-        Collection<String> individuals = getIndividuals(problems, conf.getTypes(), conf.getMaxNoOfIndividuals(), conf.getMaxIndividualsPerExampleConcept());
+        ABoxFiller filler = new ABoxFiller(retriever, types);
+        fillAbox(filler, problems,conf.getMaxIndividualsPerExampleConcept());
+        /*Collection<String> individuals = getIndividuals(problems, conf.getTypes(), conf.getMaxNoOfIndividuals(), conf.getMaxIndividualsPerExampleConcept());
         for(String individual : individuals){
             addIndividuals(parser.getOntology(), createIndividual(individual, conf.getTypes()));
-        }
+        }*/
         for(LPProblem problem : problems) {
             cutProblems(problem, conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
+            //measure(problem, parser.getOntology());
         }
+        System.out.println("Ontology has now "+parser.getOntology().getIndividualsInSignature().size()+" Individuals");
         saveOntology(name+"-ontology.owl", parser.getOntology());
         saveLPProblem(name+"-lp.json", problems);
     }
 
-    private List<String> generateNegativeConcepts(String positiveConcept){
+    private void createTypesExpr() {
+        List<OWLClassExpression> classes = new ArrayList<OWLClassExpression>();
+        for(String type: types){
+            classes.add(new OWLDataFactoryImpl().getOWLClass(IRI.create(type)));
+        }
+        typesExpr = new OWLObjectUnionOfImpl(classes);
+    }
+
+    private void measure(LPProblem problem, OWLOntology ontology) {
+        org.semanticweb.HermiT.Configuration conf = new org.semanticweb.HermiT.Configuration();
+        conf.ignoreUnsupportedDatatypes=true;
+        Reasoner res = new Reasoner(conf, ontology);
+        Set<OWLNamedIndividual> instances = res.getInstances(problem.goldStandardConceptExpr).getFlattened();
+        Set<String> temp = new HashSet<String>();
+        instances.forEach(i ->{
+            temp.add(i.getIRI().toString());
+        });
+        Set<String> temp2 = new HashSet<String>();
+        problem.positives.forEach(indi ->{
+            temp2.add(indi);
+        });
+        temp2.removeAll(temp);
+        if(temp2.size()!=0){
+            System.out.println("Found "+temp+" not found.");
+        }
+        int negCount=0;
+        for(String p : problem.negatives){
+            if(temp.contains(p)){
+                negCount++;
+            }
+        }
+        System.out.println("Found "+negCount+" which shouldn't be found");
+    }
+
+    private void fillAbox(ABoxFiller filler, Collection<LPProblem> problems, Integer maxIndividualsPerExampleConcept) {
+        problems.forEach(problem ->{
+            problem.positives = getRandom(new ArrayList<>(problem.positives), maxIndividualsPerExampleConcept);
+            problem.negatives = getRandom(new ArrayList<>(problem.negatives), maxIndividualsPerExampleConcept);
+            problem.positives.forEach(pos ->{
+                filler.addIndividualsFromConcept(problem.goldStandardConceptAsExpr(), pos, parser.getOntology());
+            });
+            problem.negatives.forEach(nes ->{
+                OWLClassExpression negativeExpr = problem.getExpr(nes);
+                AtomicReference<OWLClassExpression> actNegExa = new AtomicReference<>(negativeExpr);
+                if(problem.negativeGenerated) {
+                    negativeExpr.components().forEach(x->{
+                        if(x instanceof List){
+                            ((List)x).forEach(e->{
+
+                                if (!((OWLClassExpression)e).equals(typesExpr)) {
+                                    actNegExa.set((OWLClassExpression) e);
+                                }
+                            });
+
+                        }else {
+                            if (!x.equals(typesExpr)) {
+                                actNegExa.set((OWLClassExpression) x);
+                            }
+                        }
+                    });
+                }
+                filler.addIndividualsFromConcept(actNegExa.get(), nes, parser.getOntology());
+            });
+
+        });
+    }
+
+    private List<PosNegExample> generateConcepts(Integer maxGenerateConcepts, Integer minConceptLength, Integer maxConceptLength, Integer maxDepth, boolean inferDirectSuperClasses) {
+        List<PosNegExample> examples =new ArrayList<PosNegExample>();
+        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(retriever, parser.getOntology(), types, parser);
+        creator.minConceptLength=minConceptLength;
+        creator.maxConceptLength=maxConceptLength;
+        creator.maxDepth=maxDepth;
+        creator.inferDirectSuperClasses=inferDirectSuperClasses;
+        creator.createDistinctConcepts(maxGenerateConcepts).forEach(concept -> {
+            PosNegExample example = new PosNegExample();
+            example.setPositive(concept);
+            examples.add(example);
+        });
+        return examples;
+    }
+
+    private List<OWLClassExpression> generateNegativeConcepts(String positiveConcept){
         //concept -> Expr -> visit -> negations
         OWLClassExpression expr = parser.parseManchesterConcept(positiveConcept);
         OWLNegationCreator creator = new OWLNegationCreator();
         expr.accept(creator);
         creator.prune();
-        creator.addNeccTypes(types);
+        creator.addNeccTypes(types, typesExpr);
         List<OWLClassExpression> concepts= creator.negationConcepts;
 
-        List<String> ret = new ArrayList<String>();
-        for(OWLClassExpression concept: concepts){
-            ret.add(parser.render(concept));
-        }
-        return ret;
+        return concepts;
     }
 
     private void cutProblems(LPProblem problem, Double percentageOfPositiveExamples, Double percentageOfNegativeExamples) {
@@ -86,6 +186,7 @@ public class LPGenerator {
             ret.addAll(getRandom(typeIndividuals, maxNoOfIndividuals));
         }
         for(LPProblem problem : problems){
+            //TODO Axioms from
             problem.positives = getRandom(new ArrayList<>(problem.positives), maxNoOfIndividualsPerExampleConcept);
             problem.negatives = getRandom(new ArrayList<>(problem.negatives), maxNoOfIndividualsPerExampleConcept);
             ret.addAll(problem.positives);
@@ -139,20 +240,24 @@ public class LPGenerator {
         return removed;
     }
 
-    private LPProblem generateLPProblem(PosNegExample concept, Parser parser) {
+    private LPProblem generateLPProblem(PosNegExample concept, Parser parser, boolean negativeGenerated) {
         LPProblem problem = new LPProblem();
+        problem.negativeGenerated=negativeGenerated;
         problem.goldStandardConcept=concept.getPositive();
 
         OWLClassExpression pos = parser.parseManchesterConcept(concept.getPositive());
-
+        problem.goldStandardConceptExpr=pos;
         problem.rules = parser.getRulesInExpr(pos, problem.dataRules);
 
         problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos));
-        for(String negative : concept.getNegatives()){
+        for(OWLClassExpression neg : concept.getNegatives()){
 
-            OWLClassExpression neg =parser.parseManchesterConcept(negative);
-            problem.negatives.addAll(retriever.retrieveIndividualsForConcept(neg));
+            List<String> retrieved = retriever.retrieveIndividualsForConcept(neg);
+            problem.negatives.addAll(retrieved);
             problem.rules.addAll(parser.getRulesInExpr(neg, problem.dataRules));
+            retrieved.forEach(retr -> {
+                problem.negativeMap.put(retr, neg);
+            });
         }
         return problem;
     }
@@ -219,16 +324,18 @@ public class LPGenerator {
             pw.print("[\n");
             int count=0;
             for(LPProblem problem: problems ) {
-                pw.print("\t{\n\t\"concept\": \"");
-                pw.print(problem.goldStandardConcept);
-                pw.print("\",\n\t\"positives\": [\n");
-                writeCollection(problem.positives, pw);
-                pw.print("\n\t],\n\t\"negatives\": [\n");
-                writeCollection(problem.negatives, pw);
-                pw.print("\n\t]\n\t}");
-                count++;
-                if(count<problems.size()){
-                    pw.print(",\n");
+                if(problem.positives.size()>0 && problem.negatives.size()>0) {
+                    pw.print("\t{\n\t\"concept\": \"");
+                    pw.print(problem.goldStandardConcept.replace("\n", " "));
+                    pw.print("\",\n\t\"positives\": [\n");
+                    writeCollection(problem.positives, pw);
+                    pw.print("\n\t],\n\t\"negatives\": [\n");
+                    writeCollection(problem.negatives, pw);
+                    pw.print("\n\t]\n\t}");
+                    count++;
+                    if (count < problems.size()) {
+                        pw.print(",\n");
+                    }
                 }
             }
             pw.print("\n]");

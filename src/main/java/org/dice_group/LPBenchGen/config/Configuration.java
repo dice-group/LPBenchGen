@@ -41,25 +41,75 @@ seed:
     @JsonProperty(required = true)
     private List<String> types;
     @JsonProperty(required = false, defaultValue = "0")
-    private Integer maxNoOfIndividuals;
+    private Integer maxNoOfIndividuals=0;
     @JsonProperty(required = false, defaultValue = "0.5")
-    private Double percentageOfPositiveExamples;
+    private Double percentageOfPositiveExamples=0.5;
     @JsonProperty(required = false, defaultValue = "0.5")
-    private Double percentageOfNegativeExamples;
+    private Double percentageOfNegativeExamples=0.5;
     @JsonProperty(required = false, defaultValue = "1")
-    private Integer seed;
+    private Integer seed=1;
     @JsonProperty(required = false, defaultValue = "200")
-    private Integer maxIndividualsPerExampleConcept;
+    private Integer maxIndividualsPerExampleConcept=200;
     @JsonProperty(required = false, defaultValue = "30")
-    private Integer maxNoOfExamples;
+    private Integer maxNoOfExamples=30;
     @JsonProperty(required = false, defaultValue = "5")
-    private Integer minNoOfExamples;
-    @JsonProperty(required = true)
+    private Integer minNoOfExamples=5;
+    @JsonProperty(required = false)
     private List<PosNegExample> concepts;
+    @JsonProperty(required = false, defaultValue = "20")
+    private Integer maxGenerateConcepts=20;
+    @JsonProperty(required = false, defaultValue = "2")
+    private Integer maxDepth=2;
+    @JsonProperty(required = false, defaultValue = "10")
+    private Integer maxConceptLength=10;
+    @JsonProperty(required = false, defaultValue = "4")
+    private Integer minConceptLength=4;
+    @JsonProperty(required = false, defaultValue = "true")
+    private Boolean inferDirectSuperClasses=true;
     @JsonProperty(required = true)
     private String endpoint;
     @JsonProperty(required = true)
     private String owlFile;
+
+    public Integer getMaxDepth() {
+        return maxDepth;
+    }
+
+    public void setMaxDepth(Integer maxDepth) {
+        this.maxDepth = maxDepth;
+    }
+
+    public Integer getMaxConceptLength() {
+        return maxConceptLength;
+    }
+
+    public void setMaxConceptLength(Integer maxConceptLength) {
+        this.maxConceptLength = maxConceptLength;
+    }
+
+    public Integer getMinConceptLength() {
+        return minConceptLength;
+    }
+
+    public void setMinConceptLength(Integer minConceptLength) {
+        this.minConceptLength = minConceptLength;
+    }
+
+    public Boolean getInferDirectSuperClasses() {
+        return inferDirectSuperClasses;
+    }
+
+    public void setInferDirectSuperClasses(Boolean inferDirectSuperClasses) {
+        this.inferDirectSuperClasses = inferDirectSuperClasses;
+    }
+
+    public Integer getMaxGenerateConcepts() {
+        return maxGenerateConcepts;
+    }
+
+    public void setMaxGenerateConcepts(Integer maxGenerateConcepts) {
+        this.maxGenerateConcepts = maxGenerateConcepts;
+    }
 
     public Integer getMaxIndividualsPerExampleConcept() {
         return maxIndividualsPerExampleConcept;

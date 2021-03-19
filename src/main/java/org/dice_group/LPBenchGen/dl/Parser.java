@@ -36,10 +36,11 @@ public class Parser {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         ontology = manager.loadOntologyFromOntologyDocument(new File(ontologyFile));
         owlOntology = manager.loadOntologyFromOntologyDocument(IRI.create("http://www.w3.org/2002/07/owl"));
+        provider = new BidirectionalShortFormProviderAdapter(Sets.newHashSet(ontology, owlOntology), new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology));
+
     }
 
     public  OWLClassExpression parseManchesterConcept(String concept){
-        provider = new BidirectionalShortFormProviderAdapter(Sets.newHashSet(ontology, owlOntology), new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology));
         OWLEntityChecker checker = new ShortFormEntityChecker(provider);
 
         OWLDataFactory dataFactory = new OWLDataFactoryImpl();

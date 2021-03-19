@@ -52,11 +52,16 @@ public class IndividualRetriever {
     private List<String> createRequest(String sparqlQuery){
         List<String> ret =  new ArrayList<String>();
 
-        Query q = QueryFactory.create(sparqlQuery);
-        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, q);
-        ResultSet res = qexec.execSelect();
-        while(res.hasNext()){
-            ret.add(res.next().getResource(DEFAULT_VARIABLE_NAME).toString());
+        try {
+            Query q = QueryFactory.create(sparqlQuery);
+
+            QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, q);
+            ResultSet res = qexec.execSelect();
+            while (res.hasNext()) {
+                ret.add(res.next().getResource(DEFAULT_VARIABLE_NAME).toString());
+            }
+        }catch(Exception e){
+            e.printStackTrace();
         }
         return ret;
     }
@@ -67,6 +72,13 @@ public class IndividualRetriever {
 
     private String createTypesQuery(String uriIndividual) {
         return "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?"+DEFAULT_VARIABLE_NAME+" { <"+uriIndividual+"> rdf:type ?"+DEFAULT_VARIABLE_NAME+"}";
+    }
+
+    public List<String> retrieveIndividualsForConcept(OWLClassExpression concept, int limit){
+        String sparqlQuery = createQuery(concept);
+        Query q = QueryFactory.create(sparqlQuery);
+        q.setLimit(limit);
+        return createRequest(q.serialize());
     }
 
     public List<String> retrieveIndividualsForConcept(OWLClassExpression concept){
@@ -87,8 +99,9 @@ public class IndividualRetriever {
         // female and (President or artist)) -> {?s type female . {{?s type president} UNION { ?s type artist }}} ???
         //                                      {?s type female . FILTER ( ?s in {?s type artist} OR ?s in {?s type president})}
         OWL2SPARQL converter = new OWL2SPARQL();
-
-        return converter.asQuery(concept, "?var").serialize();
+        Query q  = converter.asQuery(concept, "?var");
+        q.setLimit(100);
+        return q.serialize();
     }
 
     public Collection<String> retrieveTypesForIndividual(String uri) {
@@ -118,5 +131,16 @@ public class IndividualRetriever {
 
     private String createRuleQuery(String uri, String rule) {
         return "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?"+DEFAULT_VARIABLE_NAME+" { <"+uri+"> <"+rule+"> ?"+DEFAULT_VARIABLE_NAME+"}";
+    }
+
+    public ResultSet getResultMap(Query q) {
+        try {
+            QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, q);
+            ResultSet res = qexec.execSelect();
+            return res;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 }
