@@ -70,6 +70,17 @@ seed:
     private String endpoint;
     @JsonProperty(required = true)
     private String owlFile;
+    @JsonProperty(required = false)
+    private boolean endpointInfersRules=false;
+
+
+    public boolean isEndpointInfersRules() {
+        return endpointInfersRules;
+    }
+
+    public void setEndpointInfersRules(boolean endpointInfersRules) {
+        this.endpointInfersRules = endpointInfersRules;
+    }
 
     public Integer getMaxDepth() {
         return maxDepth;

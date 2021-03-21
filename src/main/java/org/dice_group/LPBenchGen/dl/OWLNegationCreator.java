@@ -3,10 +3,7 @@ package org.dice_group.LPBenchGen.dl;
 
 import com.google.common.collect.Lists;
 import org.semanticweb.owlapi.model.*;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectComplementOfImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectUnionOfImpl;
+import uk.ac.manchester.cs.owl.owlapi.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,7 +13,14 @@ import java.util.List;
 
 public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityVisitor {
 
+/*TODO:
+   SPARQL doesn;t infere super classes
+   -> some concepts not working correctly! check for allowed SUB CLASSES as well
+   see Settlement  and (leaderName some Person) -> Moscow f.e. its obv correct, however doesn't have Settlement directly.
 
+
+   Vt in Types -> getAllowedSubTypes ST_t, replace conceptStr(t, (\'(t or ORs in ST_t))\')
+  */
     public List<OWLClassExpression> negationConcepts = new ArrayList<OWLClassExpression>();
 
     boolean currentNegation=false;
@@ -96,9 +100,11 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
         for(OWLClassExpression entity : ce.getOperands()){
             entity.accept(this);
             List<OWLClassExpression> ops = new ArrayList<OWLClassExpression>(ce.getOperands());
-            ops.remove(entity);
-            ops.add(new OWLObjectComplementOfImpl(entity));
-            negationConcepts.add(new OWLObjectIntersectionOfImpl(ops));
+
+                ops.remove(entity);
+                ops.add(new OWLObjectComplementOfImpl(entity));
+                negationConcepts.add(new OWLObjectIntersectionOfImpl(ops));
+
         }
     }
 
@@ -122,8 +128,9 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
     }
 
     public void visit(OWLObjectSomeValuesFrom ce) {
+        //some -> all
         if(!currentNegation) {
-            negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
+            //negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
         }else{
             //TODO???
         }
@@ -131,7 +138,7 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
     public void visit(OWLObjectAllValuesFrom ce) {
         if(!currentNegation) {
-            negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
+            //negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
         }else{
             //TODO???
         }

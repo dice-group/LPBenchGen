@@ -69,4 +69,8 @@ public class Parser {
         renderer.setShortFormProvider(provider);
         return renderer.render(concept);
     }
+
+    public String getShortName(String uri) {
+        return provider.getShortForm(new OWLDataFactoryImpl().getOWLClass(uri));
+    }
 }

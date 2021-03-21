@@ -20,9 +20,10 @@ import java.util.*;
 public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
 
     private final List<String> originalTypes;
+    private final Reasoner res;
     private IndividualRetriever retriever;
     private OWLOntology onto;
-    private List<String> allowedTypes;
+    public List<String> allowedTypes;
     private Parser parser;
     private OWLDataFactory dataFactory = new OWLDataFactoryImpl();
     private Map<String, Set<OWLAxiom>> type2axioms = new HashMap<String, Set<OWLAxiom>>();
@@ -33,30 +34,39 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     public int minConceptLength=4;
     public boolean inferDirectSuperClasses=true;
 
-    public OWLTBoxPositiveCreator(IndividualRetriever retriever, OWLOntology onto, List<String> allowedTypes, Parser parser){
+    public OWLTBoxPositiveCreator(IndividualRetriever retriever, OWLOntology onto, List<String> allowedTypes, Parser parser, Reasoner res){
         this.retriever=retriever;
         this.onto=onto;
         this.originalTypes = allowedTypes;
         this.allowedTypes=new ArrayList<String>(new HashSet<String>(allowedTypes));
         this.parser=parser;
+        this.res=res;
     }
 
     public Collection<String> createDistinctConcepts(int noOfConcepts){
         Set<String> ret = new HashSet<String>();
+        int toSmallCount=0;
+        int noResults=0;
         for(OWLClassExpression concept : createConcepts(noOfConcepts)){
+
             if(getConceptLength(concept)<minConceptLength){
+                toSmallCount++;
                 continue;
             }
-            if(!retriever.retrieveIndividualsForConcept(concept, 1).isEmpty()) {
+            if(!retriever.retrieveIndividualsForConcept(concept, 1, 1).isEmpty()) {
 
-                ret.add(parser.render(concept.getNNF()));
+                ret.add(parser.render(concept));
                 if(ret.size()>=noOfConcepts){
                     break;
                 }
+            }else{
+                noResults++;
             }
+
         }
         List<String> ret2= new ArrayList<String>(ret);
         //keepRandom(ret2, noOfConcepts);
+        System.out.println("Final "+ret2.size()+" concepts. ["+toSmallCount+" to small, "+noResults+" with no results/timeout]");
         return ret2;
     }
 
@@ -70,20 +80,21 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         List<OWLClassExpression> concepts = new ArrayList<OWLClassExpression>();
         List<String> allowedTypes = new ArrayList<String>(this.allowedTypes);
         allowedTypes.forEach(type -> {
-            Set<OWLAxiom> axioms = getAxiomsForClass(dataFactory.getOWLClass(IRI.create(type)));
-            type2axioms.put(type, axioms);
-            Collection<OWLClassExpression> ret =  createConceptsFromClass(dataFactory.getOWLClass(IRI.create(type)), false, 0);
-            type2expr.put(type, ret);
-            concepts.addAll(ret);
+            if(!type.equals("http://www.w3.org/2002/07/owl#Thing")) {
+                Set<OWLAxiom> axioms = getAxiomsForClass(dataFactory.getOWLClass(IRI.create(type)));
+                type2axioms.put(type, axioms);
+                Collection<OWLClassExpression> ret = createConceptsFromClass(dataFactory.getOWLClass(IRI.create(type)), false, 0);
+                type2expr.put(type, ret);
+                concepts.addAll(ret);
+            }
         });
         concepts.addAll(createOverlappingClassConcepts());
+        System.out.println("Found "+concepts.size()+" theoretically possible concepts.");
         return concepts;
     }
 
     private Set<OWLAxiom> getAxiomsForClass(OWLClass owlClass) {
-        Configuration conf = new Configuration();
-        conf.ignoreUnsupportedDatatypes=true;
-        Reasoner  res = new Reasoner(conf, onto);
+
         Set<OWLAxiom> ret = new HashSet<OWLAxiom>();
         if(inferDirectSuperClasses && originalTypes.contains(owlClass.getIRI().toString())) {
             res.getSuperClasses(owlClass, true).forEach(node -> {
@@ -183,14 +194,14 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
             if(ax instanceof  OWLObjectPropertyDomainAxiom){
                 OWLObjectPropertyExpression prop = ((OWLObjectPropertyDomainAxiom)ax).getProperty();
                 Collection<OWLClass> propClasses = getClassesForProperty(prop);
-                OWLClass owlClass2 = ((OWLObjectPropertyDomainAxiom) ax).getDomain().asOWLClass();
+                OWLClassExpression owlClass2 = ((OWLObjectPropertyDomainAxiom) ax).getDomain();
                 propClasses.remove(owlClass2);
                 propClasses.remove(owlClass);
                 propClasses.forEach(propClass ->{
                     if(allowedTypes.contains(propClass.getIRI().toString())) {
                         OWLClassExpression propRange = new OWLObjectSomeValuesFromImpl(prop, propClass);
                         OWLClassExpression expr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(owlClass, propRange));
-                        if (!retriever.retrieveIndividualsForConcept(expr, 1).isEmpty()) {
+                        //if (!retriever.retrieveIndividualsForConcept(expr, 1).isEmpty()) {
 
                             ret.add(expr);
 
@@ -201,11 +212,13 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
                                     OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(owlClass2, new
                                             OWLObjectSomeValuesFromImpl(prop, concept)));
                                     if (getConceptLength(pexpr) < maxConceptLength) {
-                                        ret.add(new OWLObjectIntersectionOfImpl(Lists.newArrayList(pexpr, concept)));
+                                        OWLClassExpression newExpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(pexpr, concept));
+                                            ret.add(newExpr);
+
                                     }
                                 });
                             }
-                        }
+                        //}
                     }
                 });
             }
@@ -215,7 +228,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
             if (ax instanceof OWLObjectPropertyRangeAxiom) {
 
                 OWLObjectPropertyExpression prop = ((OWLObjectPropertyRangeAxiom)ax).getProperty();
-                OWLClass owlClass2 = ((OWLObjectPropertyRangeAxiom) ax).getRange().asOWLClass();
+                OWLClassExpression owlClass2 = ((OWLObjectPropertyRangeAxiom) ax).getRange();
 
                 OWLClassExpression classRange = new OWLObjectSomeValuesFromImpl(prop, owlClass2);
                 ret.add(classRange);
@@ -227,16 +240,18 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
                     if(allowedTypes.contains(propClass.getIRI().toString())) {
                         OWLClassExpression propRange = new OWLObjectSomeValuesFromImpl(prop, propClass);
                         OWLClassExpression expr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(classRange, propRange));
-                        if (!retriever.retrieveIndividualsForConcept(expr, 1).isEmpty()) {
+                        //if (!retriever.retrieveIndividualsForConcept(expr, 1).isEmpty()) {
 
                             ret.add(expr);
                             if (depth < maxDepth) {
                                 //TODO check if Intersection already in
                                 createConceptsFromClass(propClass, false, depth + 1).forEach(concept -> {
-                                    ret.add(new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, concept)));
+                                    OWLClassExpression newExpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, concept));
+                                        ret.add(newExpr);
+
                                 });
                             }
-                        }
+                       //}
                     }
                 });
             }

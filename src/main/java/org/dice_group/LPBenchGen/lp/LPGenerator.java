@@ -1,5 +1,6 @@
 package org.dice_group.LPBenchGen.lp;
 
+import com.google.common.collect.Lists;
 import org.dice_group.LPBenchGen.config.Configuration;
 import org.dice_group.LPBenchGen.config.PosNegExample;
 import org.dice_group.LPBenchGen.dl.ABoxFiller;
@@ -10,6 +11,7 @@ import org.dice_group.LPBenchGen.sparql.IndividualRetriever;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectUnionOfImpl;
 
 import java.io.FileNotFoundException;
@@ -17,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LPGenerator {
@@ -30,17 +33,22 @@ public class LPGenerator {
     private Map<String, Collection<Object[]>> dataRulesMapping = new HashMap<String, Collection<Object[]>>();
     private List<String> types;
     private OWLClassExpression typesExpr;
+    private Reasoner res;
 
 
     public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
         Configuration conf = Configuration.loadFromFile(configFile);
         parser = new Parser(conf.getOwlFile());
+        org.semanticweb.HermiT.Configuration conf2 = new org.semanticweb.HermiT.Configuration();
+        conf2.ignoreUnsupportedDatatypes=true;
+        res = new Reasoner(conf2, parser.getOntology());
+        //debugAdd();
         retriever = new IndividualRetriever(conf.getEndpoint());
         seed= conf.getSeed();
         types = conf.getTypes();
         minExamples=conf.getMinNoOfExamples();
         maxExamples=conf.getMaxNoOfExamples();
-        createTypesExpr();
+
 
         Collection<LPProblem> problems = new ArrayList<LPProblem>();
 
@@ -48,6 +56,7 @@ public class LPGenerator {
 
             conf.setConcepts(generateConcepts(conf.getMaxGenerateConcepts(), conf.getMinConceptLength(), conf.getMaxConceptLength(), conf.getMaxDepth(), conf.getInferDirectSuperClasses()));
         }
+        createTypesExpr();
         int count=0;
         for(PosNegExample concept : conf.getConcepts()){
             boolean negativeGenerated=false;
@@ -58,7 +67,7 @@ public class LPGenerator {
             try {
                 problems.add(generateLPProblem(concept, parser,negativeGenerated));
                 count++;
-                System.out.println("Finished concept " + count + "/" + conf.getConcepts().size());
+                System.out.println("Finished problem generation " + count + "/" + conf.getConcepts().size());
             }catch(Exception e ){
                 e.printStackTrace();
             }
@@ -72,11 +81,23 @@ public class LPGenerator {
         }*/
         for(LPProblem problem : problems) {
             cutProblems(problem, conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
-            //measure(problem, parser.getOntology());
+            if(!conf.isEndpointInfersRules()) {
+                measure(problem, parser.getOntology());
+            }
         }
         System.out.println("Ontology has now "+parser.getOntology().getIndividualsInSignature().size()+" Individuals");
+        //debugAdd();
         saveOntology(name+"-ontology.owl", parser.getOntology());
         saveLPProblem(name+"-lp.json", problems);
+    }
+
+    private void debugAdd() {
+        OWLAxiom axiom;
+        OWLDataFactory factory = new OWLDataFactoryImpl();
+        OWLObjectPropertyExpression pexpr = factory.getOWLObjectProperty(IRI.create("http://dbpedia.org/ontology/headquarter"));
+        OWLClass orga = factory.getOWLClass("http://dbpedia.org/ontology/Organisation");
+        axiom=factory.getOWLObjectPropertyRangeAxiom(pexpr, orga);
+        parser.getOntology().add(axiom);
     }
 
     private void createTypesExpr() {
@@ -90,8 +111,10 @@ public class LPGenerator {
     private void measure(LPProblem problem, OWLOntology ontology) {
         org.semanticweb.HermiT.Configuration conf = new org.semanticweb.HermiT.Configuration();
         conf.ignoreUnsupportedDatatypes=true;
+        conf.throwInconsistentOntologyException=false;
+
         Reasoner res = new Reasoner(conf, ontology);
-        Set<OWLNamedIndividual> instances = res.getInstances(problem.goldStandardConceptExpr).getFlattened();
+        Set<OWLNamedIndividual> instances = res.getInstances(parser.parseManchesterConcept(problem.goldStandardConcept), true).getFlattened();
         Set<String> temp = new HashSet<String>();
         instances.forEach(i ->{
             temp.add(i.getIRI().toString());
@@ -105,22 +128,37 @@ public class LPGenerator {
             System.out.println("Found "+temp+" not found.");
         }
         int negCount=0;
+        Set<String> rem = new HashSet<String>();
         for(String p : problem.negatives){
             if(temp.contains(p)){
+                rem.add(p);
                 negCount++;
             }
         }
-        System.out.println("Found "+negCount+" which shouldn't be found");
+        problem.negatives.removeAll(rem);
+        if(rem.size()>0) {
+            System.out.println("Found " + negCount + " which shouldn't be found");
+        }
     }
 
     private void fillAbox(ABoxFiller filler, Collection<LPProblem> problems, Integer maxIndividualsPerExampleConcept) {
+        AtomicInteger count= new AtomicInteger();
         problems.forEach(problem ->{
             problem.positives = getRandom(new ArrayList<>(problem.positives), maxIndividualsPerExampleConcept);
             problem.negatives = getRandom(new ArrayList<>(problem.negatives), maxIndividualsPerExampleConcept);
+            ArrayList<String> rem = new ArrayList<>();
             problem.positives.forEach(pos ->{
-                filler.addIndividualsFromConcept(problem.goldStandardConceptAsExpr(), pos, parser.getOntology());
+                if(!filler.addIndividualsFromConcept(problem.goldStandardConceptAsExpr(), pos, parser.getOntology())){
+                    rem.add(pos);
+                }
             });
+            if(!rem.isEmpty()) {
+                System.out.println("Errors occured at individuals, removing " + rem + " from positives");
+                problem.positives.removeAll(rem);
+            }
+            rem.clear();
             problem.negatives.forEach(nes ->{
+                //TODO remove if error
                 OWLClassExpression negativeExpr = problem.getExpr(nes);
                 AtomicReference<OWLClassExpression> actNegExa = new AtomicReference<>(negativeExpr);
                 if(problem.negativeGenerated) {
@@ -140,15 +178,24 @@ public class LPGenerator {
                         }
                     });
                 }
-                filler.addIndividualsFromConcept(actNegExa.get(), nes, parser.getOntology());
+                if(!filler.addIndividualsFromConcept(actNegExa.get(), nes, parser.getOntology())){
+                    rem.add(nes);
+                }
             });
-
+            if(!rem.isEmpty()) {
+                System.out.println("Errors occured at individuals, removing " + rem + " from negatives");
+                problem.negatives.removeAll(rem);
+                rem.clear();
+            }
+            count.getAndIncrement();
+            System.out.println("Filled Abox for problem "+(count)+"/"+problems.size());
         });
     }
 
     private List<PosNegExample> generateConcepts(Integer maxGenerateConcepts, Integer minConceptLength, Integer maxConceptLength, Integer maxDepth, boolean inferDirectSuperClasses) {
         List<PosNegExample> examples =new ArrayList<PosNegExample>();
-        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(retriever, parser.getOntology(), types, parser);
+
+        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(retriever, parser.getOntology(), types, parser, res);
         creator.minConceptLength=minConceptLength;
         creator.maxConceptLength=maxConceptLength;
         creator.maxDepth=maxDepth;
@@ -158,6 +205,7 @@ public class LPGenerator {
             example.setPositive(concept);
             examples.add(example);
         });
+        this.types=creator.allowedTypes;
         return examples;
     }
 
@@ -246,20 +294,107 @@ public class LPGenerator {
         problem.goldStandardConcept=concept.getPositive();
 
         OWLClassExpression pos = parser.parseManchesterConcept(concept.getPositive());
+        pos = transformConceptSubClasses(pos, "OR", false);
         problem.goldStandardConceptExpr=pos;
         problem.rules = parser.getRulesInExpr(pos, problem.dataRules);
+        //TODO check core:Protein  and (core:encodedBy some core:Gene),  http://purl.uniprot.org/EMBLWGS/ECF0332865
 
         problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos));
         for(OWLClassExpression neg : concept.getNegatives()){
+            OWLClassExpression conc = neg;
+            if(negativeGenerated){
+                conc = transformConceptSubClasses(neg, "OR", true);
+            }
 
-            List<String> retrieved = retriever.retrieveIndividualsForConcept(neg);
+            List<String> retrieved = retriever.retrieveIndividualsForConcept(conc);
             problem.negatives.addAll(retrieved);
             problem.rules.addAll(parser.getRulesInExpr(neg, problem.dataRules));
+            OWLClassExpression finalConc = conc;
             retrieved.forEach(retr -> {
-                problem.negativeMap.put(retr, neg);
+                problem.negativeMap.put(retr, finalConc);
             });
         }
         return problem;
+    }
+
+    private OWLClassExpression transformConceptSubClasses(OWLClassExpression neg, String combiner, boolean rem) {
+        OWLClassExpression expr =neg;
+        if(rem){
+             expr = removeExpr(neg);
+        }
+
+        String conceptString = parser.render(expr);
+        for(String type : types){
+            String shortFormType = parser.getShortName(type);
+            if(conceptString.contains(shortFormType)) {
+                conceptString = conceptString.replace(shortFormType, getIntersectSubClasses(type, combiner));
+            }
+        }
+        //parser.getShortName(conceptString);
+        return new OWLObjectIntersectionOfImpl(Lists.newArrayList(parser.parseManchesterConcept(conceptString), typesExpr));
+    }
+
+    private OWLClassExpression removeExpr(OWLClassExpression neg) {
+        AtomicReference<OWLClassExpression> actNegExa = new AtomicReference<>(neg);
+            neg.components().forEach(x->{
+                if(x instanceof List){
+                    ((List)x).forEach(e->{
+                        if (!((OWLClassExpression)e).equals(typesExpr)) {
+                            actNegExa.set((OWLClassExpression) e);
+                        }
+                    });
+
+                }else {
+                    if (!x.equals(typesExpr)) {
+                        actNegExa.set((OWLClassExpression) x);
+                    }
+                }
+            });
+            return actNegExa.get();
+
+    }
+
+    private CharSequence getUnionSubClasses(String type) {
+        OWLDataFactory factory = new OWLDataFactoryImpl();
+        StringBuilder builder = new StringBuilder("( ").append(parser.getShortName(type)).append(" OR ");
+        AtomicInteger count= new AtomicInteger();
+        res.getSubClasses(factory.getOWLClass(type)).getFlattened().stream()
+                .filter(subClass -> types.contains(subClass.getIRI().toString())).forEach(containedSubClass ->{
+                    builder.append(parser.getShortName(containedSubClass.getIRI().toString()));
+                    builder.append(" OR ");
+                    count.getAndIncrement();
+        });
+        if(count.get() ==0) {
+            return parser.getShortName(type);
+        }
+        return builder.subSequence(0, builder.length() - 4) + ")";
+    }
+
+    private CharSequence getIntersectSubClasses(String type, String combiner) {
+        OWLDataFactory factory = new OWLDataFactoryImpl();
+        StringBuilder builder = new StringBuilder("( ").append(parser.getShortName(type)).append(" OR ");
+        AtomicInteger count= new AtomicInteger();
+        for(OWLClass subClass : res.getSubClasses(factory.getOWLClass(type)).getFlattened()){
+            if(types.contains(subClass.getIRI().toString())){
+                builder.append(parser.getShortName(subClass.getIRI().toString()));
+                builder.append(" ").append(combiner).append(" ");
+                count.getAndIncrement();
+            }
+        }
+        /*
+        for(OWLClass subClass : res.getSuperClasses(factory.getOWLClass(type)).getFlattened()){
+            if(types.contains(subClass.getIRI().toString())){
+                builder.append(parser.getShortName(subClass.getIRI().toString()));
+                builder.append(" ").append(combiner).append(" ");
+                count.getAndIncrement();
+            }
+        }
+        */
+
+        if(count.get() ==0) {
+            return parser.getShortName(type);
+        }
+        return builder.subSequence(0, builder.length() - 4) + ")";
     }
 
     public Collection<OWLAxiom> createIndividual(String uri, Collection<String> typesAllowed){
@@ -322,8 +457,9 @@ public class LPGenerator {
         try(PrintWriter pw = new PrintWriter(output)){
             // print end
             pw.print("[\n");
-            int count=0;
-            for(LPProblem problem: problems ) {
+            AtomicInteger count= new AtomicInteger();
+            long size= problems.stream().filter(x -> x.positives.size()>0 && x.negatives.size()>0).count();
+            problems.stream().filter(x -> x.positives.size()>0 && x.negatives.size()>0).forEach(problem -> {
                 if(problem.positives.size()>0 && problem.negatives.size()>0) {
                     pw.print("\t{\n\t\"concept\": \"");
                     pw.print(problem.goldStandardConcept.replace("\n", " "));
@@ -332,12 +468,12 @@ public class LPGenerator {
                     pw.print("\n\t],\n\t\"negatives\": [\n");
                     writeCollection(problem.negatives, pw);
                     pw.print("\n\t]\n\t}");
-                    count++;
-                    if (count < problems.size()) {
+                    count.getAndIncrement();
+                    if (count.get() < size) {
                         pw.print(",\n");
                     }
                 }
-            }
+            });
             pw.print("\n]");
         } catch (FileNotFoundException e) {
             e.printStackTrace();

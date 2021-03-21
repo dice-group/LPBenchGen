@@ -10,6 +10,7 @@ import org.apache.jena.sparql.syntax.ElementWalker;
 import org.dice_group.LPBenchGen.sparql.IndividualRetriever;
 import org.dice_group.LPBenchGen.sparql.QueryTripleMappingVisitor;
 import org.dice_group.LPBenchGen.sparql.VariableCollector;
+import org.dice_group.LPBenchGen.sparql.visitors.QueryRemoveUselessTriplesVisitor;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
@@ -18,6 +19,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/*
+TODO:
+should be solved already with adding object types :)
+ [http://dbpedia.org/resource/Holland–Dozier–Holland, http://dbpedia.org/resource/F4_(band)]
+ tp: 0, fp: 0, fn: 2
+ Person  and (Band  and (bandMember some Person))
+ */
 public class ABoxFiller {
 
     private OWLDataFactory factory = new OWLDataFactoryImpl();
@@ -39,7 +47,7 @@ public class ABoxFiller {
         this.allowedTypes=allowedTypes;
     }
 
-    public void addIndividualsFromConcept(OWLClassExpression concept, String startIndividual, OWLOntology ontology){
+    public boolean addIndividualsFromConcept(OWLClassExpression concept, String startIndividual, OWLOntology ontology){
         //walk concept from startIndividual -> For all rules recursively add Individuals who have the connection
         // e.g. MusicalArtist some prop1 (Politician and some prop2 XYZ)
         // -> startIndividual prop1 ?o1 . ?o1 rdf:type Politician ; prop2 ?o2
@@ -61,6 +69,7 @@ public class ABoxFiller {
 
 
         String queryStr = q.serialize().replace("?var", "<"+startIndividual+">");
+
         try {
             if(varC.vars.isEmpty()){
                 //only a type query
@@ -68,9 +77,15 @@ public class ABoxFiller {
                 ontology.addAxioms(getTypeAxiomsForIndividual(subject));
             }else {
                 Query query = QueryFactory.create(queryStr);
+                //TODO walk query pattern -> remove non var triples
+                QueryRemoveUselessTriplesVisitor visitor2 = new QueryRemoveUselessTriplesVisitor();
+                ElementWalker.walk(query.getQueryPattern(), visitor2);
 
                 query.setLimit(100);
                 ResultSet res = retriever.getResultMap(query);
+                if(res==null){
+                    return false;
+                }
                 QueryTripleMappingVisitor visitor = new QueryTripleMappingVisitor(startIndividual);
                 ElementWalker.walk(query.getQueryPattern(), visitor);
                 visitor.patternToMap(res);
@@ -79,7 +94,9 @@ public class ABoxFiller {
             }
         }catch(Exception e){
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     private List<OWLAxiom> createAxiomsFromMap(Map<String, List<String[]>> map) {
@@ -89,7 +106,11 @@ public class ABoxFiller {
             axioms.addAll(getTypeAxiomsForIndividual(subject));
             map.get(individual).forEach(triple -> {
                 OWLObjectPropertyExpression property = factory.getOWLObjectProperty(triple[0]);
+                if(triple[1].startsWith(":no prefix")){
+                    triple[1]=individual+"#"+triple[1].substring(10);
+                }
                 OWLNamedIndividual object = factory.getOWLNamedIndividual(triple[1]);
+                axioms.addAll(getTypeAxiomsForIndividual(object));
                 OWLAxiom axiom = factory.getOWLObjectPropertyAssertionAxiom(property, subject, object);
                 axioms.add(axiom);
             });
