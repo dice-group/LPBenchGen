@@ -1,0 +1,2229 @@
+[
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and ((channel some      (Agent or MusicGenre or Work))  and (channel some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Russell_Howard's_Good_News",
+		"http://dbpedia.org/resource/Cradle_to_Grave",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/Theodore_(TV_series)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Love_Soup",
+		"http://dbpedia.org/resource/Love_Hurts_(TV_series)",
+		"http://dbpedia.org/resource/Loving,_Never_Forgetting",
+		"http://dbpedia.org/resource/Lucan_(TV_series)",
+		"http://dbpedia.org/resource/Maan_(Pakistani_TV_series)"
+	]
+	},
+	{
+	"concept": "(Organisation  and (trustee some (foundedBy some      (Agent or MusicGenre or Work))))  and (foundedBy some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/St_Mary's_CBS"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2014–15_Glasgow_Warriors_season",
+		"http://dbpedia.org/resource/MacroMind",
+		"http://dbpedia.org/resource/2017_Tamil_Thalaivas_season",
+		"http://dbpedia.org/resource/5th_Cruiser_Squadron",
+		"http://dbpedia.org/resource/2015–16_America's_Cup_World_Series",
+		"http://dbpedia.org/resource/194th_Armored_Brigade_(United_States)",
+		"http://dbpedia.org/resource/Unocal_Corporation",
+		"http://dbpedia.org/resource/2017–18_Glasgow_Warriors_season",
+		"http://dbpedia.org/resource/Kotak_Mahindra_Bank",
+		"http://dbpedia.org/resource/5th_Battalion_(Australia)",
+		"http://dbpedia.org/resource/PrettyLittleThing",
+		"http://dbpedia.org/resource/194th_Motorized_Infantry_Brigade_(People's_Republic_of_China)",
+		"http://dbpedia.org/resource/Valcour_Records",
+		"http://dbpedia.org/resource/2017_Patna_Pirates_season",
+		"http://dbpedia.org/resource/Delhi_Public_School,_Ranchi"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingLabel some Agent))  and Agent",
+	"positives": [
+		"http://dbpedia.org/resource/Gold_Castle_Records",
+		"http://dbpedia.org/resource/MTM_Records",
+		"http://dbpedia.org/resource/Deutsche_Grammophon",
+		"http://dbpedia.org/resource/RCA_Records",
+		"http://dbpedia.org/resource/Machete_Music",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Blackhouse_Records",
+		"http://dbpedia.org/resource/Kidinakorner",
+		"http://dbpedia.org/resource/SOLAR_Records",
+		"http://dbpedia.org/resource/Blackheart_Records",
+		"http://dbpedia.org/resource/Private_Music",
+		"http://dbpedia.org/resource/Profile_Records",
+		"http://dbpedia.org/resource/Digital_Jukebox_Records",
+		"http://dbpedia.org/resource/R.E.X._Records",
+		"http://dbpedia.org/resource/Vertigo_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2016_Munich_shooting",
+		"http://dbpedia.org/resource/2014–15_Glasgow_Warriors_season",
+		"http://dbpedia.org/resource/1919_(band)",
+		"http://dbpedia.org/resource/Utech_Records",
+		"http://dbpedia.org/resource/Magik_Muzik",
+		"http://dbpedia.org/resource/Velvet_Music",
+		"http://dbpedia.org/resource/Mainstream_Records",
+		"http://dbpedia.org/resource/LoveCat_Music",
+		"http://dbpedia.org/resource/2015_Parramatta_shooting",
+		"http://dbpedia.org/resource/Vertical_Records",
+		"http://dbpedia.org/resource/V-Disc",
+		"http://dbpedia.org/resource/Urgent!_Records",
+		"http://dbpedia.org/resource/2016–17_Invicta_Dynamos_season",
+		"http://dbpedia.org/resource/194th_Motorized_Infantry_Brigade_(People's_Republic_of_China)",
+		"http://dbpedia.org/resource/2016_Western_Bulldogs_season"
+	]
+	},
+	{
+	"concept": "(Person  and (relative some (relative some      (MusicGenre or Work))))  and (relative some      (MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Shah_Sharabeel",
+		"http://dbpedia.org/resource/Ryan_Thomas",
+		"http://dbpedia.org/resource/Ushna_Shah",
+		"http://dbpedia.org/resource/Aang",
+		"http://dbpedia.org/resource/Adam_Thomas"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Gourry_Gabriev",
+		"http://dbpedia.org/resource/61st_Delaware_General_Assembly",
+		"http://dbpedia.org/resource/Margaret_White_(Carrie)",
+		"http://dbpedia.org/resource/63rd_Delaware_General_Assembly",
+		"http://dbpedia.org/resource/Carrie_White",
+		"http://dbpedia.org/resource/60_Second_Assassin_(rapper)",
+		"http://dbpedia.org/resource/Kathryn_Merteuil",
+		"http://dbpedia.org/resource/Mini-Me",
+		"http://dbpedia.org/resource/2013_Santa_Monica_shooting",
+		"http://dbpedia.org/resource/TV's_Frank",
+		"http://dbpedia.org/resource/Asami_Sato",
+		"http://dbpedia.org/resource/67th_Delaware_General_Assembly",
+		"http://dbpedia.org/resource/2013_Hialeah_shooting",
+		"http://dbpedia.org/resource/Danny_Torrance",
+		"http://dbpedia.org/resource/Luke_Hemsworth"
+	]
+	},
+	{
+	"concept": "RecordLabel  and (distributingLabel some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/Exotic_Fever_Records",
+		"http://dbpedia.org/resource/Artists_Recording_Collective",
+		"http://dbpedia.org/resource/I_Am_Other",
+		"http://dbpedia.org/resource/Cavity_Search_Records",
+		"http://dbpedia.org/resource/Spool_(record_label)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/LoveRenaissance",
+		"http://dbpedia.org/resource/Mad_Decent",
+		"http://dbpedia.org/resource/Universal_Music_Group_Nashville",
+		"http://dbpedia.org/resource/Lujo_Records",
+		"http://dbpedia.org/resource/Universal_Music_Group",
+		"http://dbpedia.org/resource/Mainya_Music",
+		"http://dbpedia.org/resource/Mainstream_Records",
+		"http://dbpedia.org/resource/Unfiltered_Records",
+		"http://dbpedia.org/resource/5_Rue_Christine",
+		"http://dbpedia.org/resource/Malaco_Records",
+		"http://dbpedia.org/resource/United_Artists_Records",
+		"http://dbpedia.org/resource/Low_Country_Sound",
+		"http://dbpedia.org/resource/AM_Television",
+		"http://dbpedia.org/resource/Ujikaji",
+		"http://dbpedia.org/resource/Madhura_Audio"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (Work  and (composer some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Supremacy:_Your_Will_Be_Done",
+		"http://dbpedia.org/resource/Maui_Mallard_in_Cold_Shadow",
+		"http://dbpedia.org/resource/M*A*S*H_(TV_series)",
+		"http://dbpedia.org/resource/Best_Player",
+		"http://dbpedia.org/resource/Alvin_and_the_Chipmunks_(1983_TV_series)",
+		"http://dbpedia.org/resource/Lee_Nelson's_Well_Good_Show"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/A.O.N._(All_Or_Nothing)_Series_Vol._1:_F.N.O._(Failure's_No_Option)",
+		"http://dbpedia.org/resource/Love,_Peace_&_Poetry_–_Vol.6_Brazilian",
+		"http://dbpedia.org/resource/The_Green_Leaves_of_Summer",
+		"http://dbpedia.org/resource/666_Ways_to_Love:_Prologue",
+		"http://dbpedia.org/resource/777_–_Sect(s)",
+		"http://dbpedia.org/resource/Love,_Peace_&_Poetry_–_Vol.7_Mexican",
+		"http://dbpedia.org/resource/Mexicali_Blues_(song)",
+		"http://dbpedia.org/resource/Playing_in_the_Band",
+		"http://dbpedia.org/resource/6_Derrty_Hits",
+		"http://dbpedia.org/resource/I'm_Good,_I'm_Gone",
+		"http://dbpedia.org/resource/7_Years_and_50_Days",
+		"http://dbpedia.org/resource/Dat_Dere",
+		"http://dbpedia.org/resource/AE_LIVE",
+		"http://dbpedia.org/resource/Lucky_7_(TV_series)"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Work))  and (Work  and (coverArtist some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/We_(novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/The_Thief_of_Always",
+		"http://dbpedia.org/resource/A.K.A._Wham_Bam_Sam",
+		"http://dbpedia.org/resource/84–86",
+		"http://dbpedia.org/resource/Mississippi_Jack",
+		"http://dbpedia.org/resource/Among_the_Hidden",
+		"http://dbpedia.org/resource/Among_the_Betrayed",
+		"http://dbpedia.org/resource/Cartesian_Reflections",
+		"http://dbpedia.org/resource/Ice_(Durst_novel)",
+		"http://dbpedia.org/resource/91_over_50"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (composer some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/One_Day_More",
+		"http://dbpedia.org/resource/Maui_Mallard_in_Cold_Shadow",
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/Ghost_Whisperer",
+		"http://dbpedia.org/resource/Roll_On,_Columbia,_Roll_On",
+		"http://dbpedia.org/resource/Lee_Nelson's_Well_Good_Show",
+		"http://dbpedia.org/resource/Warner_Bros._Presents",
+		"http://dbpedia.org/resource/Tekken_Tag_Tournament_2",
+		"http://dbpedia.org/resource/Minute_to_Win_It_Indonesia",
+		"http://dbpedia.org/resource/The_Sinking_of_the_Reuben_James",
+		"http://dbpedia.org/resource/Cradle_to_Grave",
+		"http://dbpedia.org/resource/We_Love_Katamari",
+		"http://dbpedia.org/resource/Jarama_Valley_(song)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/The_Green_Leaves_of_Summer",
+		"http://dbpedia.org/resource/Taking_a_Chance_on_Love",
+		"http://dbpedia.org/resource/When_It_Rains_(Brad_Mehldau_song)",
+		"http://dbpedia.org/resource/Stuck_in_a_Wind_Up",
+		"http://dbpedia.org/resource/Groovin'_High",
+		"http://dbpedia.org/resource/Planet_Rock_(song)",
+		"http://dbpedia.org/resource/Mexicali_Blues_(song)",
+		"http://dbpedia.org/resource/Moanin'_(song)",
+		"http://dbpedia.org/resource/Tire_Me",
+		"http://dbpedia.org/resource/1:a_gången",
+		"http://dbpedia.org/resource/More_&_More_(Twice_song)",
+		"http://dbpedia.org/resource/Alice_(Lady_Gaga_song)",
+		"http://dbpedia.org/resource/Sa_Ugoy_ng_Duyan",
+		"http://dbpedia.org/resource/Rawhide_(song)",
+		"http://dbpedia.org/resource/Öppna_landskap"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and ((composer some      (Agent or MusicGenre or Work))  and (composer some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Supremacy:_Your_Will_Be_Done",
+		"http://dbpedia.org/resource/Maui_Mallard_in_Cold_Shadow",
+		"http://dbpedia.org/resource/M*A*S*H_(TV_series)",
+		"http://dbpedia.org/resource/Best_Player",
+		"http://dbpedia.org/resource/Alvin_and_the_Chipmunks_(1983_TV_series)",
+		"http://dbpedia.org/resource/Lee_Nelson's_Well_Good_Show"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Malang_(song)",
+		"http://dbpedia.org/resource/Phir_Wahi_(song)",
+		"http://dbpedia.org/resource/Lover_(Rodgers_and_Hart_song)",
+		"http://dbpedia.org/resource/My_Blue_Heaven_(song)",
+		"http://dbpedia.org/resource/Luis_(TV_series)",
+		"http://dbpedia.org/resource/Loving_You_(2003_film)",
+		"http://dbpedia.org/resource/Lumines:_Puzzle_Fusion",
+		"http://dbpedia.org/resource/Visan_om_solen,_månen_och_planeterna"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingLabel some (distributingLabel some      (Agent or Work))))  and (distributingLabel some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Freeworld_Entertainment",
+		"http://dbpedia.org/resource/MTM_Records",
+		"http://dbpedia.org/resource/Peaceville_Records",
+		"http://dbpedia.org/resource/Noise_Records",
+		"http://dbpedia.org/resource/SBK_Records",
+		"http://dbpedia.org/resource/Because_Music",
+		"http://dbpedia.org/resource/Frontiers_Records",
+		"http://dbpedia.org/resource/Rethink_(record_label)",
+		"http://dbpedia.org/resource/Spinefarm_Records",
+		"http://dbpedia.org/resource/Ecstatic_Peace!",
+		"http://dbpedia.org/resource/Capitol_Records_Nashville",
+		"http://dbpedia.org/resource/Brainfeeder",
+		"http://dbpedia.org/resource/Big_Vin_Records",
+		"http://dbpedia.org/resource/Caroline_Distribution",
+		"http://dbpedia.org/resource/Capitol_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Nonclassical",
+		"http://dbpedia.org/resource/Nothing_Records",
+		"http://dbpedia.org/resource/Lovepump_United_Records",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Alligator_Records",
+		"http://dbpedia.org/resource/DJM_Records",
+		"http://dbpedia.org/resource/Underscore_Records_Pvt._Ltd.",
+		"http://dbpedia.org/resource/Probe_Records",
+		"http://dbpedia.org/resource/Universal_Records_(1995)",
+		"http://dbpedia.org/resource/Blackheart_Records",
+		"http://dbpedia.org/resource/United_Artists_Records",
+		"http://dbpedia.org/resource/VP_Records",
+		"http://dbpedia.org/resource/Madison_Gate_Records",
+		"http://dbpedia.org/resource/Machine_Shop_Records",
+		"http://dbpedia.org/resource/Maison_de_Soul"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and ((creator some      (Agent or MusicGenre or Work))  and (creator some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Russell_Howard's_Good_News",
+		"http://dbpedia.org/resource/Minute_to_Win_It_Indonesia",
+		"http://dbpedia.org/resource/You_Are_the_One_(Argentine_TV_series)",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Friday_Night_Dinner"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Casey_Jones_(Teenage_Mutant_Ninja_Turtles)",
+		"http://dbpedia.org/resource/Corey_Stuart",
+		"http://dbpedia.org/resource/Madison_Jeffries",
+		"http://dbpedia.org/resource/Noel's_House_Party",
+		"http://dbpedia.org/resource/Maggie_Horton",
+		"http://dbpedia.org/resource/Caterpillar_(Alice's_Adventures_in_Wonderland)",
+		"http://dbpedia.org/resource/Catelyn_Stark",
+		"http://dbpedia.org/resource/Ultimo_(Marvel_Comics)"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and ((narrator some      (Agent or Work))  and (narrator some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/The_Inbetweeners"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Ulat_Bayan",
+		"http://dbpedia.org/resource/Tekken_Tag_Tournament_2",
+		"http://dbpedia.org/resource/Madonna:_Truth_or_Dare",
+		"http://dbpedia.org/resource/Lowdown_(TV_series)",
+		"http://dbpedia.org/resource/Utshimassits:_Place_of_the_Boss",
+		"http://dbpedia.org/resource/Love_101_(TV_series)",
+		"http://dbpedia.org/resource/Untamed_Romania",
+		"http://dbpedia.org/resource/You_Are_the_One_(Argentine_TV_series)"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Agent))  and (publisher some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/King,_Queen,_Knave",
+		"http://dbpedia.org/resource/Froth_on_the_Daydream",
+		"http://dbpedia.org/resource/The_Four_Fundamental_Concepts_of_Psychoanalysis",
+		"http://dbpedia.org/resource/The_Cowards",
+		"http://dbpedia.org/resource/The_Boys_from_St._Petri_(novel)",
+		"http://dbpedia.org/resource/After_Dark_(Murakami_novel)",
+		"http://dbpedia.org/resource/The_Summer_of_the_Ubume",
+		"http://dbpedia.org/resource/Cré_na_Cille",
+		"http://dbpedia.org/resource/Igraine_the_Brave",
+		"http://dbpedia.org/resource/In_Search_of_Lost_Time",
+		"http://dbpedia.org/resource/The_Battle_(Rambaud_novel)",
+		"http://dbpedia.org/resource/Of_Grammatology",
+		"http://dbpedia.org/resource/Memoirs_of_an_Anti-Semite",
+		"http://dbpedia.org/resource/Parables_and_Paradoxes",
+		"http://dbpedia.org/resource/White_Dog_(Gary_novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Psychonauts",
+		"http://dbpedia.org/resource/A_Modern_Buccaneer",
+		"http://dbpedia.org/resource/Tom_Brown_at_Oxford",
+		"http://dbpedia.org/resource/Structure_and_Interpretation_of_Classical_Mechanics",
+		"http://dbpedia.org/resource/Who's_Afraid_of_Beowulf%3F",
+		"http://dbpedia.org/resource/The_Adventures_of_Alix",
+		"http://dbpedia.org/resource/The_False_Inspector_Dew",
+		"http://dbpedia.org/resource/Good_Faith_Collaboration",
+		"http://dbpedia.org/resource/A_Blade_So_Black",
+		"http://dbpedia.org/resource/Flying_Models"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingLabel some (parentCompany some      (Agent or MusicGenre or Work))))  and (parentCompany some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Dreamville_Records",
+		"http://dbpedia.org/resource/RooArt",
+		"http://dbpedia.org/resource/EMI_America_Records",
+		"http://dbpedia.org/resource/Deutsche_Grammophon",
+		"http://dbpedia.org/resource/Safehouse_Records",
+		"http://dbpedia.org/resource/Element_9_(music)",
+		"http://dbpedia.org/resource/G-Note_Records",
+		"http://dbpedia.org/resource/Back_Porch_Records",
+		"http://dbpedia.org/resource/Hatchet_House",
+		"http://dbpedia.org/resource/OVO_Sound",
+		"http://dbpedia.org/resource/Reaction_Records",
+		"http://dbpedia.org/resource/Kapp_Records",
+		"http://dbpedia.org/resource/Vertigo_Records",
+		"http://dbpedia.org/resource/Schoolboy_Records",
+		"http://dbpedia.org/resource/Lench_Mob_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Lucidsamples",
+		"http://dbpedia.org/resource/MCA_Records",
+		"http://dbpedia.org/resource/Cork_University_Press",
+		"http://dbpedia.org/resource/University_of_Alabama_Press",
+		"http://dbpedia.org/resource/Mahindra_Electric",
+		"http://dbpedia.org/resource/Vagrant_Records",
+		"http://dbpedia.org/resource/Luckyhorse_Industries",
+		"http://dbpedia.org/resource/A2SEA",
+		"http://dbpedia.org/resource/Corpus_Christi_Records",
+		"http://dbpedia.org/resource/Maison_de_Soul"
+	]
+	},
+	{
+	"concept": "RecordLabel  and (distributingCompany some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/Exotic_Fever_Records",
+		"http://dbpedia.org/resource/Artists_Recording_Collective",
+		"http://dbpedia.org/resource/I_Am_Other",
+		"http://dbpedia.org/resource/Cavity_Search_Records",
+		"http://dbpedia.org/resource/Spool_(record_label)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/LoveRenaissance",
+		"http://dbpedia.org/resource/Mad_Decent",
+		"http://dbpedia.org/resource/Universal_Music_Group_Nashville",
+		"http://dbpedia.org/resource/Lujo_Records",
+		"http://dbpedia.org/resource/Universal_Music_Group",
+		"http://dbpedia.org/resource/Mainya_Music",
+		"http://dbpedia.org/resource/Mainstream_Records",
+		"http://dbpedia.org/resource/Unfiltered_Records",
+		"http://dbpedia.org/resource/5_Rue_Christine",
+		"http://dbpedia.org/resource/Malaco_Records",
+		"http://dbpedia.org/resource/United_Artists_Records",
+		"http://dbpedia.org/resource/Low_Country_Sound",
+		"http://dbpedia.org/resource/AM_Television",
+		"http://dbpedia.org/resource/Ujikaji",
+		"http://dbpedia.org/resource/Madhura_Audio"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingCompany some Agent))  and Agent",
+	"positives": [
+		"http://dbpedia.org/resource/Gold_Castle_Records",
+		"http://dbpedia.org/resource/MTM_Records",
+		"http://dbpedia.org/resource/Deutsche_Grammophon",
+		"http://dbpedia.org/resource/RCA_Records",
+		"http://dbpedia.org/resource/Machete_Music",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Blackhouse_Records",
+		"http://dbpedia.org/resource/Kidinakorner",
+		"http://dbpedia.org/resource/SOLAR_Records",
+		"http://dbpedia.org/resource/Blackheart_Records",
+		"http://dbpedia.org/resource/Private_Music",
+		"http://dbpedia.org/resource/Profile_Records",
+		"http://dbpedia.org/resource/Digital_Jukebox_Records",
+		"http://dbpedia.org/resource/R.E.X._Records",
+		"http://dbpedia.org/resource/Vertigo_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2016_Munich_shooting",
+		"http://dbpedia.org/resource/2014–15_Glasgow_Warriors_season",
+		"http://dbpedia.org/resource/1919_(band)",
+		"http://dbpedia.org/resource/Utech_Records",
+		"http://dbpedia.org/resource/Magik_Muzik",
+		"http://dbpedia.org/resource/Velvet_Music",
+		"http://dbpedia.org/resource/Mainstream_Records",
+		"http://dbpedia.org/resource/LoveCat_Music",
+		"http://dbpedia.org/resource/2015_Parramatta_shooting",
+		"http://dbpedia.org/resource/Vertical_Records",
+		"http://dbpedia.org/resource/V-Disc",
+		"http://dbpedia.org/resource/Urgent!_Records",
+		"http://dbpedia.org/resource/2016–17_Invicta_Dynamos_season",
+		"http://dbpedia.org/resource/194th_Motorized_Infantry_Brigade_(People's_Republic_of_China)",
+		"http://dbpedia.org/resource/2016_Western_Bulldogs_season"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Work))  and (coverArtist some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/We_(novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/A_Ball_for_Daisy",
+		"http://dbpedia.org/resource/The_Mysterious_Benedict_Society",
+		"http://dbpedia.org/resource/A_Fire_Upon_the_Deep",
+		"http://dbpedia.org/resource/Cartesian_Reflections",
+		"http://dbpedia.org/resource/Dwellers_in_the_Crucible"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Agent))  and (author some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Poetics_of_Cinema",
+		"http://dbpedia.org/resource/Being_and_Time",
+		"http://dbpedia.org/resource/The_Man_from_Mars",
+		"http://dbpedia.org/resource/Ecstasy:_A_Study_of_Happiness",
+		"http://dbpedia.org/resource/Death_on_Credit",
+		"http://dbpedia.org/resource/Otherwise_than_Being",
+		"http://dbpedia.org/resource/Nietzsche_contra_Wagner",
+		"http://dbpedia.org/resource/Michael_Strogoff",
+		"http://dbpedia.org/resource/The_Broken_Commandment",
+		"http://dbpedia.org/resource/Arsène_Lupin_versus_Herlock_Sholmes",
+		"http://dbpedia.org/resource/Banco_(novel)",
+		"http://dbpedia.org/resource/Oysters_(short_story)",
+		"http://dbpedia.org/resource/Conversations_with_Professor_Y",
+		"http://dbpedia.org/resource/Glass_Palace_Chronicle",
+		"http://dbpedia.org/resource/A_Stanislaw_Lem_Reader"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Castrovalva_(M._C._Escher)",
+		"http://dbpedia.org/resource/MPMC",
+		"http://dbpedia.org/resource/Maha_Yazawin",
+		"http://dbpedia.org/resource/Carry_Me_Down",
+		"http://dbpedia.org/resource/A_Mother's_Gift",
+		"http://dbpedia.org/resource/Dairy_Queen_(novel)",
+		"http://dbpedia.org/resource/Lychee_Light_Club",
+		"http://dbpedia.org/resource/A_Cruel_Bird_Came_to_the_Nest_and_Looked_In",
+		"http://dbpedia.org/resource/The_Secret_of_Mirror_Bay",
+		"http://dbpedia.org/resource/A_Capitalism_for_the_People"
+	]
+	},
+	{
+	"concept": "((politicalPartyInLegislature some      (Agent or MusicGenre))  and (politicalPartyInLegislature some Agent))  and (politicalPartyOfLeader some      (Agent or MusicGenre))",
+	"positives": [
+		"http://dbpedia.org/resource/Provincial_Assembly_of_Sudurpashchim_Pradesh",
+		"http://dbpedia.org/resource/Legislative_Duma_of_Khabarovsk_Krai",
+		"http://dbpedia.org/resource/Provisional_State_Council",
+		"http://dbpedia.org/resource/City_Council_of_Milan",
+		"http://dbpedia.org/resource/Albuquerque_City_Council",
+		"http://dbpedia.org/resource/Cleveland_City_Council",
+		"http://dbpedia.org/resource/Lublin_Regional_Assembly",
+		"http://dbpedia.org/resource/Leeds_City_Council",
+		"http://dbpedia.org/resource/Belfast_City_Council",
+		"http://dbpedia.org/resource/Barnsley_Metropolitan_Borough_Council",
+		"http://dbpedia.org/resource/Northern_Cape_Provincial_Legislature",
+		"http://dbpedia.org/resource/Northern_Provincial_Council",
+		"http://dbpedia.org/resource/United_States_House_Committee_on_Rules",
+		"http://dbpedia.org/resource/Grand_National_Assembly_of_Turkey",
+		"http://dbpedia.org/resource/Camden_London_Borough_Council"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/15th_legislature_of_the_French_Fifth_Republic",
+		"http://dbpedia.org/resource/Kowloon_City_District_Council",
+		"http://dbpedia.org/resource/Ohio_General_Assembly",
+		"http://dbpedia.org/resource/Badulla_Municipal_Council",
+		"http://dbpedia.org/resource/7th_Lagos_State_House_of_Assembly",
+		"http://dbpedia.org/resource/Vavuniya_South_Sinhala_Divisional_Council",
+		"http://dbpedia.org/resource/Tennessee_House_of_Representatives",
+		"http://dbpedia.org/resource/Dallas_City_Council",
+		"http://dbpedia.org/resource/California_State_Assembly"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Work))  and Work",
+	"positives": [
+		"http://dbpedia.org/resource/We_(novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/5_Songs_(Seether_EP)",
+		"http://dbpedia.org/resource/A.I.E.T.O.H.",
+		"http://dbpedia.org/resource/A.K.A._Wham_Bam_Sam",
+		"http://dbpedia.org/resource/6:6:6",
+		"http://dbpedia.org/resource/666_(Billy_Talent_album)",
+		"http://dbpedia.org/resource/9_Toes_Later"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Work))  and (Work  and (author some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/We_(novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/The_Book_of_Secrets_(novel)",
+		"http://dbpedia.org/resource/AC/DC_(video)",
+		"http://dbpedia.org/resource/7_(David_Meece_album)",
+		"http://dbpedia.org/resource/A_Turn_in_the_South",
+		"http://dbpedia.org/resource/Áfram_Latibær!",
+		"http://dbpedia.org/resource/20180206_Live_at_Budokan",
+		"http://dbpedia.org/resource/9_(Eros_Ramazzotti_album)",
+		"http://dbpedia.org/resource/2016_Re-Album",
+		"http://dbpedia.org/resource/The_Treasure_in_the_Royal_Tower_(novel)",
+		"http://dbpedia.org/resource/5_Nen_Mono"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (Work  and (writer some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Roll_On,_Columbia,_Roll_On",
+		"http://dbpedia.org/resource/One_Day_More",
+		"http://dbpedia.org/resource/The_Sinking_of_the_Reuben_James"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/7_(Prince_song)",
+		"http://dbpedia.org/resource/Hits_Me_Like_a_Rock",
+		"http://dbpedia.org/resource/Lolita_(trop_jeune_pour_aimer)",
+		"http://dbpedia.org/resource/P-Poppin",
+		"http://dbpedia.org/resource/Gossip_Folks",
+		"http://dbpedia.org/resource/90124",
+		"http://dbpedia.org/resource/Amarsi_un_po'",
+		"http://dbpedia.org/resource/8-Bit_Operators:_The_Music_of_Kraftwerk"
+	]
+	},
+	{
+	"concept": "RecordLabel  and (distributingCompany some Agent)",
+	"positives": [
+		"http://dbpedia.org/resource/Gold_Castle_Records",
+		"http://dbpedia.org/resource/MTM_Records",
+		"http://dbpedia.org/resource/Deutsche_Grammophon",
+		"http://dbpedia.org/resource/RCA_Records",
+		"http://dbpedia.org/resource/Machete_Music",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Blackhouse_Records",
+		"http://dbpedia.org/resource/Kidinakorner",
+		"http://dbpedia.org/resource/SOLAR_Records",
+		"http://dbpedia.org/resource/Blackheart_Records",
+		"http://dbpedia.org/resource/Private_Music",
+		"http://dbpedia.org/resource/Profile_Records",
+		"http://dbpedia.org/resource/Digital_Jukebox_Records",
+		"http://dbpedia.org/resource/R.E.X._Records",
+		"http://dbpedia.org/resource/Vertigo_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Vaccination_Records",
+		"http://dbpedia.org/resource/Union_Label_Group",
+		"http://dbpedia.org/resource/Magik_Muzik",
+		"http://dbpedia.org/resource/DJ_International_Records",
+		"http://dbpedia.org/resource/Universal_Music_Group",
+		"http://dbpedia.org/resource/Maintenance_Records",
+		"http://dbpedia.org/resource/Universal_Warning_Records",
+		"http://dbpedia.org/resource/Mainstream_Records",
+		"http://dbpedia.org/resource/Cypress_Records",
+		"http://dbpedia.org/resource/Cordless_Recordings",
+		"http://dbpedia.org/resource/Urgent!_Records",
+		"http://dbpedia.org/resource/AM_Television",
+		"http://dbpedia.org/resource/Up-Front_Group",
+		"http://dbpedia.org/resource/Ubiquity_Records",
+		"http://dbpedia.org/resource/Madhura_Audio"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Agent))  and (illustrator some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Utopia_(book)",
+		"http://dbpedia.org/resource/Exercises_in_Style",
+		"http://dbpedia.org/resource/Facing_the_Flag",
+		"http://dbpedia.org/resource/Nesthäkchen_in_the_Children's_Sanitorium",
+		"http://dbpedia.org/resource/Around_the_Moon",
+		"http://dbpedia.org/resource/The_Begum's_Fortune",
+		"http://dbpedia.org/resource/The_Star_Diaries"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/DNA_for_Beginners",
+		"http://dbpedia.org/resource/Goodnight_Moon",
+		"http://dbpedia.org/resource/Raska_på,_Alfons_Åberg",
+		"http://dbpedia.org/resource/A_Boy_Born_from_Mold_and_Other_Delectable_Morsels",
+		"http://dbpedia.org/resource/The_Fool_of_the_World_and_the_Flying_Ship_(book)",
+		"http://dbpedia.org/resource/Fergus_Crane",
+		"http://dbpedia.org/resource/Waiting_(picture_book)"
+	]
+	},
+	{
+	"concept": "(MusicalWork  and (artist some (writer some      (Agent or MusicGenre or Work))))  and (writer some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/He_Ain't_Heavy,_He's_My_Brother",
+		"http://dbpedia.org/resource/Have_Yourself_a_Merry_Little_Christmas",
+		"http://dbpedia.org/resource/Now_or_Never_(High_School_Musical_song)",
+		"http://dbpedia.org/resource/Seasons_of_Love",
+		"http://dbpedia.org/resource/This_Is_Halloween"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/A.M._180",
+		"http://dbpedia.org/resource/A.I.E.T.O.H.",
+		"http://dbpedia.org/resource/1917:_Original_Motion_Picture_Soundtrack",
+		"http://dbpedia.org/resource/Love_Ain't_Gonna_Wait_for_You",
+		"http://dbpedia.org/resource/A-Sides,_B-Sides_&_Suicides",
+		"http://dbpedia.org/resource/Love_Ballad_(L.T.D._song)",
+		"http://dbpedia.org/resource/9.11_(album)",
+		"http://dbpedia.org/resource/2014_S/S",
+		"http://dbpedia.org/resource/Love_Don't_Let_Me_Go_(Walking_Away)",
+		"http://dbpedia.org/resource/20180206_Live_at_Budokan",
+		"http://dbpedia.org/resource/Love_Boat_Captain",
+		"http://dbpedia.org/resource/99%25_(Ska-P_album)",
+		"http://dbpedia.org/resource/Love_Is_Blindness",
+		"http://dbpedia.org/resource/6_Feet_Underground",
+		"http://dbpedia.org/resource/99_(song)"
+	]
+	},
+	{
+	"concept": "((politicalPartyInLegislature some      (Agent or MusicGenre))  and (politicalPartyInLegislature some Agent))  and ((politicalPartyInLegislature some      (Agent or MusicGenre))  and (politicalPartyInLegislature some MusicGenre))",
+	"positives": [
+		"http://dbpedia.org/resource/Chamber_of_Peers_(France)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Legislative_Chamber_of_Uzbekistan",
+		"http://dbpedia.org/resource/Lubusz_Regional_Assembly",
+		"http://dbpedia.org/resource/Provincial_Assembly_of_Province_No._1",
+		"http://dbpedia.org/resource/Delaware_General_Assembly",
+		"http://dbpedia.org/resource/Knesset",
+		"http://dbpedia.org/resource/Brazilian_Senate",
+		"http://dbpedia.org/resource/Legislative_Assembly_of_Alberta",
+		"http://dbpedia.org/resource/Utah_State_Legislature",
+		"http://dbpedia.org/resource/Legislative_Duma_of_Tomsk_Oblast",
+		"http://dbpedia.org/resource/Chamber_of_Deputies_of_the_Czech_Republic",
+		"http://dbpedia.org/resource/Grand_National_Assembly_of_Turkey",
+		"http://dbpedia.org/resource/Grand_and_General_Council",
+		"http://dbpedia.org/resource/Chamber_of_Deputies_(Italy)"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (Work  and (publisher some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Half-Minute_Hero:_The_Second_Coming",
+		"http://dbpedia.org/resource/Supremacy:_Your_Will_Be_Done",
+		"http://dbpedia.org/resource/We_Love_Katamari",
+		"http://dbpedia.org/resource/Tekken_Tag_Tournament_2"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/96°_in_the_Shade",
+		"http://dbpedia.org/resource/A_Higher_Loyalty",
+		"http://dbpedia.org/resource/601_to_the_615",
+		"http://dbpedia.org/resource/Grim_Fandango",
+		"http://dbpedia.org/resource/Dino_Master",
+		"http://dbpedia.org/resource/Dirty_Weekend_(novel)",
+		"http://dbpedia.org/resource/BlowOut",
+		"http://dbpedia.org/resource/A_Tangled_Tale",
+		"http://dbpedia.org/resource/5_sormee",
+		"http://dbpedia.org/resource/Lucidity_(video_game)",
+		"http://dbpedia.org/resource/The_Dead_of_Jericho"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingCompany some (foundedBy some      (Agent or MusicGenre or Work))))  and (foundedBy some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Chrysalis_Records",
+		"http://dbpedia.org/resource/Charisma_Records",
+		"http://dbpedia.org/resource/Rockland_Records",
+		"http://dbpedia.org/resource/Ice_Age_Entertainment",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Smash_the_House",
+		"http://dbpedia.org/resource/G-Note_Records",
+		"http://dbpedia.org/resource/Bigger_Picture_Music_Group",
+		"http://dbpedia.org/resource/Monarc_Entertainment",
+		"http://dbpedia.org/resource/4th_&_B'way_Records",
+		"http://dbpedia.org/resource/GRP_Records",
+		"http://dbpedia.org/resource/Barnaby_Records",
+		"http://dbpedia.org/resource/Harvest_Records",
+		"http://dbpedia.org/resource/Caroline_Distribution",
+		"http://dbpedia.org/resource/Blue_Thumb_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Magnanimous_Records",
+		"http://dbpedia.org/resource/DOOM_Inc",
+		"http://dbpedia.org/resource/MCA_Music_Inc._(Philippines)",
+		"http://dbpedia.org/resource/Universal_Music_Group_Nigeria",
+		"http://dbpedia.org/resource/MP3_Disques",
+		"http://dbpedia.org/resource/ABC_Music",
+		"http://dbpedia.org/resource/Gonzo_(company)",
+		"http://dbpedia.org/resource/Lumiere_Records",
+		"http://dbpedia.org/resource/Dell_EMC_XtremIO"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (Work  and (author some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Cradle_to_Grave",
+		"http://dbpedia.org/resource/Noel's_House_Party",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Alvin_and_the_Chipmunks_(1983_TV_series)",
+		"http://dbpedia.org/resource/Lee_Nelson's_Well_Good_Show"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/George_and_the_Big_Bang",
+		"http://dbpedia.org/resource/77_Million_Paintings",
+		"http://dbpedia.org/resource/601_to_the_615",
+		"http://dbpedia.org/resource/The_Clue_in_the_Crumbling_Wall",
+		"http://dbpedia.org/resource/Love,_Peace_&_Poetry_–_Vol.4_Japanese",
+		"http://dbpedia.org/resource/7000_Danses",
+		"http://dbpedia.org/resource/A_Warning_to_the_Curious_and_Other_Ghost_Stories",
+		"http://dbpedia.org/resource/80_in_the_Shade",
+		"http://dbpedia.org/resource/8_(Anggun_album)"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingCompany some (keyPerson some      (Agent or MusicGenre or Work))))  and (keyPerson some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Big_Machine_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Carousel_Productions",
+		"http://dbpedia.org/resource/George_S._and_Dolores_Doré_Eccles_Foundation",
+		"http://dbpedia.org/resource/Central_Huijin_Investment",
+		"http://dbpedia.org/resource/Universal_Warning_Records",
+		"http://dbpedia.org/resource/Constellation_Records_(Chicago)",
+		"http://dbpedia.org/resource/Lyric_Street_Records",
+		"http://dbpedia.org/resource/Joseph_Schlitz_Brewing_Company",
+		"http://dbpedia.org/resource/Khaadi",
+		"http://dbpedia.org/resource/United_Artists_Records",
+		"http://dbpedia.org/resource/Ujikaji",
+		"http://dbpedia.org/resource/Corpus_Christi_Records"
+	]
+	},
+	{
+	"concept": "(Organisation  and (secretaryGeneral some (president some      (Agent))))  and (president some      (Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/National_Movement_for_the_Development_of_Society"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2014–15_Invicta_Dynamos_season",
+		"http://dbpedia.org/resource/Alfredo_Palacio",
+		"http://dbpedia.org/resource/Mohammad_Ahmadian",
+		"http://dbpedia.org/resource/Koç_University",
+		"http://dbpedia.org/resource/Cork_Constitution",
+		"http://dbpedia.org/resource/Salah_al-Din_al-Bitar",
+		"http://dbpedia.org/resource/Democratic_Centre_(Croatia)",
+		"http://dbpedia.org/resource/5_Rue_Christine",
+		"http://dbpedia.org/resource/Kimon_Georgiev",
+		"http://dbpedia.org/resource/Ganatantri_Dal",
+		"http://dbpedia.org/resource/1920_Maraşspor",
+		"http://dbpedia.org/resource/5th_Battalion_7th_Air_Defense_Artillery_Regiment",
+		"http://dbpedia.org/resource/2016–17_Invicta_Dynamos_season",
+		"http://dbpedia.org/resource/Al_Ahly_(table_tennis)",
+		"http://dbpedia.org/resource/José_Dirceu"
+	]
+	},
+	{
+	"concept": "(Person  and (relative some (notableWork some Work)))  and (notableWork some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/Robert_Gardner_(anthropologist)",
+		"http://dbpedia.org/resource/John_Elder_Robison",
+		"http://dbpedia.org/resource/Robert_Lowell",
+		"http://dbpedia.org/resource/Marieke_Hardy",
+		"http://dbpedia.org/resource/Augusten_Burroughs"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2016_Berlin_truck_attack",
+		"http://dbpedia.org/resource/Oliver_Madox_Hueffer",
+		"http://dbpedia.org/resource/Sapan_Saxena",
+		"http://dbpedia.org/resource/Khaled_Hosseini",
+		"http://dbpedia.org/resource/87th_Delaware_General_Assembly",
+		"http://dbpedia.org/resource/Emily_Rooney",
+		"http://dbpedia.org/resource/John_Darnton",
+		"http://dbpedia.org/resource/2014_Las_Vegas_shootings",
+		"http://dbpedia.org/resource/2016_UCLA_shooting",
+		"http://dbpedia.org/resource/Janna_Malamud_Smith",
+		"http://dbpedia.org/resource/G._P._Wells",
+		"http://dbpedia.org/resource/9MOTHER9HORSE9EYES9",
+		"http://dbpedia.org/resource/Chris_Lang",
+		"http://dbpedia.org/resource/Alistair_MacLeod",
+		"http://dbpedia.org/resource/Dino_Stamatopoulos"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (artist some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Roll_On,_Columbia,_Roll_On",
+		"http://dbpedia.org/resource/One_Day_More",
+		"http://dbpedia.org/resource/The_Sinking_of_the_Reuben_James"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Joan_of_Arc_(Madonna_song)",
+		"http://dbpedia.org/resource/Madonna_singles_discography",
+		"http://dbpedia.org/resource/Mad_Love_(Mabel_song)",
+		"http://dbpedia.org/resource/We_Want_Eazy",
+		"http://dbpedia.org/resource/Bird_Song_(M.I.A._song)",
+		"http://dbpedia.org/resource/Ride_on_Time_(MAX_song)",
+		"http://dbpedia.org/resource/Una_donna_per_amico_(song)"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (Work  and (producer some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/The_Big_Match",
+		"http://dbpedia.org/resource/James_Paul_McCartney_(TV_program)",
+		"http://dbpedia.org/resource/Ghost_Whisperer",
+		"http://dbpedia.org/resource/Tekken_Tag_Tournament_2"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/A.O.N._(All_Or_Nothing)_Series_Vol._1:_F.N.O._(Failure's_No_Option)",
+		"http://dbpedia.org/resource/List_of_Doctors_characters_(2000)",
+		"http://dbpedia.org/resource/A_House_Is_Not_a_Home_(song)",
+		"http://dbpedia.org/resource/Brittany_Hodges",
+		"http://dbpedia.org/resource/Us_Placers",
+		"http://dbpedia.org/resource/Lose_Yourself",
+		"http://dbpedia.org/resource/Owen_Turner",
+		"http://dbpedia.org/resource/88_the_Winners",
+		"http://dbpedia.org/resource/Jem_Costello",
+		"http://dbpedia.org/resource/2016_Re-Album",
+		"http://dbpedia.org/resource/Hard_to_Say_(Sawyer_Brown_song)"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingCompany some (parentCompany some      (Agent or MusicGenre or Work))))  and (parentCompany some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Dreamville_Records",
+		"http://dbpedia.org/resource/RooArt",
+		"http://dbpedia.org/resource/EMI_America_Records",
+		"http://dbpedia.org/resource/Deutsche_Grammophon",
+		"http://dbpedia.org/resource/Safehouse_Records",
+		"http://dbpedia.org/resource/Element_9_(music)",
+		"http://dbpedia.org/resource/G-Note_Records",
+		"http://dbpedia.org/resource/Back_Porch_Records",
+		"http://dbpedia.org/resource/Hatchet_House",
+		"http://dbpedia.org/resource/OVO_Sound",
+		"http://dbpedia.org/resource/Reaction_Records",
+		"http://dbpedia.org/resource/Kapp_Records",
+		"http://dbpedia.org/resource/Vertigo_Records",
+		"http://dbpedia.org/resource/Schoolboy_Records",
+		"http://dbpedia.org/resource/Lench_Mob_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Lucidsamples",
+		"http://dbpedia.org/resource/MCA_Records",
+		"http://dbpedia.org/resource/Cork_University_Press",
+		"http://dbpedia.org/resource/University_of_Alabama_Press",
+		"http://dbpedia.org/resource/Mahindra_Electric",
+		"http://dbpedia.org/resource/Vagrant_Records",
+		"http://dbpedia.org/resource/Luckyhorse_Industries",
+		"http://dbpedia.org/resource/A2SEA",
+		"http://dbpedia.org/resource/Corpus_Christi_Records",
+		"http://dbpedia.org/resource/Maison_de_Soul"
+	]
+	},
+	{
+	"concept": "Album  and (artist some Agent)",
+	"positives": [
+		"http://dbpedia.org/resource/Still_in_Love_with_You_(Thin_Lizzy_song)",
+		"http://dbpedia.org/resource/The_Garden_of_Allah_(song)",
+		"http://dbpedia.org/resource/Contigo_en_la_Distancia",
+		"http://dbpedia.org/resource/A_House_Is_Not_a_Home_(song)",
+		"http://dbpedia.org/resource/Forever_Young_(Bob_Dylan_song)",
+		"http://dbpedia.org/resource/One_Too_Many_Mornings",
+		"http://dbpedia.org/resource/History_Maker",
+		"http://dbpedia.org/resource/Sigur_Rós_discography",
+		"http://dbpedia.org/resource/Block_B_discography",
+		"http://dbpedia.org/resource/Queen_of_the_Broken_Hearts",
+		"http://dbpedia.org/resource/A_Night_in_Tunisia",
+		"http://dbpedia.org/resource/Tomorrow_Is_a_Long_Time",
+		"http://dbpedia.org/resource/I'll_Be_Your_Baby_Tonight",
+		"http://dbpedia.org/resource/It's_All_Over_Now,_Baby_Blue",
+		"http://dbpedia.org/resource/Rest_of_My_Life_(Unwritten_Law_song)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Love_Don't_Live_Here_Anymore",
+		"http://dbpedia.org/resource/Gotta_Get_Mine",
+		"http://dbpedia.org/resource/AC/DC_(video)",
+		"http://dbpedia.org/resource/Brad_Pitt's_Cousin",
+		"http://dbpedia.org/resource/601_to_the_615",
+		"http://dbpedia.org/resource/Make_That_Cake",
+		"http://dbpedia.org/resource/Borders_(M.I.A._song)",
+		"http://dbpedia.org/resource/7669_(group)",
+		"http://dbpedia.org/resource/1953:_An_Exceptional_Encounter",
+		"http://dbpedia.org/resource/7_Spirits",
+		"http://dbpedia.org/resource/AK79",
+		"http://dbpedia.org/resource/2016_Re-Album",
+		"http://dbpedia.org/resource/5_More_Songs_from_the_Stitches",
+		"http://dbpedia.org/resource/God_Is_a_Dancer",
+		"http://dbpedia.org/resource/AE_LIVE"
+	]
+	},
+	{
+	"concept": "(MusicalWork  and (artist some Work))  and Work",
+	"positives": [
+		"http://dbpedia.org/resource/Unpretty_Rapstar_discography",
+		"http://dbpedia.org/resource/Balalaika_(song)",
+		"http://dbpedia.org/resource/Saint_Asonia__Saint_Asonia__1",
+		"http://dbpedia.org/resource/Kirarin_Revolution_discography",
+		"http://dbpedia.org/resource/Yorktown_(The_World_Turned_Upside_Down)",
+		"http://dbpedia.org/resource/The_Reynolds_Pamphlet_(song)",
+		"http://dbpedia.org/resource/List_of_Aria_soundtracks",
+		"http://dbpedia.org/resource/Kiss_Me_Red",
+		"http://dbpedia.org/resource/The_Chicken_Song",
+		"http://dbpedia.org/resource/Ben_Folds_Five__Ben_Folds_Five__1",
+		"http://dbpedia.org/resource/BanG_Dream!_discography",
+		"http://dbpedia.org/resource/My_Shot",
+		"http://dbpedia.org/resource/Happy_Happy_Sunday!",
+		"http://dbpedia.org/resource/Who_Lives,_Who_Dies,_Who_Tells_Your_Story",
+		"http://dbpedia.org/resource/The_Beta_Band__The_Beta_Band__1"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/5_Songs_(Seether_EP)",
+		"http://dbpedia.org/resource/2015_Gayo_Daejun_Limited_Edition",
+		"http://dbpedia.org/resource/666_Ways_to_Love:_Prologue",
+		"http://dbpedia.org/resource/8_Megales_Epitihies",
+		"http://dbpedia.org/resource/777_–_Sect(s)",
+		"http://dbpedia.org/resource/84–86",
+		"http://dbpedia.org/resource/Love,_Peace_&_Poetry_–_Vol.5_British",
+		"http://dbpedia.org/resource/7_(Talisman_album)",
+		"http://dbpedia.org/resource/6:16_The_Genesis",
+		"http://dbpedia.org/resource/5_Nights_at_the_Empire_Belfast_Box_Set",
+		"http://dbpedia.org/resource/2016_Re-Album",
+		"http://dbpedia.org/resource/95–2003",
+		"http://dbpedia.org/resource/6_(Mucc_album)",
+		"http://dbpedia.org/resource/7_Years_and_50_Days",
+		"http://dbpedia.org/resource/AE_LIVE"
+	]
+	},
+	{
+	"concept": "(Organisation  and (superintendent some (foundedBy some      (Agent or MusicGenre or Work))))  and (foundedBy some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Holy_Cross_School_(New_Orleans)",
+		"http://dbpedia.org/resource/Loyola_College_Prep"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2014–15_Glasgow_Warriors_season",
+		"http://dbpedia.org/resource/MacroMind",
+		"http://dbpedia.org/resource/2017_Tamil_Thalaivas_season",
+		"http://dbpedia.org/resource/5th_Cruiser_Squadron",
+		"http://dbpedia.org/resource/2015–16_America's_Cup_World_Series",
+		"http://dbpedia.org/resource/194th_Armored_Brigade_(United_States)",
+		"http://dbpedia.org/resource/Unocal_Corporation",
+		"http://dbpedia.org/resource/2017–18_Glasgow_Warriors_season",
+		"http://dbpedia.org/resource/Kotak_Mahindra_Bank",
+		"http://dbpedia.org/resource/5th_Battalion_(Australia)",
+		"http://dbpedia.org/resource/PrettyLittleThing",
+		"http://dbpedia.org/resource/194th_Motorized_Infantry_Brigade_(People's_Republic_of_China)",
+		"http://dbpedia.org/resource/Valcour_Records",
+		"http://dbpedia.org/resource/2017_Patna_Pirates_season",
+		"http://dbpedia.org/resource/Delhi_Public_School,_Ranchi"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Work))  and ((author some      (Agent or Work))  and (author some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/We_(novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/ABC_Chinese–English_Dictionary",
+		"http://dbpedia.org/resource/Love_Stage!!",
+		"http://dbpedia.org/resource/9tail_Fox",
+		"http://dbpedia.org/resource/Lucan_(2013_TV_series)",
+		"http://dbpedia.org/resource/Lucas_Bros._Moving_Co.",
+		"http://dbpedia.org/resource/Love_Does"
+	]
+	},
+	{
+	"concept": "(MusicalWork  and (artist some (artist some      (Agent or Work))))  and (artist some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/What_More_Can_I_Give",
+		"http://dbpedia.org/resource/Morning_Side_of_the_Mountain",
+		"http://dbpedia.org/resource/Deep_Purple_(song)",
+		"http://dbpedia.org/resource/Nadie_se_meta",
+		"http://dbpedia.org/resource/Sun_Goes_Down_(David_Guetta_and_Showtek_song)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/9_(Do_As_Infinity_video)",
+		"http://dbpedia.org/resource/1917:_Original_Motion_Picture_Soundtrack",
+		"http://dbpedia.org/resource/A_House_Is_Not_a_Home_(song)",
+		"http://dbpedia.org/resource/A-Sides,_B-Sides_&_Suicides",
+		"http://dbpedia.org/resource/8_Megales_Epitihies",
+		"http://dbpedia.org/resource/777_–_Sect(s)",
+		"http://dbpedia.org/resource/MGMT_discography",
+		"http://dbpedia.org/resource/Love_Profusion",
+		"http://dbpedia.org/resource/I_Don't_Give_A",
+		"http://dbpedia.org/resource/Breaking_Me",
+		"http://dbpedia.org/resource/666_(Billy_Talent_album)",
+		"http://dbpedia.org/resource/Angel_(Madonna_song)",
+		"http://dbpedia.org/resource/5_More_Songs_from_the_Stitches",
+		"http://dbpedia.org/resource/Iconic_(song)",
+		"http://dbpedia.org/resource/5_Nen_Mono"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingCompany some (distributingLabel some      (Agent or Work))))  and (distributingLabel some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Freeworld_Entertainment",
+		"http://dbpedia.org/resource/MTM_Records",
+		"http://dbpedia.org/resource/Peaceville_Records",
+		"http://dbpedia.org/resource/Noise_Records",
+		"http://dbpedia.org/resource/SBK_Records",
+		"http://dbpedia.org/resource/Because_Music",
+		"http://dbpedia.org/resource/Frontiers_Records",
+		"http://dbpedia.org/resource/Rethink_(record_label)",
+		"http://dbpedia.org/resource/Spinefarm_Records",
+		"http://dbpedia.org/resource/Ecstatic_Peace!",
+		"http://dbpedia.org/resource/Capitol_Records_Nashville",
+		"http://dbpedia.org/resource/Brainfeeder",
+		"http://dbpedia.org/resource/Big_Vin_Records",
+		"http://dbpedia.org/resource/Caroline_Distribution",
+		"http://dbpedia.org/resource/Capitol_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Nonclassical",
+		"http://dbpedia.org/resource/Nothing_Records",
+		"http://dbpedia.org/resource/Lovepump_United_Records",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Alligator_Records",
+		"http://dbpedia.org/resource/DJM_Records",
+		"http://dbpedia.org/resource/Underscore_Records_Pvt._Ltd.",
+		"http://dbpedia.org/resource/Probe_Records",
+		"http://dbpedia.org/resource/Universal_Records_(1995)",
+		"http://dbpedia.org/resource/Blackheart_Records",
+		"http://dbpedia.org/resource/United_Artists_Records",
+		"http://dbpedia.org/resource/VP_Records",
+		"http://dbpedia.org/resource/Madison_Gate_Records",
+		"http://dbpedia.org/resource/Machine_Shop_Records",
+		"http://dbpedia.org/resource/Maison_de_Soul"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (company some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Cradle_to_Grave",
+		"http://dbpedia.org/resource/Minute_to_Win_It_Indonesia",
+		"http://dbpedia.org/resource/Alvin_and_the_Chipmunks_(1983_TV_series)",
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/Theodore_(TV_series)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Great_News",
+		"http://dbpedia.org/resource/Doctors'_Hospital",
+		"http://dbpedia.org/resource/Maisy",
+		"http://dbpedia.org/resource/Do_No_Harm_(TV_series)",
+		"http://dbpedia.org/resource/Glass_Mask_(TV_series)",
+		"http://dbpedia.org/resource/Dirty_John_(TV_series)",
+		"http://dbpedia.org/resource/Bonanza:_Under_Attack"
+	]
+	},
+	{
+	"concept": "(MusicalWork  and (artist some (subsequentWork some Work)))  and (subsequentWork some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/What_More_Can_I_Give",
+		"http://dbpedia.org/resource/Elected_(song)",
+		"http://dbpedia.org/resource/I_Swear",
+		"http://dbpedia.org/resource/What_Time_Is_It%3F_(song)",
+		"http://dbpedia.org/resource/Sun_Goes_Down_(David_Guetta_and_Showtek_song)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/9_(Lara_Fabian_album)",
+		"http://dbpedia.org/resource/84–86",
+		"http://dbpedia.org/resource/Koi_ni_Booing_Boo!",
+		"http://dbpedia.org/resource/Say_(Method_Man_song)",
+		"http://dbpedia.org/resource/Love,_Peace_&_Poetry_–_Vol.5_British",
+		"http://dbpedia.org/resource/U_Remind_Me",
+		"http://dbpedia.org/resource/Don't_Think_They_Know",
+		"http://dbpedia.org/resource/7_Spirits",
+		"http://dbpedia.org/resource/88_the_Winners",
+		"http://dbpedia.org/resource/Queen_of_the_Broken_Hearts",
+		"http://dbpedia.org/resource/Break_It_Up_(Foreigner_song)",
+		"http://dbpedia.org/resource/Twelve_Days_of_Rugrats",
+		"http://dbpedia.org/resource/Denwa_(song)",
+		"http://dbpedia.org/resource/Love_in_This_Club",
+		"http://dbpedia.org/resource/Dinhing_Dapita_Sadya"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Agent))  and (translator some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Blind_Willow,_Sleeping_Woman",
+		"http://dbpedia.org/resource/Nesthäkchen_in_the_Children's_Sanitorium",
+		"http://dbpedia.org/resource/Ecstasy:_A_Study_of_Happiness",
+		"http://dbpedia.org/resource/The_Mind's_Eye_(novel)",
+		"http://dbpedia.org/resource/A_Winter_amid_the_Ice",
+		"http://dbpedia.org/resource/Rau_(novel)",
+		"http://dbpedia.org/resource/Lullaby_(Slimani_novel)",
+		"http://dbpedia.org/resource/Kalyani_Inscriptions",
+		"http://dbpedia.org/resource/The_Construction_and_Principal_Uses_of_Mathematical_Instruments",
+		"http://dbpedia.org/resource/An_Enigmatic_Nature",
+		"http://dbpedia.org/resource/Glass_Palace_Chronicle",
+		"http://dbpedia.org/resource/The_Agunah",
+		"http://dbpedia.org/resource/The_Physical_Principles_of_the_Quantum_Theory",
+		"http://dbpedia.org/resource/One_Woman's_War:_Da_(Mother)",
+		"http://dbpedia.org/resource/A_Stanislaw_Lem_Reader"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Bat-Manga!:_The_Secret_History_of_Batman_in_Japan",
+		"http://dbpedia.org/resource/We_(novel)",
+		"http://dbpedia.org/resource/The_Mystery_of_the_Blue_Train"
+	]
+	},
+	{
+	"concept": "Company  and (president some Agent)",
+	"positives": [
+		"http://dbpedia.org/resource/Persepolis_Athletic_and_Cultural_Club"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/ABC_International",
+		"http://dbpedia.org/resource/ABANTIA",
+		"http://dbpedia.org/resource/77th_Street_(clothing)",
+		"http://dbpedia.org/resource/Youth_of_the_European_People's_Party",
+		"http://dbpedia.org/resource/Ali_Saeedlou",
+		"http://dbpedia.org/resource/Wayne_State_University",
+		"http://dbpedia.org/resource/King_Edward's_School,_Witley",
+		"http://dbpedia.org/resource/ABC_Air_Hungary",
+		"http://dbpedia.org/resource/Albadé_Abouba",
+		"http://dbpedia.org/resource/Social_Liberal_Party_(Brazil)",
+		"http://dbpedia.org/resource/A._G._Becker_&_Co.",
+		"http://dbpedia.org/resource/University_of_Tehran",
+		"http://dbpedia.org/resource/AA_Films",
+		"http://dbpedia.org/resource/Reza_Taghipour",
+		"http://dbpedia.org/resource/AAI_Group_of_Companies"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (Work  and (narrator some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/The_Inbetweeners"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Chaika_(film)",
+		"http://dbpedia.org/resource/Lucha_Underground",
+		"http://dbpedia.org/resource/All_Star_Secrets",
+		"http://dbpedia.org/resource/Quiz_Kids_Challenge",
+		"http://dbpedia.org/resource/Puli_(2015_film)",
+		"http://dbpedia.org/resource/88_the_Winners",
+		"http://dbpedia.org/resource/6_Derrty_Hits",
+		"http://dbpedia.org/resource/Under_the_Knife_(film)"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and ((starring some      (Agent or Work))  and (starring some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Cops_L.A.C.",
+		"http://dbpedia.org/resource/M*A*S*H_(TV_series)",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/Ghost_Whisperer"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2017_KBS_Song_Festival",
+		"http://dbpedia.org/resource/Love_Actually",
+		"http://dbpedia.org/resource/The_Sinking_of_the_Reuben_James",
+		"http://dbpedia.org/resource/Love_(2011_film)",
+		"http://dbpedia.org/resource/Love_65",
+		"http://dbpedia.org/resource/Love_(1927_American_film)",
+		"http://dbpedia.org/resource/Love,_Speed_and_Thrills"
+	]
+	},
+	{
+	"concept": "(Person  and (relative some (voice some      (MusicGenre or Work))))  and (voice some      (MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Padmé_Amidala"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Ian_Malcolm_(character)",
+		"http://dbpedia.org/resource/Abed_Nadir",
+		"http://dbpedia.org/resource/She-Ra",
+		"http://dbpedia.org/resource/2014_Isla_Vista_killings",
+		"http://dbpedia.org/resource/Captain_Harlock",
+		"http://dbpedia.org/resource/A.J._Applegate",
+		"http://dbpedia.org/resource/65th_Delaware_General_Assembly",
+		"http://dbpedia.org/resource/Poopdeck_Pappy",
+		"http://dbpedia.org/resource/Lin_Beifong",
+		"http://dbpedia.org/resource/2016_shootings_of_Des_Moines_police_officers",
+		"http://dbpedia.org/resource/Arya_Stark",
+		"http://dbpedia.org/resource/Slimer",
+		"http://dbpedia.org/resource/85th_Delaware_General_Assembly",
+		"http://dbpedia.org/resource/Motoko_Kusanagi",
+		"http://dbpedia.org/resource/Jabba_the_Hutt"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and ((executiveProducer some      (Agent or Work))  and (executiveProducer some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/M*A*S*H_(TV_series)",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Ghost_Whisperer",
+		"http://dbpedia.org/resource/James_Paul_McCartney_(TV_program)",
+		"http://dbpedia.org/resource/Theodore_(TV_series)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Magnum,_P.I.",
+		"http://dbpedia.org/resource/Maui_Mallard_in_Cold_Shadow",
+		"http://dbpedia.org/resource/Love_&_Monsters",
+		"http://dbpedia.org/resource/Magic_City_(TV_series)",
+		"http://dbpedia.org/resource/Love_Returns_(TV_series)",
+		"http://dbpedia.org/resource/Love_Monkey"
+	]
+	},
+	{
+	"concept": "(Organisation  and (president some (president some      (Agent))))  and (president some      (Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/European_Union_Centre_in_Taiwan",
+		"http://dbpedia.org/resource/Reagrupament",
+		"http://dbpedia.org/resource/National_Popular_Alliance",
+		"http://dbpedia.org/resource/National_Party_(South_Africa)",
+		"http://dbpedia.org/resource/Patriotic_Movement_for_the_Republic"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2017_Valur_season",
+		"http://dbpedia.org/resource/2017_Constituent_National_Assembly",
+		"http://dbpedia.org/resource/2014–15_FC_ViOn_Zlaté_Moravce_season",
+		"http://dbpedia.org/resource/Koç_University",
+		"http://dbpedia.org/resource/Morteza_Tamadon",
+		"http://dbpedia.org/resource/Giovanna_Debono",
+		"http://dbpedia.org/resource/5th_Cavalry_Division_(India)",
+		"http://dbpedia.org/resource/2013–14_Panionios_B.C._season",
+		"http://dbpedia.org/resource/University_of_Tehran",
+		"http://dbpedia.org/resource/Al_Ahly_(table_tennis)",
+		"http://dbpedia.org/resource/195th_Ohio_Infantry"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (Work  and (starring some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Cops_L.A.C.",
+		"http://dbpedia.org/resource/M*A*S*H_(TV_series)",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/Ghost_Whisperer"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/1917:_Original_Motion_Picture_Soundtrack",
+		"http://dbpedia.org/resource/Akin_Pa_Rin_ang_Bukas",
+		"http://dbpedia.org/resource/Prison_Shadows",
+		"http://dbpedia.org/resource/Vacanze_ai_Caraibi",
+		"http://dbpedia.org/resource/2017–2019",
+		"http://dbpedia.org/resource/7_Years_and_50_Days",
+		"http://dbpedia.org/resource/Rainbow:_A_Private_Affair",
+		"http://dbpedia.org/resource/Bombshell_(TV_series)"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (writer some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Roll_On,_Columbia,_Roll_On",
+		"http://dbpedia.org/resource/One_Day_More",
+		"http://dbpedia.org/resource/The_Sinking_of_the_Reuben_James"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Love_Has_Finally_Come_at_Last",
+		"http://dbpedia.org/resource/LoveStoned",
+		"http://dbpedia.org/resource/Love_(Destiny)",
+		"http://dbpedia.org/resource/7_Days_and_7_Nights",
+		"http://dbpedia.org/resource/Love_Don't_Hate_It"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and ((writer some      (Agent or MusicGenre or Work))  and (writer some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Roll_On,_Columbia,_Roll_On",
+		"http://dbpedia.org/resource/One_Day_More",
+		"http://dbpedia.org/resource/The_Sinking_of_the_Reuben_James"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/853-5937",
+		"http://dbpedia.org/resource/The_Big_Match",
+		"http://dbpedia.org/resource/6969",
+		"http://dbpedia.org/resource/Love_Buzz",
+		"http://dbpedia.org/resource/Love_(DJ_Trevi_song)",
+		"http://dbpedia.org/resource/9th_Inning",
+		"http://dbpedia.org/resource/AOV_(song)"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (Work  and (network some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Cops_L.A.C.",
+		"http://dbpedia.org/resource/Minute_to_Win_It_Indonesia",
+		"http://dbpedia.org/resource/Noel's_House_Party",
+		"http://dbpedia.org/resource/The_Big_Match",
+		"http://dbpedia.org/resource/Warner_Bros._Presents"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Floribama_Shore",
+		"http://dbpedia.org/resource/Promposal_(TV_series)",
+		"http://dbpedia.org/resource/MTV_Spit",
+		"http://dbpedia.org/resource/7_Spirits",
+		"http://dbpedia.org/resource/National_Museum_of_Anthropology_(Manila)",
+		"http://dbpedia.org/resource/A-ha_Live_at_Vallhall_–_Homecoming_Grimstad_Benefit_Concert",
+		"http://dbpedia.org/resource/AK79",
+		"http://dbpedia.org/resource/Valvrave_the_Liberator",
+		"http://dbpedia.org/resource/6th_Album_Re-recording_&_ETPFEST_Live",
+		"http://dbpedia.org/resource/MBC_Newsdesk"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (starring some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Cops_L.A.C.",
+		"http://dbpedia.org/resource/M*A*S*H_(TV_series)",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/Ghost_Whisperer"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/7_Lá",
+		"http://dbpedia.org/resource/Love_&_Distrust",
+		"http://dbpedia.org/resource/Love,_Timeless",
+		"http://dbpedia.org/resource/Love_24x7",
+		"http://dbpedia.org/resource/6-5=2_(2014_film)",
+		"http://dbpedia.org/resource/9_Nelalu",
+		"http://dbpedia.org/resource/600,000_Francs_a_Month_(1926_film)",
+		"http://dbpedia.org/resource/Love_(2011_film)"
+	]
+	},
+	{
+	"concept": "(Organisation  and (trustee some Agent))  and Agent",
+	"positives": [
+		"http://dbpedia.org/resource/Our_Lady_of_Wisdom_Catholic_School",
+		"http://dbpedia.org/resource/Victoria_Park_Collegiate_Institute",
+		"http://dbpedia.org/resource/Mary_Ward_Catholic_Secondary_School",
+		"http://dbpedia.org/resource/St._Joan_of_Arc_Catholic_Academy",
+		"http://dbpedia.org/resource/Faujdarhat_Collegiate_School"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2016_Munich_shooting",
+		"http://dbpedia.org/resource/2016_Berlin_truck_attack",
+		"http://dbpedia.org/resource/2016_shooting_of_Almaty_police_officers",
+		"http://dbpedia.org/resource/5ive_(American_band)",
+		"http://dbpedia.org/resource/5th_Cruiser_Squadron",
+		"http://dbpedia.org/resource/2014_shootings_at_Parliament_Hill,_Ottawa",
+		"http://dbpedia.org/resource/2016_UCLA_shooting",
+		"http://dbpedia.org/resource/2013–14_Maccabi_Tel_Aviv_F.C._season",
+		"http://dbpedia.org/resource/194th_Engineer_Brigade",
+		"http://dbpedia.org/resource/2014–15_AZ_Alkmaar_season",
+		"http://dbpedia.org/resource/5th_Battalion_7th_Air_Defense_Artillery_Regiment",
+		"http://dbpedia.org/resource/5th_Air_and_Air_Defence_Forces_Army",
+		"http://dbpedia.org/resource/2014–15_Edinburgh_Rugby_season",
+		"http://dbpedia.org/resource/5th_Connecticut_Infantry_Regiment",
+		"http://dbpedia.org/resource/5th_Combined_Arms_Army"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (channel some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Russell_Howard's_Good_News",
+		"http://dbpedia.org/resource/Cradle_to_Grave",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/Theodore_(TV_series)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/A_Morning_with_Farah",
+		"http://dbpedia.org/resource/Billy_Connolly:_Journey_to_the_Edge_of_the_World",
+		"http://dbpedia.org/resource/Lágrimas_amargas_(1967_TV_series)",
+		"http://dbpedia.org/resource/Uutisvuoto",
+		"http://dbpedia.org/resource/Quirpa_de_tres_mujeres",
+		"http://dbpedia.org/resource/Russian_Dolls:_Sex_Trade"
+	]
+	},
+	{
+	"concept": "(Organisation  and (secretaryGeneral some Agent))  and Agent",
+	"positives": [
+		"http://dbpedia.org/resource/Economic_Freedom_Fighters",
+		"http://dbpedia.org/resource/Freedom_Movement_of_Iran",
+		"http://dbpedia.org/resource/Progressive_Party_(Singapore)",
+		"http://dbpedia.org/resource/Democracy_Party_(Iran)",
+		"http://dbpedia.org/resource/Pakistan_Muslim_League_(N)",
+		"http://dbpedia.org/resource/Liberal_Party_(Japan,_2016)",
+		"http://dbpedia.org/resource/Socialist_Party_of_Cantabria",
+		"http://dbpedia.org/resource/Islamic_Labour_Party",
+		"http://dbpedia.org/resource/Unified_Socialist_Party_(Morocco)",
+		"http://dbpedia.org/resource/Moderation_and_Development_Party",
+		"http://dbpedia.org/resource/Fretilin",
+		"http://dbpedia.org/resource/Pakistan_Muslim_League_(Q)",
+		"http://dbpedia.org/resource/Action_Congress_of_Nigeria",
+		"http://dbpedia.org/resource/Barisan_Nasional",
+		"http://dbpedia.org/resource/Independent_Movement_of_Absolute_Renovation"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2016_Munich_shooting",
+		"http://dbpedia.org/resource/2016_Berlin_truck_attack",
+		"http://dbpedia.org/resource/2016_shooting_of_Almaty_police_officers",
+		"http://dbpedia.org/resource/5ive_(American_band)",
+		"http://dbpedia.org/resource/5th_Cruiser_Squadron",
+		"http://dbpedia.org/resource/2014_shootings_at_Parliament_Hill,_Ottawa",
+		"http://dbpedia.org/resource/2016_UCLA_shooting",
+		"http://dbpedia.org/resource/2013–14_Maccabi_Tel_Aviv_F.C._season",
+		"http://dbpedia.org/resource/194th_Engineer_Brigade",
+		"http://dbpedia.org/resource/2014–15_AZ_Alkmaar_season",
+		"http://dbpedia.org/resource/5th_Battalion_7th_Air_Defense_Artillery_Regiment",
+		"http://dbpedia.org/resource/5th_Air_and_Air_Defence_Forces_Army",
+		"http://dbpedia.org/resource/2014–15_Edinburgh_Rugby_season",
+		"http://dbpedia.org/resource/5th_Connecticut_Infantry_Regiment",
+		"http://dbpedia.org/resource/5th_Combined_Arms_Army"
+	]
+	},
+	{
+	"concept": "Album  and (artist some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/Fahrenheit_discography",
+		"http://dbpedia.org/resource/Music_of_Clannad",
+		"http://dbpedia.org/resource/The_Partridge_Family_discography",
+		"http://dbpedia.org/resource/Mambo_No._5",
+		"http://dbpedia.org/resource/Slug_(song)",
+		"http://dbpedia.org/resource/Katri_Ylander",
+		"http://dbpedia.org/resource/Your_Blue_Room"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Music_of_One_Piece",
+		"http://dbpedia.org/resource/Five_in_a_Row_(1989_song)",
+		"http://dbpedia.org/resource/Show_You_the_Way_to_Go",
+		"http://dbpedia.org/resource/A-Sides,_B-Sides_&_Suicides",
+		"http://dbpedia.org/resource/666_Ways_to_Love:_Prologue",
+		"http://dbpedia.org/resource/777_–_Sect(s)",
+		"http://dbpedia.org/resource/Local_H__Local_H__1",
+		"http://dbpedia.org/resource/Free!_discography",
+		"http://dbpedia.org/resource/Nadie_se_meta",
+		"http://dbpedia.org/resource/Ben_Folds_Five__Ben_Folds_Five__1",
+		"http://dbpedia.org/resource/5_Nights_at_the_Empire_Belfast_Box_Set",
+		"http://dbpedia.org/resource/Making_Today_a_Perfect_Day",
+		"http://dbpedia.org/resource/History_Has_Its_Eyes_on_You",
+		"http://dbpedia.org/resource/The_Ghost_Inside_(band)__The_Ghost_Inside__1",
+		"http://dbpedia.org/resource/Who_Lives,_Who_Dies,_Who_Tells_Your_Story"
+	]
+	},
+	{
+	"concept": "((politicalPartyInLegislature some      (Agent or MusicGenre))  and (politicalPartyInLegislature some Agent))  and (house some      (Agent or MusicGenre))",
+	"positives": [
+		"http://dbpedia.org/resource/National_Assembly_(Bahrain)",
+		"http://dbpedia.org/resource/Belgian_Federal_Parliament",
+		"http://dbpedia.org/resource/New_Zealand_Parliament",
+		"http://dbpedia.org/resource/Joint_session_of_the_United_States_Congress",
+		"http://dbpedia.org/resource/Federal_Assembly_(Russia)",
+		"http://dbpedia.org/resource/Parliament_of_Poland",
+		"http://dbpedia.org/resource/Parliament_of_South_Africa",
+		"http://dbpedia.org/resource/Idaho_Legislature",
+		"http://dbpedia.org/resource/Legislature_XV_of_Italy",
+		"http://dbpedia.org/resource/National_Diet",
+		"http://dbpedia.org/resource/New_Jersey_Legislative_Districts,_2011_apportionment",
+		"http://dbpedia.org/resource/Legislature_XIII_of_Italy",
+		"http://dbpedia.org/resource/Parliament_of_the_United_Kingdom",
+		"http://dbpedia.org/resource/Legislature_XI_of_Italy",
+		"http://dbpedia.org/resource/Parliament_of_Barbados"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Nigeria",
+		"http://dbpedia.org/resource/5th_Illinois_General_Assembly",
+		"http://dbpedia.org/resource/Kenya",
+		"http://dbpedia.org/resource/6th_National_Assembly",
+		"http://dbpedia.org/resource/4th_Uttarakhand_Assembly",
+		"http://dbpedia.org/resource/Saskatchewan_Legislature",
+		"http://dbpedia.org/resource/1st_Uttarakhand_Assembly",
+		"http://dbpedia.org/resource/French_Parliament",
+		"http://dbpedia.org/resource/Sejm_of_Congress_Poland"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Work))  and (author some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/We_(novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/A_School_Story",
+		"http://dbpedia.org/resource/Curl-up",
+		"http://dbpedia.org/resource/Tehanu",
+		"http://dbpedia.org/resource/Going_My_Way_(TV_series)",
+		"http://dbpedia.org/resource/Spatial_Concept:_Nature",
+		"http://dbpedia.org/resource/A_Place_of_Execution",
+		"http://dbpedia.org/resource/Seussical",
+		"http://dbpedia.org/resource/Dairy_Queen_(novel)"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and Work",
+	"positives": [
+		"http://dbpedia.org/resource/One_Day_More",
+		"http://dbpedia.org/resource/Maui_Mallard_in_Cold_Shadow",
+		"http://dbpedia.org/resource/Friday_Night_Dinner",
+		"http://dbpedia.org/resource/Ghost_Whisperer",
+		"http://dbpedia.org/resource/Roll_On,_Columbia,_Roll_On",
+		"http://dbpedia.org/resource/Lee_Nelson's_Well_Good_Show",
+		"http://dbpedia.org/resource/Warner_Bros._Presents",
+		"http://dbpedia.org/resource/Tekken_Tag_Tournament_2",
+		"http://dbpedia.org/resource/Minute_to_Win_It_Indonesia",
+		"http://dbpedia.org/resource/The_Sinking_of_the_Reuben_James",
+		"http://dbpedia.org/resource/Cradle_to_Grave",
+		"http://dbpedia.org/resource/We_Love_Katamari",
+		"http://dbpedia.org/resource/Jarama_Valley_(song)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/1917:_Original_Motion_Picture_Soundtrack",
+		"http://dbpedia.org/resource/A.K.A._Wham_Bam_Sam",
+		"http://dbpedia.org/resource/84–86",
+		"http://dbpedia.org/resource/1953:_An_Exceptional_Encounter",
+		"http://dbpedia.org/resource/82_(album)",
+		"http://dbpedia.org/resource/1959_(album)",
+		"http://dbpedia.org/resource/ALIVE_in_Florida",
+		"http://dbpedia.org/resource/9_(Eros_Ramazzotti_album)",
+		"http://dbpedia.org/resource/8-Bit_Operators:_The_Music_of_Kraftwerk"
+	]
+	},
+	{
+	"concept": "RecordLabel  and (distributingLabel some Agent)",
+	"positives": [
+		"http://dbpedia.org/resource/Gold_Castle_Records",
+		"http://dbpedia.org/resource/MTM_Records",
+		"http://dbpedia.org/resource/Deutsche_Grammophon",
+		"http://dbpedia.org/resource/RCA_Records",
+		"http://dbpedia.org/resource/Machete_Music",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Blackhouse_Records",
+		"http://dbpedia.org/resource/Kidinakorner",
+		"http://dbpedia.org/resource/SOLAR_Records",
+		"http://dbpedia.org/resource/Blackheart_Records",
+		"http://dbpedia.org/resource/Private_Music",
+		"http://dbpedia.org/resource/Profile_Records",
+		"http://dbpedia.org/resource/Digital_Jukebox_Records",
+		"http://dbpedia.org/resource/R.E.X._Records",
+		"http://dbpedia.org/resource/Vertigo_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Vaccination_Records",
+		"http://dbpedia.org/resource/Union_Label_Group",
+		"http://dbpedia.org/resource/Magik_Muzik",
+		"http://dbpedia.org/resource/DJ_International_Records",
+		"http://dbpedia.org/resource/Universal_Music_Group",
+		"http://dbpedia.org/resource/Maintenance_Records",
+		"http://dbpedia.org/resource/Universal_Warning_Records",
+		"http://dbpedia.org/resource/Mainstream_Records",
+		"http://dbpedia.org/resource/Cypress_Records",
+		"http://dbpedia.org/resource/Cordless_Recordings",
+		"http://dbpedia.org/resource/Urgent!_Records",
+		"http://dbpedia.org/resource/AM_Television",
+		"http://dbpedia.org/resource/Up-Front_Group",
+		"http://dbpedia.org/resource/Ubiquity_Records",
+		"http://dbpedia.org/resource/Madhura_Audio"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (narrator some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/The_Inbetweeners"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Gordon_Ramsay:_Uncharted",
+		"http://dbpedia.org/resource/Lucha_Underground",
+		"http://dbpedia.org/resource/Krakatoa_(film)",
+		"http://dbpedia.org/resource/Guards_of_the_North",
+		"http://dbpedia.org/resource/Kilos_Pronto",
+		"http://dbpedia.org/resource/Rajaratha"
+	]
+	},
+	{
+	"concept": "(MusicalWork  and (artist some (producer some      (Agent or Work))))  and (producer some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/I_Think_I_Love_You",
+		"http://dbpedia.org/resource/Doesn't_Somebody_Want_to_Be_Wanted",
+		"http://dbpedia.org/resource/He_Ain't_Heavy,_He's_My_Brother",
+		"http://dbpedia.org/resource/Best_Friend's_Brother",
+		"http://dbpedia.org/resource/I'll_Meet_You_Halfway",
+		"http://dbpedia.org/resource/Making_Today_a_Perfect_Day",
+		"http://dbpedia.org/resource/Elected_(song)",
+		"http://dbpedia.org/resource/Living_Doll_(song)",
+		"http://dbpedia.org/resource/Looking_Through_the_Eyes_of_Love",
+		"http://dbpedia.org/resource/Stick_to_the_Status_Quo"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/5_Songs_(Seether_EP)",
+		"http://dbpedia.org/resource/A_House_Is_Not_a_Home_(song)",
+		"http://dbpedia.org/resource/India_Longford",
+		"http://dbpedia.org/resource/Us_Placers",
+		"http://dbpedia.org/resource/All_Fired_Up_(The_Saturdays_song)",
+		"http://dbpedia.org/resource/Don't_You_Know_That%3F",
+		"http://dbpedia.org/resource/Don't_Tell_Me_(Ruel_song)",
+		"http://dbpedia.org/resource/66°_Pohjoista_Leveyttä",
+		"http://dbpedia.org/resource/Every_Year,_Every_Christmas",
+		"http://dbpedia.org/resource/70-10_Tour",
+		"http://dbpedia.org/resource/A-ha_discography",
+		"http://dbpedia.org/resource/AFA_for_Effort",
+		"http://dbpedia.org/resource/6_(Mucc_album)",
+		"http://dbpedia.org/resource/Jealous_of_My_Boogie"
+	]
+	},
+	{
+	"concept": "Album  and (lyrics some Person)",
+	"positives": [
+		"http://dbpedia.org/resource/Hadestown",
+		"http://dbpedia.org/resource/The_Sea_Cabinet",
+		"http://dbpedia.org/resource/Time_(musical)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/60_Watt_Silver_Lining",
+		"http://dbpedia.org/resource/Forbidden_Broadway_Goes_to_Rehab",
+		"http://dbpedia.org/resource/Going_Up_(musical)",
+		"http://dbpedia.org/resource/Cyrano_(musical)",
+		"http://dbpedia.org/resource/A_Kurt_Weill_Cabaret",
+		"http://dbpedia.org/resource/77_Million_Paintings",
+		"http://dbpedia.org/resource/7669_(group)",
+		"http://dbpedia.org/resource/A.E.I.O.U._(album)",
+		"http://dbpedia.org/resource/9.11_(album)",
+		"http://dbpedia.org/resource/666_(Billy_Talent_album)",
+		"http://dbpedia.org/resource/Hello_Again_(musical)",
+		"http://dbpedia.org/resource/95–2003",
+		"http://dbpedia.org/resource/Scandalous:_The_Life_and_Trials_of_Aimee_Semple_McPherson",
+		"http://dbpedia.org/resource/Follow_That_Girl",
+		"http://dbpedia.org/resource/A_Saint_She_Ain't"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Agent))  and ((coverArtist some      (Agent or MusicGenre or Work))  and (coverArtist some Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Noise:_The_Political_Economy_of_Music"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Froth_on_the_Daydream",
+		"http://dbpedia.org/resource/Nesthäkchen_in_the_Children's_Sanitorium",
+		"http://dbpedia.org/resource/The_Devil's_Own_Work",
+		"http://dbpedia.org/resource/Beasts_(novella)",
+		"http://dbpedia.org/resource/The_Last_Will_and_Testament_of_Senhor_da_Silva_Araújo",
+		"http://dbpedia.org/resource/The_Hunchback_of_Notre-Dame",
+		"http://dbpedia.org/resource/The_Physical_Principles_of_the_Quantum_Theory",
+		"http://dbpedia.org/resource/Four_Major_Plays_of_Chikamatsu"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (executiveProducer some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/M*A*S*H_(TV_series)",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Ghost_Whisperer",
+		"http://dbpedia.org/resource/James_Paul_McCartney_(TV_program)",
+		"http://dbpedia.org/resource/Theodore_(TV_series)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Makin'_It_(TV_series)",
+		"http://dbpedia.org/resource/Bonnie_(TV_series)",
+		"http://dbpedia.org/resource/Veronica_Mars",
+		"http://dbpedia.org/resource/Greed_(game_show)",
+		"http://dbpedia.org/resource/Unhitched",
+		"http://dbpedia.org/resource/Magic_Funhouse!",
+		"http://dbpedia.org/resource/Defiance_(TV_series)",
+		"http://dbpedia.org/resource/Diff'rent_Strokes",
+		"http://dbpedia.org/resource/Deon_Cole's_Black_Box"
+	]
+	},
+	{
+	"concept": "((politicalPartyInLegislature some      (Agent or MusicGenre))  and (politicalPartyInLegislature some Agent))  and (leader some      (Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Northern_Ireland_Assembly",
+		"http://dbpedia.org/resource/Chicago_City_Council",
+		"http://dbpedia.org/resource/Kaohsiung_City_Council",
+		"http://dbpedia.org/resource/Mississippi_Legislature",
+		"http://dbpedia.org/resource/Dewan_Negara",
+		"http://dbpedia.org/resource/Belfast_City_Council",
+		"http://dbpedia.org/resource/Vermont_Senate",
+		"http://dbpedia.org/resource/House_of_Commons_of_the_United_Kingdom",
+		"http://dbpedia.org/resource/Provincial_Assembly_of_Sindh",
+		"http://dbpedia.org/resource/Sarawak_State_Legislative_Assembly",
+		"http://dbpedia.org/resource/Eastern_Cape_Provincial_Legislature",
+		"http://dbpedia.org/resource/South_Dakota_Legislature",
+		"http://dbpedia.org/resource/Detroit_City_Council",
+		"http://dbpedia.org/resource/Michigan_Legislature",
+		"http://dbpedia.org/resource/Chamber_of_Deputies_of_Chile"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Democratic_Party_(Japan,_2016)",
+		"http://dbpedia.org/resource/Democratic_Left_(Ireland)",
+		"http://dbpedia.org/resource/Project_NOAH_(Philippines)",
+		"http://dbpedia.org/resource/Greater_Hyderabad_Municipal_Corporation",
+		"http://dbpedia.org/resource/House_of_Lords_(Austria)",
+		"http://dbpedia.org/resource/Food_and_Drug_Administration_(Myanmar)"
+	]
+	},
+	{
+	"concept": "(Organisation  and (president some Agent))  and Agent",
+	"positives": [
+		"http://dbpedia.org/resource/Panathinaikos_Fencing",
+		"http://dbpedia.org/resource/École_Spéciale_des_Travaux_Publics",
+		"http://dbpedia.org/resource/Missouri_Military_Academy",
+		"http://dbpedia.org/resource/Social_Right_(political_party)",
+		"http://dbpedia.org/resource/BC_Krasny_Oktyabr",
+		"http://dbpedia.org/resource/Koç_University",
+		"http://dbpedia.org/resource/Sree_Chitra_Tirunal_Institute_for_Medical_Sciences_and_Technology",
+		"http://dbpedia.org/resource/Socialist_Campaign_Group",
+		"http://dbpedia.org/resource/Gustavus_Adolphus_College",
+		"http://dbpedia.org/resource/University_of_Tokyo",
+		"http://dbpedia.org/resource/University_of_Tehran",
+		"http://dbpedia.org/resource/Lyman_Ward_Military_Academy",
+		"http://dbpedia.org/resource/Alliance_for_the_Republic_(Senegal)",
+		"http://dbpedia.org/resource/Centre_College",
+		"http://dbpedia.org/resource/Al_Ahly_(table_tennis)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/5th_District_of_Columbia_Infantry_Battalion",
+		"http://dbpedia.org/resource/2016–17_Glasgow_Warriors_season",
+		"http://dbpedia.org/resource/2014–15_FC_ViOn_Zlaté_Moravce_season",
+		"http://dbpedia.org/resource/2014–15_FC_Vestsjælland_season",
+		"http://dbpedia.org/resource/5th_California_Infantry_Regiment",
+		"http://dbpedia.org/resource/2016–17_Antalyaspor_season",
+		"http://dbpedia.org/resource/2013–14_Azerbaijan_Women's_Volleyball_Super_League"
+	]
+	},
+	{
+	"concept": "(MusicalWork  and (artist some (previousWork some Work)))  and (previousWork some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/What_More_Can_I_Give",
+		"http://dbpedia.org/resource/What_Time_Is_It%3F_(song)",
+		"http://dbpedia.org/resource/I_Swear"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Good_God_(Korn_song)",
+		"http://dbpedia.org/resource/Gold_(Victoria_Justice_song)",
+		"http://dbpedia.org/resource/601_to_the_615",
+		"http://dbpedia.org/resource/7_(David_Meece_album)",
+		"http://dbpedia.org/resource/666_Ways_to_Love:_Prologue",
+		"http://dbpedia.org/resource/8_Megales_Epitihies",
+		"http://dbpedia.org/resource/82_(album)",
+		"http://dbpedia.org/resource/Born_to_Be_Wild",
+		"http://dbpedia.org/resource/6:16_The_Genesis",
+		"http://dbpedia.org/resource/9th_Inning",
+		"http://dbpedia.org/resource/Don't_Play_No_Game_That_I_Can't_Win",
+		"http://dbpedia.org/resource/8_(Arvingarna_album)",
+		"http://dbpedia.org/resource/AE_LIVE",
+		"http://dbpedia.org/resource/Vem_Cair_na_Zueira",
+		"http://dbpedia.org/resource/Domino_(Kiss_song)"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingLabel some (distributingCompany some      (Agent or Work))))  and (distributingCompany some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Freeworld_Entertainment",
+		"http://dbpedia.org/resource/MTM_Records",
+		"http://dbpedia.org/resource/Peaceville_Records",
+		"http://dbpedia.org/resource/Noise_Records",
+		"http://dbpedia.org/resource/SBK_Records",
+		"http://dbpedia.org/resource/Because_Music",
+		"http://dbpedia.org/resource/Frontiers_Records",
+		"http://dbpedia.org/resource/Rethink_(record_label)",
+		"http://dbpedia.org/resource/Spinefarm_Records",
+		"http://dbpedia.org/resource/Ecstatic_Peace!",
+		"http://dbpedia.org/resource/Capitol_Records_Nashville",
+		"http://dbpedia.org/resource/Brainfeeder",
+		"http://dbpedia.org/resource/Big_Vin_Records",
+		"http://dbpedia.org/resource/Caroline_Distribution",
+		"http://dbpedia.org/resource/Capitol_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Nonclassical",
+		"http://dbpedia.org/resource/Nothing_Records",
+		"http://dbpedia.org/resource/Lovepump_United_Records",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Alligator_Records",
+		"http://dbpedia.org/resource/DJM_Records",
+		"http://dbpedia.org/resource/Underscore_Records_Pvt._Ltd.",
+		"http://dbpedia.org/resource/Probe_Records",
+		"http://dbpedia.org/resource/Universal_Records_(1995)",
+		"http://dbpedia.org/resource/Blackheart_Records",
+		"http://dbpedia.org/resource/United_Artists_Records",
+		"http://dbpedia.org/resource/VP_Records",
+		"http://dbpedia.org/resource/Madison_Gate_Records",
+		"http://dbpedia.org/resource/Machine_Shop_Records",
+		"http://dbpedia.org/resource/Maison_de_Soul"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and ((artist some      (Agent or Work))  and (artist some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/Roll_On,_Columbia,_Roll_On",
+		"http://dbpedia.org/resource/The_Sinking_of_the_Reuben_James"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/700_Ft._Ceiling",
+		"http://dbpedia.org/resource/Lee_Nelson's_Well_Good_Show",
+		"http://dbpedia.org/resource/5_Star_(Yo_Gotti_song)",
+		"http://dbpedia.org/resource/Minute_to_Win_It_Indonesia",
+		"http://dbpedia.org/resource/Love_Is_Blindness",
+		"http://dbpedia.org/resource/AKMU_discography"
+	]
+	},
+	{
+	"concept": "(Organisation  and (president some (foundedBy some      (Agent or MusicGenre or Work))))  and (foundedBy some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Divine_Word_Academy_of_Dagupan"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2014–15_Glasgow_Warriors_season",
+		"http://dbpedia.org/resource/Nanosolar",
+		"http://dbpedia.org/resource/Grindhouse_Releasing",
+		"http://dbpedia.org/resource/UniCredit_Banca",
+		"http://dbpedia.org/resource/MakerBot",
+		"http://dbpedia.org/resource/AL-Automotive_Lighting",
+		"http://dbpedia.org/resource/SOLAR_Records",
+		"http://dbpedia.org/resource/2016–17_Elche_CF_season",
+		"http://dbpedia.org/resource/2015–16_Munster_Rugby_season",
+		"http://dbpedia.org/resource/5th_Battalion_7th_Air_Defense_Artillery_Regiment",
+		"http://dbpedia.org/resource/5th_Battalion_(Australia)",
+		"http://dbpedia.org/resource/Magnetic_MRO",
+		"http://dbpedia.org/resource/Granstudio",
+		"http://dbpedia.org/resource/Gottfried_Keller_Foundation"
+	]
+	},
+	{
+	"concept": "Company  and (ceo some Agent)",
+	"positives": [
+		"http://dbpedia.org/resource/Rhode_Island_Public_Transit_Authority",
+		"http://dbpedia.org/resource/Suburban_Express",
+		"http://dbpedia.org/resource/Group_Voyagers",
+		"http://dbpedia.org/resource/DC_Circulator",
+		"http://dbpedia.org/resource/Sajha_Yatayat",
+		"http://dbpedia.org/resource/Noctilien",
+		"http://dbpedia.org/resource/SEPTA_Suburban_Division_bus_routes"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Euroleague_Basketball_Next_Generation_Tournament",
+		"http://dbpedia.org/resource/826NYC",
+		"http://dbpedia.org/resource/ABM_United_Kingdom_Limited",
+		"http://dbpedia.org/resource/ABC_motorcycles",
+		"http://dbpedia.org/resource/8D_Technologies",
+		"http://dbpedia.org/resource/Ironi_Nes_Ziona_B.C.",
+		"http://dbpedia.org/resource/9X_Media",
+		"http://dbpedia.org/resource/South_Africa_national_under-19_cricket_team",
+		"http://dbpedia.org/resource/989_Studios",
+		"http://dbpedia.org/resource/7-Eleven_Speak_Out_Wireless",
+		"http://dbpedia.org/resource/A-Mark_Precious_Metals",
+		"http://dbpedia.org/resource/A-Boy_Plumbing_&_Electrical_Supply",
+		"http://dbpedia.org/resource/Ontario_Hockey_League",
+		"http://dbpedia.org/resource/615_Music",
+		"http://dbpedia.org/resource/ABC_Family_Worldwide"
+	]
+	},
+	{
+	"concept": "(Person  and (relative some (veneratedIn some      (MusicGenre))))  and (veneratedIn some      (MusicGenre))",
+	"positives": [
+		"http://dbpedia.org/resource/Moses"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/9th_Delaware_General_Assembly",
+		"http://dbpedia.org/resource/John_the_Baptist",
+		"http://dbpedia.org/resource/Enoch_(ancestor_of_Noah)",
+		"http://dbpedia.org/resource/2016_Kalamazoo_shootings",
+		"http://dbpedia.org/resource/Amos_(prophet)",
+		"http://dbpedia.org/resource/2014_shootings_at_Parliament_Hill,_Ottawa",
+		"http://dbpedia.org/resource/Attar_of_Nishapur",
+		"http://dbpedia.org/resource/Noah",
+		"http://dbpedia.org/resource/Jacob",
+		"http://dbpedia.org/resource/2013–14_Viborg_FF_season",
+		"http://dbpedia.org/resource/Aaron",
+		"http://dbpedia.org/resource/9MOTHER9HORSE9EYES9",
+		"http://dbpedia.org/resource/Abraham__Abraham__1",
+		"http://dbpedia.org/resource/93rd_Delaware_General_Assembly",
+		"http://dbpedia.org/resource/94th_Delaware_General_Assembly"
+	]
+	},
+	{
+	"concept": "(Organisation  and (ceo some Agent))  and Agent",
+	"positives": [
+		"http://dbpedia.org/resource/Suburban_Express",
+		"http://dbpedia.org/resource/USA_Volleyball_Cup",
+		"http://dbpedia.org/resource/Middlesex_County_Cricket_Club",
+		"http://dbpedia.org/resource/3BL",
+		"http://dbpedia.org/resource/FIVB_Volleyball_Men's_Challenger_Cup",
+		"http://dbpedia.org/resource/National_Girls_Baseball_League",
+		"http://dbpedia.org/resource/FIVB_Volleyball_Men's_World_Cup",
+		"http://dbpedia.org/resource/Ironi_Nes_Ziona_B.C.",
+		"http://dbpedia.org/resource/D&G_Bus",
+		"http://dbpedia.org/resource/FIVB_Women's_Volleyball_Intercontinental_Olympic_Qualification_Tournament",
+		"http://dbpedia.org/resource/FIVB_Volleyball_Women's_Challenger_Cup",
+		"http://dbpedia.org/resource/FIVB_Volleyball_Men's_Nations_League",
+		"http://dbpedia.org/resource/DC_Circulator",
+		"http://dbpedia.org/resource/Ontario_Hockey_League",
+		"http://dbpedia.org/resource/SEPTA_Suburban_Division_bus_routes"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2016_Munich_shooting",
+		"http://dbpedia.org/resource/2016_Berlin_truck_attack",
+		"http://dbpedia.org/resource/2016_shooting_of_Almaty_police_officers",
+		"http://dbpedia.org/resource/5ive_(American_band)",
+		"http://dbpedia.org/resource/5th_Cruiser_Squadron",
+		"http://dbpedia.org/resource/2014_shootings_at_Parliament_Hill,_Ottawa",
+		"http://dbpedia.org/resource/2016_UCLA_shooting",
+		"http://dbpedia.org/resource/2013–14_Maccabi_Tel_Aviv_F.C._season",
+		"http://dbpedia.org/resource/194th_Engineer_Brigade",
+		"http://dbpedia.org/resource/2014–15_AZ_Alkmaar_season",
+		"http://dbpedia.org/resource/5th_Battalion_7th_Air_Defense_Artillery_Regiment",
+		"http://dbpedia.org/resource/5th_Air_and_Air_Defence_Forces_Army",
+		"http://dbpedia.org/resource/2014–15_Edinburgh_Rugby_season",
+		"http://dbpedia.org/resource/5th_Connecticut_Infantry_Regiment",
+		"http://dbpedia.org/resource/5th_Combined_Arms_Army"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingLabel some (foundedBy some      (Agent or MusicGenre or Work))))  and (foundedBy some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Chrysalis_Records",
+		"http://dbpedia.org/resource/Charisma_Records",
+		"http://dbpedia.org/resource/Rockland_Records",
+		"http://dbpedia.org/resource/Ice_Age_Entertainment",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Smash_the_House",
+		"http://dbpedia.org/resource/G-Note_Records",
+		"http://dbpedia.org/resource/Bigger_Picture_Music_Group",
+		"http://dbpedia.org/resource/Monarc_Entertainment",
+		"http://dbpedia.org/resource/4th_&_B'way_Records",
+		"http://dbpedia.org/resource/GRP_Records",
+		"http://dbpedia.org/resource/Barnaby_Records",
+		"http://dbpedia.org/resource/Harvest_Records",
+		"http://dbpedia.org/resource/Caroline_Distribution",
+		"http://dbpedia.org/resource/Blue_Thumb_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Magnanimous_Records",
+		"http://dbpedia.org/resource/DOOM_Inc",
+		"http://dbpedia.org/resource/MCA_Music_Inc._(Philippines)",
+		"http://dbpedia.org/resource/Universal_Music_Group_Nigeria",
+		"http://dbpedia.org/resource/MP3_Disques",
+		"http://dbpedia.org/resource/ABC_Music",
+		"http://dbpedia.org/resource/Gonzo_(company)",
+		"http://dbpedia.org/resource/Lumiere_Records",
+		"http://dbpedia.org/resource/Dell_EMC_XtremIO"
+	]
+	},
+	{
+	"concept": "(MusicalWork  and (artist some (recordLabel some      (Agent or MusicGenre or Work))))  and (recordLabel some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Love_Is_All_Around",
+		"http://dbpedia.org/resource/Love_Is_Easy_(McFly_song)",
+		"http://dbpedia.org/resource/Love_Letters_in_the_Sand",
+		"http://dbpedia.org/resource/Love_(John_Lennon_song)",
+		"http://dbpedia.org/resource/Love_Isn't_Easy_(But_It_Sure_Is_Hard_Enough)",
+		"http://dbpedia.org/resource/Love_Hurts",
+		"http://dbpedia.org/resource/Love_Don't_Die",
+		"http://dbpedia.org/resource/Love_Comes_Again",
+		"http://dbpedia.org/resource/Love_Goes_On_(song)",
+		"http://dbpedia.org/resource/Love_Is_a_Beautiful_Thing_(Phil_Vassar_song)",
+		"http://dbpedia.org/resource/Love-Hate-Sex-Pain",
+		"http://dbpedia.org/resource/Love_Is_a_Battlefield",
+		"http://dbpedia.org/resource/Love_Is_a_War",
+		"http://dbpedia.org/resource/Love_Is_Requited",
+		"http://dbpedia.org/resource/99_(song)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/70_Volt_Parade",
+		"http://dbpedia.org/resource/AC/DC_(video)",
+		"http://dbpedia.org/resource/A'arab_Zaraq_–_Lucid_Dreaming",
+		"http://dbpedia.org/resource/87_Hits_Out",
+		"http://dbpedia.org/resource/Love_Battery",
+		"http://dbpedia.org/resource/2014_S/S",
+		"http://dbpedia.org/resource/Low_Millions",
+		"http://dbpedia.org/resource/AFA_for_Effort"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingCompany some (distributingCompany some      (Agent or Work))))  and (distributingCompany some      (Agent or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Freeworld_Entertainment",
+		"http://dbpedia.org/resource/MTM_Records",
+		"http://dbpedia.org/resource/Peaceville_Records",
+		"http://dbpedia.org/resource/Noise_Records",
+		"http://dbpedia.org/resource/SBK_Records",
+		"http://dbpedia.org/resource/Because_Music",
+		"http://dbpedia.org/resource/Frontiers_Records",
+		"http://dbpedia.org/resource/Rethink_(record_label)",
+		"http://dbpedia.org/resource/Spinefarm_Records",
+		"http://dbpedia.org/resource/Ecstatic_Peace!",
+		"http://dbpedia.org/resource/Capitol_Records_Nashville",
+		"http://dbpedia.org/resource/Brainfeeder",
+		"http://dbpedia.org/resource/Big_Vin_Records",
+		"http://dbpedia.org/resource/Caroline_Distribution",
+		"http://dbpedia.org/resource/Capitol_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Nonclassical",
+		"http://dbpedia.org/resource/Nothing_Records",
+		"http://dbpedia.org/resource/Lovepump_United_Records",
+		"http://dbpedia.org/resource/Hi_Records",
+		"http://dbpedia.org/resource/Alligator_Records",
+		"http://dbpedia.org/resource/DJM_Records",
+		"http://dbpedia.org/resource/Underscore_Records_Pvt._Ltd.",
+		"http://dbpedia.org/resource/Probe_Records",
+		"http://dbpedia.org/resource/Universal_Records_(1995)",
+		"http://dbpedia.org/resource/Blackheart_Records",
+		"http://dbpedia.org/resource/United_Artists_Records",
+		"http://dbpedia.org/resource/VP_Records",
+		"http://dbpedia.org/resource/Madison_Gate_Records",
+		"http://dbpedia.org/resource/Machine_Shop_Records",
+		"http://dbpedia.org/resource/Maison_de_Soul"
+	]
+	},
+	{
+	"concept": "(RecordLabel  and (distributingLabel some (keyPerson some      (Agent or MusicGenre or Work))))  and (keyPerson some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Big_Machine_Records"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Carousel_Productions",
+		"http://dbpedia.org/resource/George_S._and_Dolores_Doré_Eccles_Foundation",
+		"http://dbpedia.org/resource/Central_Huijin_Investment",
+		"http://dbpedia.org/resource/Universal_Warning_Records",
+		"http://dbpedia.org/resource/Constellation_Records_(Chicago)",
+		"http://dbpedia.org/resource/Lyric_Street_Records",
+		"http://dbpedia.org/resource/Joseph_Schlitz_Brewing_Company",
+		"http://dbpedia.org/resource/Khaadi",
+		"http://dbpedia.org/resource/United_Artists_Records",
+		"http://dbpedia.org/resource/Ujikaji",
+		"http://dbpedia.org/resource/Corpus_Christi_Records"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (creator some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Russell_Howard's_Good_News",
+		"http://dbpedia.org/resource/Minute_to_Win_It_Indonesia",
+		"http://dbpedia.org/resource/You_Are_the_One_(Argentine_TV_series)",
+		"http://dbpedia.org/resource/The_Inbetweeners",
+		"http://dbpedia.org/resource/Friday_Night_Dinner"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Raiders_(comics)",
+		"http://dbpedia.org/resource/Wrecking_Ball_(Overwatch)",
+		"http://dbpedia.org/resource/Frankenstein_(DC_Comics)",
+		"http://dbpedia.org/resource/War_Machine",
+		"http://dbpedia.org/resource/Geist_(DC_Comics)",
+		"http://dbpedia.org/resource/Chemistro",
+		"http://dbpedia.org/resource/Sam_Evans",
+		"http://dbpedia.org/resource/Daffy_Duck"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Work))  and (translator some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/We_(novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Blind_Willow,_Sleeping_Woman",
+		"http://dbpedia.org/resource/Nesthäkchen_in_the_Children's_Sanitorium",
+		"http://dbpedia.org/resource/Ecstasy:_A_Study_of_Happiness",
+		"http://dbpedia.org/resource/The_Mind's_Eye_(novel)",
+		"http://dbpedia.org/resource/A_Winter_amid_the_Ice",
+		"http://dbpedia.org/resource/Rau_(novel)",
+		"http://dbpedia.org/resource/Lullaby_(Slimani_novel)",
+		"http://dbpedia.org/resource/Kalyani_Inscriptions",
+		"http://dbpedia.org/resource/The_Construction_and_Principal_Uses_of_Mathematical_Instruments",
+		"http://dbpedia.org/resource/An_Enigmatic_Nature",
+		"http://dbpedia.org/resource/Glass_Palace_Chronicle",
+		"http://dbpedia.org/resource/The_Agunah",
+		"http://dbpedia.org/resource/The_Physical_Principles_of_the_Quantum_Theory",
+		"http://dbpedia.org/resource/One_Woman's_War:_Da_(Mother)",
+		"http://dbpedia.org/resource/A_Stanislaw_Lem_Reader"
+	]
+	},
+	{
+	"concept": "((politicalPartyInLegislature some      (Agent or MusicGenre))  and (politicalPartyInLegislature some Agent))  and Agent",
+	"positives": [
+		"http://dbpedia.org/resource/Folketing",
+		"http://dbpedia.org/resource/Albuquerque_City_Council",
+		"http://dbpedia.org/resource/North_Carolina_General_Assembly",
+		"http://dbpedia.org/resource/Bago_Region_Hluttaw",
+		"http://dbpedia.org/resource/Malacca_State_Legislative_Assembly",
+		"http://dbpedia.org/resource/Secretariat_of_the_Naifaru_Council",
+		"http://dbpedia.org/resource/Lublin_Regional_Assembly",
+		"http://dbpedia.org/resource/Cheshire_West_and_Chester_Council",
+		"http://dbpedia.org/resource/Florida_Legislature",
+		"http://dbpedia.org/resource/Chiayi_County_Council",
+		"http://dbpedia.org/resource/Utah_State_Legislature",
+		"http://dbpedia.org/resource/Liverpool_City_Council",
+		"http://dbpedia.org/resource/Chamber_of_Representatives_of_Colombia",
+		"http://dbpedia.org/resource/Dewan_Rakyat",
+		"http://dbpedia.org/resource/Chamber_of_Deputies_of_Chile"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/2014–15_Invicta_Dynamos_season",
+		"http://dbpedia.org/resource/2014_killings_of_NYPD_officers",
+		"http://dbpedia.org/resource/2015_Tyrone_shooting",
+		"http://dbpedia.org/resource/2014–15_FC_ViOn_Zlaté_Moravce_season",
+		"http://dbpedia.org/resource/2015_Örebro_SK_season",
+		"http://dbpedia.org/resource/2017_Fresno_shooting_spree",
+		"http://dbpedia.org/resource/195th_Infantry_Division_(German_Empire)",
+		"http://dbpedia.org/resource/2015–16_Munster_Rugby_season",
+		"http://dbpedia.org/resource/2013–14_Panionios_B.C._season",
+		"http://dbpedia.org/resource/2013–14_WBFAL",
+		"http://dbpedia.org/resource/2014_Colchester_murders",
+		"http://dbpedia.org/resource/2017_Resorts_World_Manila_attack",
+		"http://dbpedia.org/resource/2015–16_Invicta_Dynamos_season",
+		"http://dbpedia.org/resource/2017_Patna_Pirates_season",
+		"http://dbpedia.org/resource/195th_Ohio_Infantry"
+	]
+	},
+	{
+	"concept": "(Artist  and (training some (notableWork some Work)))  and (notableWork some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/Philip_R._Goodwin",
+		"http://dbpedia.org/resource/Pietro_Perugino",
+		"http://dbpedia.org/resource/Simone_Martini",
+		"http://dbpedia.org/resource/Henri_Matisse",
+		"http://dbpedia.org/resource/Filippino_Lippi"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Lucien_Guitry",
+		"http://dbpedia.org/resource/Akiyuki_Nosaka",
+		"http://dbpedia.org/resource/Lorin_Morgan-Richards",
+		"http://dbpedia.org/resource/Lovie_Austin",
+		"http://dbpedia.org/resource/Binod_Bihari_Verma",
+		"http://dbpedia.org/resource/Love_(Ai_Otsuka)",
+		"http://dbpedia.org/resource/Aleksey_Pisemsky",
+		"http://dbpedia.org/resource/Ștefan_Luchian",
+		"http://dbpedia.org/resource/60_Second_Assassin_(rapper)",
+		"http://dbpedia.org/resource/Lyrian",
+		"http://dbpedia.org/resource/Lovefoxxx",
+		"http://dbpedia.org/resource/Juan_de_Pareja",
+		"http://dbpedia.org/resource/Rockne_S._O'Bannon",
+		"http://dbpedia.org/resource/A._W._Baskcomb",
+		"http://dbpedia.org/resource/Loyce_Houlton"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Agent))  and (coverArtist some      (Agent or MusicGenre or Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Ruposhi_Bangla",
+		"http://dbpedia.org/resource/The_Secret_of_Evil",
+		"http://dbpedia.org/resource/Eumeswil",
+		"http://dbpedia.org/resource/Les_Enfants_Terribles",
+		"http://dbpedia.org/resource/The_Battle_(Rambaud_novel)",
+		"http://dbpedia.org/resource/Cousin_Bazilio",
+		"http://dbpedia.org/resource/Parables_and_Paradoxes",
+		"http://dbpedia.org/resource/The_Unfinished_Memoirs"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Mera_monster,_Alfons!",
+		"http://dbpedia.org/resource/Daikaiju!_Giant_Monster_Tales",
+		"http://dbpedia.org/resource/A_Fire_Upon_the_Deep",
+		"http://dbpedia.org/resource/The_Dragon_and_the_George",
+		"http://dbpedia.org/resource/Dwellers_in_the_Crucible"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Work))  and ((coverArtist some      (Agent or MusicGenre or Work))  and (coverArtist some Agent))",
+	"positives": [
+		"http://dbpedia.org/resource/We_(novel)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Daisy_Gets_Lost",
+		"http://dbpedia.org/resource/Casualties_of_Peace",
+		"http://dbpedia.org/resource/Orbital_Resonance_(novel)",
+		"http://dbpedia.org/resource/Cartesian_Reflections",
+		"http://dbpedia.org/resource/The_Ruins_of_Ambrai"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (subsequentWork some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/M*A*S*H_(TV_series)",
+		"http://dbpedia.org/resource/Alvin_and_the_Chipmunks_(1983_TV_series)",
+		"http://dbpedia.org/resource/Warner_Bros._Presents"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Don't_Cry_Wolf_(song)",
+		"http://dbpedia.org/resource/Go_Deep",
+		"http://dbpedia.org/resource/U_Remind_Me",
+		"http://dbpedia.org/resource/Go!_Go!_Here_We_Go!_Rock_Lee_/_Otona_wa_Wakatte_Kurenai",
+		"http://dbpedia.org/resource/Love_Lies_(song)",
+		"http://dbpedia.org/resource/Quand_je_te_rêve",
+		"http://dbpedia.org/resource/Goodbye_(Jason_Derulo_and_David_Guetta_song)",
+		"http://dbpedia.org/resource/Dinhing_Dapita_Sadya"
+	]
+	},
+	{
+	"concept": "((composer some      (Agent or MusicGenre or Work))  and (composer some Work))  and (previousWork some Work)",
+	"positives": [
+		"http://dbpedia.org/resource/Noel's_House_Party",
+		"http://dbpedia.org/resource/Alvin_and_the_Chipmunks_(1983_TV_series)"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Lust_for_Life_(Lana_Del_Rey_song)",
+		"http://dbpedia.org/resource/Do_You_Wanna_Be%3F",
+		"http://dbpedia.org/resource/Dibs_(song)",
+		"http://dbpedia.org/resource/Blurred_Lines",
+		"http://dbpedia.org/resource/Living_Darfur"
+	]
+	},
+	{
+	"concept": "((translator some      (Agent or MusicGenre or Work))  and (translator some Agent))  and ((publisher some      (Agent or MusicGenre or Work))  and (publisher some Work))",
+	"positives": [
+		"http://dbpedia.org/resource/Torrents_of_Spring",
+		"http://dbpedia.org/resource/Amers",
+		"http://dbpedia.org/resource/Open_Veins_of_Latin_America"
+	],
+	"negatives": [
+		"http://dbpedia.org/resource/Ice_(Sorokin_novel)",
+		"http://dbpedia.org/resource/Poetics_of_Cinema",
+		"http://dbpedia.org/resource/The_Debut_of_Battling_Billson",
+		"http://dbpedia.org/resource/Les_Fleurs_du_mal",
+		"http://dbpedia.org/resource/ABC-Zeitung",
+		"http://dbpedia.org/resource/Otherwise_than_Being",
+		"http://dbpedia.org/resource/Thathamma",
+		"http://dbpedia.org/resource/A_Journey_to_Arzrum",
+		"http://dbpedia.org/resource/A_Parisian_Affair",
+		"http://dbpedia.org/resource/Knife_(novel)"
+	]
+	}
+]
