@@ -1,28 +1,30 @@
 endpoint: http://dbpedia.org/sparql
-owlFile: ./dbpedia_2016-10.owl
+owlFile: ./fixed-ontology.owl
 seed: 123
 types:
+  - http://dbpedia.org/ontology/Politician
+  - http://dbpedia.org/ontology/Company
+  - http://dbpedia.org/ontology/RecordLabel
+  - http://dbpedia.org/ontology/ArchitecturalStructure
+  - http://dbpedia.org/ontology/Architect
+  - http://dbpedia.org/ontology/Person
+  - http://dbpedia.org/ontology/Mayor
+  - http://dbpedia.org/ontology/Work
   - http://dbpedia.org/ontology/Band
   - http://dbpedia.org/ontology/MusicalArtist
   - http://dbpedia.org/ontology/Album
   - http://dbpedia.org/ontology/Actor
   - http://dbpedia.org/ontology/MusicGenre
 maxNoOfIndividuals: 5
-maxIndividualsPerExampleConcept: 50
-percentageOfPositiveExamples: 0.1
-percentageOfNegativeExamples: 0.1
+maxIndividualsPerExampleConcept: 30
+percentageOfPositiveExamples: 0.5
+percentageOfNegativeExamples: 0.5
 maxNoOfExamples: 30
 minNoOfExamples: 5
+maxGenerateConcepts: 100
+maxConceptLength: 8
+maxDepth: 1
+removeLiterals: true
+namespace: http://dbpedia.org/ontology/
 concepts:
-  - positive: MusicalArtist and genre min 5
-  - positive: MusicalArtist and genre min 3
-    negatives:
-      - Album
-      - MusicalArtist and genre max 2
-  - positive: Actor and MusicalArtist
-    negatives:
-      - MusicalArtist and not Actor
-      - Actor and not MusicalArtist
-  - positive: MusicalArtist and alias min 2
-    negatives:
-      - MusicalArtist and alias max 1
+  - positive: Album  and (artist some Agent)

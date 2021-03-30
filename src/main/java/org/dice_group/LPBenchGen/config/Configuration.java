@@ -7,6 +7,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Configuration {
@@ -38,8 +39,8 @@ seed:
 */
 
 
-    @JsonProperty(required = true)
-    private List<String> types;
+    @JsonProperty(required = false)
+    private List<String> types = new ArrayList<>();
     @JsonProperty(required = false, defaultValue = "0")
     private Integer maxNoOfIndividuals=0;
     @JsonProperty(required = false, defaultValue = "0.5")
@@ -72,7 +73,26 @@ seed:
     private String owlFile;
     @JsonProperty(required = false)
     private boolean endpointInfersRules=false;
+    @JsonProperty(required = false)
+    private boolean removeLiterals=false;
+    @JsonProperty(required = false)
+    private String namespace;
 
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public boolean isRemoveLiterals() {
+        return removeLiterals;
+    }
+
+    public void setRemoveLiterals(boolean removeLiterals) {
+        this.removeLiterals = removeLiterals;
+    }
 
     public boolean isEndpointInfersRules() {
         return endpointInfersRules;

@@ -6,6 +6,8 @@ import org.dice_group.LPBenchGen.sparql.IndividualRetriever;
 import org.semanticweb.HermiT.Configuration;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectComplementOfImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
@@ -19,8 +21,11 @@ import java.util.*;
  */
 public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OWLTBoxPositiveCreator.class.getName());
+
     private final List<String> originalTypes;
     private final Reasoner res;
+    private final String namespace;
     private IndividualRetriever retriever;
     private OWLOntology onto;
     public List<String> allowedTypes;
@@ -34,26 +39,27 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     public int minConceptLength=4;
     public boolean inferDirectSuperClasses=true;
 
-    public OWLTBoxPositiveCreator(IndividualRetriever retriever, OWLOntology onto, List<String> allowedTypes, Parser parser, Reasoner res){
+    public OWLTBoxPositiveCreator(IndividualRetriever retriever, OWLOntology onto, List<String> allowedTypes, Parser parser, Reasoner res, String allowedNamespace){
         this.retriever=retriever;
         this.onto=onto;
         this.originalTypes = allowedTypes;
         this.allowedTypes=new ArrayList<String>(new HashSet<String>(allowedTypes));
         this.parser=parser;
         this.res=res;
+        this.namespace=allowedNamespace;
     }
 
     public Collection<String> createDistinctConcepts(int noOfConcepts){
         Set<String> ret = new HashSet<String>();
         int toSmallCount=0;
         int noResults=0;
-        for(OWLClassExpression concept : createConcepts(noOfConcepts)){
+        for(OWLClassExpression concept : createConcepts()){
 
             if(getConceptLength(concept)<minConceptLength){
                 toSmallCount++;
                 continue;
             }
-            if(!retriever.retrieveIndividualsForConcept(concept, 1, 1).isEmpty()) {
+            if(!retriever.retrieveIndividualsForConcept(concept, 1, 5).isEmpty()) {
 
                 ret.add(parser.render(concept));
                 if(ret.size()>=noOfConcepts){
@@ -65,8 +71,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
 
         }
         List<String> ret2= new ArrayList<String>(ret);
-        //keepRandom(ret2, noOfConcepts);
-        System.out.println("Final "+ret2.size()+" concepts. ["+toSmallCount+" to small, "+noResults+" with no results/timeout]");
+        LOGGER.info("Final {} concepts. [{} to small, {} with no results/timeout]", ret2.size(), toSmallCount, noResults);
         return ret2;
     }
 
@@ -76,7 +81,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         return 1.0*renderer.conceptLength;
     }
 
-    public Collection<OWLClassExpression> createConcepts(int noOfConcepts){
+    public Collection<OWLClassExpression> createConcepts(){
         List<OWLClassExpression> concepts = new ArrayList<OWLClassExpression>();
         List<String> allowedTypes = new ArrayList<String>(this.allowedTypes);
         allowedTypes.forEach(type -> {
@@ -89,7 +94,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
             }
         });
         concepts.addAll(createOverlappingClassConcepts());
-        System.out.println("Found "+concepts.size()+" theoretically possible concepts.");
+        LOGGER.info("Found {} theoretically possible concepts.", concepts.size());
         return concepts;
     }
 
@@ -99,16 +104,18 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         if(inferDirectSuperClasses && originalTypes.contains(owlClass.getIRI().toString())) {
             res.getSuperClasses(owlClass, true).forEach(node -> {
                 node.getEntities().forEach(superClass -> {
-                    onto.getReferencingAxioms(superClass).stream().filter(x -> x instanceof OWLObjectPropertyRangeAxiom || x instanceof OWLObjectPropertyDomainAxiom).forEach(
-                            supClassAxiom -> {
-                                ret.add(supClassAxiom);
-                                String str = superClass.getIRI().toString();
-                                if (!allowedTypes.contains(str))
-                                    allowedTypes.add(str);
+                    if(namespace==null || superClass.getIRI().toString().startsWith(namespace)) {
+                        onto.getReferencingAxioms(superClass).stream().filter(x -> x instanceof OWLObjectPropertyRangeAxiom || x instanceof OWLObjectPropertyDomainAxiom).forEach(
+                                supClassAxiom -> {
 
-                            }
-                    );
-                    //TODO
+                                    ret.add(supClassAxiom);
+                                    String str = superClass.getIRI().toString();
+                                    if (!allowedTypes.contains(str))
+                                        allowedTypes.add(str);
+
+                                }
+                        );
+                    }
                 });
             });
         }
@@ -116,12 +123,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         return ret;
     }
 
-    private void keepRandom(List<String> concepts, int noOfConcepts) {
-        Random rand =new Random();
-        while(concepts.size()>noOfConcepts){
-            concepts.remove(rand.nextInt(concepts.size()));
-        }
-    }
 
     private Collection<? extends OWLClassExpression> createOverlappingClassConcepts() {
         Collection<OWLClassExpression> ret = new ArrayList<OWLClassExpression>();
@@ -162,103 +163,107 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         return concepts;
     }
 
-    private Collection<OWLClassExpression> createSingleClassConcepts(Set<OWLAxiom> axioms, OWLClass current) {
+    private void createConceptFromRangeAxiom(OWLObjectPropertyRangeAxiom ax, int depth, Collection<OWLClassExpression> ret, OWLClass owlClass){
+        OWLObjectPropertyExpression prop = ax.getProperty();
+        OWLClassExpression owlClass2 = ax.getRange();
+        owlClass2 = pruneUnionExpr(owlClass2);
+        OWLClassExpression classRange =null;
+        if(owlClass2 != null) {
+            classRange = new OWLObjectSomeValuesFromImpl(prop, owlClass2);
+            ret.add(classRange);
+        }
+        Collection<OWLClass> propClasses = getClassesForProperty(prop);
+        propClasses.remove(owlClass2);
+        propClasses.remove(owlClass);
 
-        Collection<OWLClassExpression> ret = new ArrayList<OWLClassExpression>();
+        OWLClassExpression finalClassRange = classRange;
+        propClasses.forEach(propClass ->{
+            if(finalClassRange!=null && allowedTypes.contains(propClass.getIRI().toString())) {
+                OWLClassExpression propRange = new OWLObjectSomeValuesFromImpl(prop, propClass);
+                propRange = pruneUnionExpr(propRange);
+                if(propRange!=null){
+                    OWLClassExpression expr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(finalClassRange, propRange));
+                    //if (!retriever.retrieveIndividualsForConcept(expr, 1,1 ).isEmpty()) {
 
-        axioms.forEach(axiom ->{
-            ret.addAll(createConceptFromAxiom(axiom, Sets.newHashSet()));
+                    ret.add(expr);
+                    if (depth < maxDepth) {
+                        createConceptsFromClass(propClass, false, depth + 1).forEach(concept -> {
+                            OWLClassExpression newExpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, concept));
+                            ret.add(newExpr);
+
+                        });
+                    }
+                }
+            }
         });
-        return ret;
     }
+
+    private void createConceptFromDomainAxiom(OWLObjectPropertyDomainAxiom ax, int depth, Collection<OWLClassExpression> ret, OWLClass owlClass){
+        OWLObjectPropertyExpression prop = ax.getProperty();
+        Collection<OWLClass> propClasses = getClassesForProperty(prop);
+
+        OWLClassExpression owlClass2 = ax.getDomain();
+        owlClass2 = pruneUnionExpr(owlClass2);
+
+        propClasses.remove(owlClass2);
+        propClasses.remove(owlClass);
+        OWLClassExpression finalOwlClass = owlClass2;
+        propClasses.forEach(propClass ->{
+            if(finalOwlClass !=null &&  allowedTypes.contains(propClass.getIRI().toString())) {
+                OWLClassExpression propRange = new OWLObjectSomeValuesFromImpl(prop, propClass);
+                propRange = pruneUnionExpr(propRange);
+                if(propRange!=null){
+
+                    OWLClassExpression expr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(owlClass, propRange));
+                    //if (!retriever.retrieveIndividualsForConcept(expr, 1, 1).isEmpty()) {
+
+                    ret.add(expr);
+
+                    if (depth < maxDepth) {
+                        createConceptsFromClass(propClass, false, depth + 1).forEach(concept -> {
+                            //OWLClassExpression iexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(owlClass, concept));
+                            OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(finalOwlClass, new
+                                    OWLObjectSomeValuesFromImpl(prop, concept)));
+                            if (getConceptLength(pexpr) < maxConceptLength) {
+                                OWLClassExpression newExpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(pexpr, concept));
+                                ret.add(newExpr);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
 
     private Collection<OWLClassExpression> createConceptsFromClass(OWLClass owlClass, boolean onlyRange, int depth){
         Collection<OWLClassExpression> ret = new ArrayList<OWLClassExpression>();
         ret.add(owlClass);
-        /*
-    TODO:
-        for class   -> get axioms class=domain -> C + C and (Vr.D)
-                    -> get axioms class=range -> Vr.C + Vr.(C and (Vr2.D))
-     */
-        Set<OWLAxiom> rangeAxioms = new HashSet<OWLAxiom>();
-        Set<OWLAxiom> domainAxioms = new HashSet<OWLAxiom>();
+
         getAxiomsForClass(owlClass).forEach(axiom ->{
             if(!onlyRange && axiom instanceof OWLObjectPropertyRangeAxiom){
-                rangeAxioms.add(axiom);
+                createConceptFromRangeAxiom(((OWLObjectPropertyRangeAxiom) axiom), depth,ret, owlClass);
             }
-            if((axiom instanceof OWLDataPropertyDomainAxiom || axiom instanceof OWLObjectPropertyDomainAxiom)){
-                domainAxioms.add(axiom);
+            if(axiom instanceof OWLObjectPropertyDomainAxiom){
+                createConceptFromDomainAxiom(((OWLObjectPropertyDomainAxiom) axiom), depth,ret, owlClass);
             }
         });
-        for(OWLAxiom ax : domainAxioms){
-            if(ax instanceof  OWLObjectPropertyDomainAxiom){
-                OWLObjectPropertyExpression prop = ((OWLObjectPropertyDomainAxiom)ax).getProperty();
-                Collection<OWLClass> propClasses = getClassesForProperty(prop);
-                OWLClassExpression owlClass2 = ((OWLObjectPropertyDomainAxiom) ax).getDomain();
-                propClasses.remove(owlClass2);
-                propClasses.remove(owlClass);
-                propClasses.forEach(propClass ->{
-                    if(allowedTypes.contains(propClass.getIRI().toString())) {
-                        OWLClassExpression propRange = new OWLObjectSomeValuesFromImpl(prop, propClass);
-                        OWLClassExpression expr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(owlClass, propRange));
-                        //if (!retriever.retrieveIndividualsForConcept(expr, 1).isEmpty()) {
-
-                            ret.add(expr);
-
-                            if (depth < maxDepth) {
-
-                                createConceptsFromClass(propClass, false, depth + 1).forEach(concept -> {
-                                    //OWLClassExpression iexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(owlClass, concept));
-                                    OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(owlClass2, new
-                                            OWLObjectSomeValuesFromImpl(prop, concept)));
-                                    if (getConceptLength(pexpr) < maxConceptLength) {
-                                        OWLClassExpression newExpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(pexpr, concept));
-                                            ret.add(newExpr);
-
-                                    }
-                                });
-                            }
-                        //}
-                    }
-                });
-            }
-        }
-        //TODO check if onlyRange makes sense
-        for(OWLAxiom ax : rangeAxioms) {
-            if (ax instanceof OWLObjectPropertyRangeAxiom) {
-
-                OWLObjectPropertyExpression prop = ((OWLObjectPropertyRangeAxiom)ax).getProperty();
-                OWLClassExpression owlClass2 = ((OWLObjectPropertyRangeAxiom) ax).getRange();
-
-                OWLClassExpression classRange = new OWLObjectSomeValuesFromImpl(prop, owlClass2);
-                ret.add(classRange);
-                Collection<OWLClass> propClasses = getClassesForProperty(prop);
-                propClasses.remove(owlClass2);
-                propClasses.remove(owlClass);
-
-                propClasses.forEach(propClass ->{
-                    if(allowedTypes.contains(propClass.getIRI().toString())) {
-                        OWLClassExpression propRange = new OWLObjectSomeValuesFromImpl(prop, propClass);
-                        OWLClassExpression expr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(classRange, propRange));
-                        //if (!retriever.retrieveIndividualsForConcept(expr, 1).isEmpty()) {
-
-                            ret.add(expr);
-                            if (depth < maxDepth) {
-                                //TODO check if Intersection already in
-                                createConceptsFromClass(propClass, false, depth + 1).forEach(concept -> {
-                                    OWLClassExpression newExpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, concept));
-                                        ret.add(newExpr);
-
-                                });
-                            }
-                       //}
-                    }
-                });
-            }
-        }
-        ///TODO rangeAxioms
-        //get all axioms which are domain, which are range
         return ret;
+    }
+
+    private OWLClassExpression pruneUnionExpr(OWLClassExpression propRange) {
+        List<OWLClass> classes = new ArrayList<>();
+        if(propRange instanceof OWLObjectUnionOf){
+            ((OWLObjectUnionOf)propRange).classesInSignature().filter(x-> allowedTypes.contains(x.getIRI().toString())).forEach(type ->{
+                classes.add(type);
+            });
+            if(classes.isEmpty()){
+                return null;
+            }
+            return dataFactory.getOWLObjectUnionOf(classes);
+
+        }
+        return propRange;
     }
 
     private Collection<OWLClass> getClassesForProperty(OWLObjectPropertyExpression prop) {
@@ -269,67 +274,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
             }
         });
         return ret;
-    }
-
-
-    private Collection<OWLClassExpression> createConceptFromAxiom(OWLAxiom axiom, Collection<OWLAxiom> current){
-        Collection<OWLClassExpression> ret = new ArrayList<OWLClassExpression>();
-        current.add(axiom);
-        OWLClassExpression expr = getBaseExpression(axiom);
-        //TODO only add if types are allowed
-        ret.addAll(axiom.getNestedClassExpressions());
-        ret.add(expr);
-        if(expr==null){
-            return ret;
-        }
-        //TODO not getClassesInSignature -> get Range Types if Axiom is range Property!
-        //TODO rewrite completely
-        Set<OWLClass> classesToHandle = axiom.getClassesInSignature();
-        //classesToHandle.removeAll(current);
-        classesToHandle.forEach(owlClass -> {
-            Collection<OWLAxiom> axioms = getAxioms(owlClass);
-            axioms.removeAll(current);
-            for (OWLAxiom axiom2 : axioms) {
-                for(OWLClassExpression expr2 : createConceptFromAxiom(axiom2, current)) {
-                   OWLClassExpression expressions = new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, expr2));
-                   try {
-                       ret.add(expressions.getNNF());
-                   }catch(Exception e){
-                       e.printStackTrace();
-                   }
-                }
-            }
-        });
-        return ret;
-    }
-
-    private OWLClassExpression getBaseExpression(OWLAxiom axiom) {
-        //TODO
-        OWLAxiomVisitorBase visitor = new OWLAxiomVisitorBase();
-        axiom.accept(visitor);
-        //if axiom is type -> return OWLClass
-        //otherwise return dataPropertyExpr/objectPropertyExpr
-        return visitor.getExpression();
-    }
-
-    private Collection<OWLAxiom> getAxioms(OWLClass owlClass){
-        Collection<OWLAxiom> ret = new ArrayList<OWLAxiom>();
-        Set<OWLAxiom> axioms = getAxiomsForClass(owlClass);
-        axioms.forEach(axiom ->{
-            if(checkAllowedAxiom(axiom)){
-                ret.add(axiom);
-            }
-        });
-        return ret;
-    }
-
-    private boolean checkAllowedAxiom(OWLAxiom axiom) {
-        for(OWLClass owlClass : axiom.getClassesInSignature()){
-            if(!allowedTypes.contains(owlClass.getIRI().toString())){
-                return false;
-            }
-        }
-        return true;
     }
 
     protected int[] getCardinalities(){

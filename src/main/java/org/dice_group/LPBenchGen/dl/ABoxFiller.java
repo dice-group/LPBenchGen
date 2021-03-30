@@ -12,35 +12,20 @@ import org.dice_group.LPBenchGen.sparql.QueryTripleMappingVisitor;
 import org.dice_group.LPBenchGen.sparql.VariableCollector;
 import org.dice_group.LPBenchGen.sparql.visitors.QueryRemoveUselessTriplesVisitor;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-/*
-TODO:
-should be solved already with adding object types :)
- [http://dbpedia.org/resource/Holland–Dozier–Holland, http://dbpedia.org/resource/F4_(band)]
- tp: 0, fp: 0, fn: 2
- Person  and (Band  and (bandMember some Person))
- */
+
 public class ABoxFiller {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ABoxFiller.class.getName());
 
     private OWLDataFactory factory = new OWLDataFactoryImpl();
     private List<String> allowedTypes;
     private IndividualRetriever retriever;
-
-    public static void main(String[] args) throws OWLOntologyCreationException {
-        IndividualRetriever retriever = new IndividualRetriever("http://dbpedia.org/sparql");
-        ABoxFiller filler = new ABoxFiller(retriever, Lists.newArrayList("http://dbpedia.org/ontology/Person", "http://dbpedia.org/ontology/City", "http://dbpedia.org/ontology/Place"));
-        Parser parser = new Parser("./dbpedia_2016-10.owl");
-        OWLClassExpression ce = parser.parseManchesterConcept("Person and (birthPlace some (City and location some Place))");
-
-        String startIndvidual  = retriever.retrieveIndividualsForConcept(ce).iterator().next();
-        filler.addIndividualsFromConcept(ce, startIndvidual, parser.getOntology());
-    }
 
     public ABoxFiller(IndividualRetriever retriever, List<String> allowedTypes){
         this.retriever=retriever;
@@ -48,14 +33,6 @@ public class ABoxFiller {
     }
 
     public boolean addIndividualsFromConcept(OWLClassExpression concept, String startIndividual, OWLOntology ontology){
-        //walk concept from startIndividual -> For all rules recursively add Individuals who have the connection
-        // e.g. MusicalArtist some prop1 (Politician and some prop2 XYZ)
-        // -> startIndividual prop1 ?o1 . ?o1 rdf:type Politician ; prop2 ?o2
-        // -> add ?o1 and ?o2 and add o1 type Policitian; prop2 o2
-        //    add MusicalArtist1
-        // add/or (should be straigth forward as well)
-        // get SPARQL query from OWL2SPARQL -> but instead fill startIndividual with VAR and get all other variables
-        //TODO subqueries check
 
         OWL2SPARQL sparql = new OWL2SPARQL();
         Query q = sparql.asQuery(concept, "?var");
@@ -77,7 +54,6 @@ public class ABoxFiller {
                 ontology.addAxioms(getTypeAxiomsForIndividual(subject));
             }else {
                 Query query = QueryFactory.create(queryStr);
-                //TODO walk query pattern -> remove non var triples
                 QueryRemoveUselessTriplesVisitor visitor2 = new QueryRemoveUselessTriplesVisitor();
                 ElementWalker.walk(query.getQueryPattern(), visitor2);
 
@@ -93,7 +69,9 @@ public class ABoxFiller {
                 ontology.addAxioms(axioms);
             }
         }catch(Exception e){
-            e.printStackTrace();
+            String id = UUID.randomUUID().toString();
+            LOGGER.error("{}:, Could not add Individuals for concept {} with Individual {}", id, concept, startIndividual);
+            LOGGER.error(id+": Due to: ", e);
             return false;
         }
         return true;

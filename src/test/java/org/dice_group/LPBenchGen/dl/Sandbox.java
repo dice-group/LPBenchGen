@@ -16,6 +16,7 @@ import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassEx
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxPrefixNameShortFormProvider;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
@@ -46,7 +47,7 @@ public class Sandbox {
 
         Configuration conf = new Configuration();
         conf.ignoreUnsupportedDatatypes=true;
-        Reasoner rc = new Reasoner(conf, ontology);
+        OWLReasoner rc = new Reasoner(conf, ontology);
         ManchesterOWLSyntaxClassExpressionParser parser = new ManchesterOWLSyntaxClassExpressionParser(dataFactory, checker);
         JSONArray examples = new JSONArray(FileUtils.readFileToString(new File("./testbench6-lp.json")));
         examples.forEach(example ->{

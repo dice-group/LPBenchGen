@@ -19,7 +19,15 @@ public class ConceptLengthCalculator extends DLSyntaxObjectRenderer {
 
     public  void visit(OWLObjectUnionOf ce) {
         conceptLength++;
-        super.visit(ce);
+        boolean types=true;
+        for(OWLClassExpression expr : ce.getOperands()){
+            if(!(expr instanceof OWLClass)){
+                types=false;
+            }
+        }
+        if(!types) {
+            super.visit(ce);
+        }
     }
 
     public void visit(OWLObjectComplementOf ce) {

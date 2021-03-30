@@ -29,6 +29,8 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImplString;
 
@@ -38,37 +40,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class IndividualRetriever {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(IndividualRetriever.class.getName());
     public static final String DEFAULT_VARIABLE_NAME = "var";
     private String endpoint;
     public boolean useCSV=false;
 
     public IndividualRetriever(String endpoint){
         this.endpoint=endpoint;
-    }
-
-    public List<String> retrieveIndividualsForType(String uriType){
-        String sparqlQuery = createTypeQuery(uriType);
-
-        return createRequest(sparqlQuery, 180);
-    }
-
-    private List<OWLLiteral> createDataRequest(String sparqlQuery){
-        List<OWLLiteral> ret =  new ArrayList<OWLLiteral>();
-
-        Query q = QueryFactory.create(sparqlQuery);
-        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, q);
-        ResultSet res = qexec.execSelect();
-        while(res.hasNext()){
-            ret.add(transformLiteral(res.next().getLiteral(DEFAULT_VARIABLE_NAME)));
-        }
-        return ret;
     }
 
     private OWLLiteral transformLiteral(Literal literal) {
@@ -114,6 +96,9 @@ public class IndividualRetriever {
         }catch(Exception e){
             //System.out.println("Code: "+code+", CT: "+actualContentType);
             //e.printStackTrace();
+            String id = UUID.randomUUID().toString();
+            LOGGER.warn("Could not execute request due to {}, see debug id:{}", e.getMessage(), id);
+            LOGGER.debug(id+": ", e);
         }
         return ret;
     }
@@ -129,7 +114,7 @@ public class IndividualRetriever {
         try {
             return byteSource.asCharSource(Charsets.UTF_8).read();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not read stream due to ",e);
         }
         return "";
 
@@ -156,17 +141,6 @@ public class IndividualRetriever {
     }
 
     private String createQuery(OWLClassExpression concept) {
-        // Atomic C -> ?s type C
-        // rC -> ?s r ?o . ?o type C
-        // rD -> ?s r ?o . D
-        // C or D  {C} UNION {D} // a little bit more problematic
-        // C and D -> C . D .
-        // not C -> ?? thats also possible, FILTER (?s )
-        // female and president -> {?s type female; type president}
-        // female or president -> {?s type female} union {?s type president}
-        // female and (not (isR President or artist)) -> {?s type female . FILTER (?s not in {{?s isR ?o . ?o type president} UNION { ?s type artist }})
-        // female and (President or artist)) -> {?s type female . {{?s type president} UNION { ?s type artist }}} ???
-        //                                      {?s type female . FILTER ( ?s in {?s type artist} OR ?s in {?s type president})}
         OWL2SPARQL converter = new OWL2SPARQL();
         Query q  = converter.asQuery(concept, "?var");
         q.setLimit(100);
@@ -177,30 +151,6 @@ public class IndividualRetriever {
         return createRequest(createTypesQuery(uri), 180);
     }
 
-    public Collection<String[]> retrieveIndividualsForRule(String uri, Collection<String> rules) {
-        Collection<String[]> ret = new HashSet<String[]>();
-        for(String rule: rules){
-            for(String r : createRequest(createRuleQuery(uri, rule), 180)){
-                ret.add(new String[]{rule, r});
-            }
-        }
-        return ret;
-    }
-
-    public Collection<Object[]> retrieveIndividualsForDataRule(String uri, Collection<OWLDataProperty> rules) {
-        Collection<Object[]> ret = new ArrayList<Object[]>();
-        for(OWLDataProperty rule: rules){
-            for(OWLLiteral r : createDataRequest(createRuleQuery(uri, rule.getIRI().toString()))){
-                ret.add(new Object[]{rule, r});
-            }
-        }
-        return ret;
-    }
-
-
-    private String createRuleQuery(String uri, String rule) {
-        return "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?"+DEFAULT_VARIABLE_NAME+" { <"+uri+"> <"+rule+"> ?"+DEFAULT_VARIABLE_NAME+"}";
-    }
 
     public ResultSet getResultMap(Query q) {
         try {
@@ -220,7 +170,7 @@ public class IndividualRetriever {
             ResultSet res= ResultSetMgr.read(is, lang);
             return res;
         }catch(Exception e){
-            e.printStackTrace();
+            LOGGER.error("Could not retrieve result map due to " ,e);
         }
         return null;
     }

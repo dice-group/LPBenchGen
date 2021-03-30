@@ -7,9 +7,13 @@ import org.dice_group.LPBenchGen.dl.ABoxFiller;
 import org.dice_group.LPBenchGen.dl.OWLNegationCreator;
 import org.dice_group.LPBenchGen.dl.OWLTBoxPositiveCreator;
 import org.dice_group.LPBenchGen.dl.Parser;
+import org.dice_group.LPBenchGen.dl.visitors.ConceptSubClassesExchanger;
 import org.dice_group.LPBenchGen.sparql.IndividualRetriever;
 import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectUnionOfImpl;
@@ -20,24 +24,23 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LPGenerator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LPGenerator.class.getName());
 
     private IndividualRetriever retriever;
     private long seed=0;
     private int minExamples;
     private int maxExamples;
     private Parser parser;
-    private Map<String, Collection<String[]>> rulesMapping = new HashMap<String, Collection<String[]>>();
-    private Map<String, Collection<Object[]>> dataRulesMapping = new HashMap<String, Collection<Object[]>>();
     private List<String> types;
     private OWLClassExpression typesExpr;
     private Reasoner res;
 
-
-    public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
-        Configuration conf = Configuration.loadFromFile(configFile);
+    private void init(Configuration conf) throws OWLOntologyCreationException {
         parser = new Parser(conf.getOwlFile());
         org.semanticweb.HermiT.Configuration conf2 = new org.semanticweb.HermiT.Configuration();
         conf2.ignoreUnsupportedDatatypes=true;
@@ -46,58 +49,94 @@ public class LPGenerator {
         retriever = new IndividualRetriever(conf.getEndpoint());
         seed= conf.getSeed();
         types = conf.getTypes();
+        if(types==null || types.isEmpty()){
+            types=new ArrayList<>();
+            Set<OWLClass> classes = parser.getOntology().getClassesInSignature();
+            classes.forEach(cl -> {
+                if(!(cl.getIRI().toString().startsWith("http://www.w3.org/2002/07/owl#") ||
+                        cl.getIRI().toString().startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#") ||
+                        cl.getIRI().toString().startsWith("http://www.w3.org/2000/01/rdf-schema#"))) {
+                    types.add(cl.getIRI().toString());
+                }
+            });
+        }
         minExamples=conf.getMinNoOfExamples();
         maxExamples=conf.getMaxNoOfExamples();
+    }
 
-
+    private Collection<LPProblem> generateProblems(List<PosNegExample> concepts){
         Collection<LPProblem> problems = new ArrayList<LPProblem>();
-
-        if(conf.getConcepts()==null) {
-
-            conf.setConcepts(generateConcepts(conf.getMaxGenerateConcepts(), conf.getMinConceptLength(), conf.getMaxConceptLength(), conf.getMaxDepth(), conf.getInferDirectSuperClasses()));
-        }
-        createTypesExpr();
         int count=0;
-        for(PosNegExample concept : conf.getConcepts()){
+        for(PosNegExample concept : concepts){
             boolean negativeGenerated=false;
             if(concept.getNegatives() == null || concept.getNegatives().size()==0){
+                LOGGER.info("Generating negative concepts for {}th problem.", count+1);
                 concept.setNegatives(generateNegativeConcepts(concept.getPositive()));
+                LOGGER.info("Generated {} concepts for {}th problem.",concept.getNegatives().size(), count+1);
                 negativeGenerated=true;
             }
             try {
                 problems.add(generateLPProblem(concept, parser,negativeGenerated));
                 count++;
-                System.out.println("Finished problem generation " + count + "/" + conf.getConcepts().size());
+                LOGGER.info("Finished generating examples for {}/{} problem.", count, concepts.size());
             }catch(Exception e ){
-                e.printStackTrace();
+                LOGGER.error("Could not generate problem. ", e);
             }
         }
-        //for all individuals in LP problem add them
-        ABoxFiller filler = new ABoxFiller(retriever, types);
-        fillAbox(filler, problems,conf.getMaxIndividualsPerExampleConcept());
-        /*Collection<String> individuals = getIndividuals(problems, conf.getTypes(), conf.getMaxNoOfIndividuals(), conf.getMaxIndividualsPerExampleConcept());
-        for(String individual : individuals){
-            addIndividuals(parser.getOntology(), createIndividual(individual, conf.getTypes()));
-        }*/
-        for(LPProblem problem : problems) {
-            cutProblems(problem, conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
-            if(!conf.isEndpointInfersRules()) {
-                measure(problem, parser.getOntology());
-            }
-        }
-        System.out.println("Ontology has now "+parser.getOntology().getIndividualsInSignature().size()+" Individuals");
-        //debugAdd();
-        saveOntology(name+"-ontology.owl", parser.getOntology());
-        saveLPProblem(name+"-lp.json", problems);
+        return problems;
     }
 
-    private void debugAdd() {
-        OWLAxiom axiom;
-        OWLDataFactory factory = new OWLDataFactoryImpl();
-        OWLObjectPropertyExpression pexpr = factory.getOWLObjectProperty(IRI.create("http://dbpedia.org/ontology/headquarter"));
-        OWLClass orga = factory.getOWLClass("http://dbpedia.org/ontology/Organisation");
-        axiom=factory.getOWLObjectPropertyRangeAxiom(pexpr, orga);
-        parser.getOntology().add(axiom);
+    private Reasoner createReasoner(){
+        org.semanticweb.HermiT.Configuration confRes = new org.semanticweb.HermiT.Configuration();
+        confRes.ignoreUnsupportedDatatypes=true;
+        confRes.throwInconsistentOntologyException=false;
+        return new Reasoner(confRes, parser.getOntology());
+    }
+
+    private void validateProblems(Collection<LPProblem> problems, boolean isEndpointInfersRules, double percOfPositiveExamples, double percOfNegativeExamples){
+        Reasoner res = createReasoner();
+
+        for(LPProblem problem : problems) {
+            if(!isEndpointInfersRules) {
+                measure(problem, parser.getOntology(), res);
+            }
+            cutProblems(problem, percOfPositiveExamples, percOfNegativeExamples);
+
+        }
+    }
+
+    public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
+        Configuration conf = Configuration.loadFromFile(configFile);
+        init(conf);
+
+        if(conf.getConcepts()==null) {
+            LOGGER.info("Generating concepts now...");
+            conf.setConcepts(generateConcepts(conf.getMaxGenerateConcepts(), conf.getMinConceptLength(), conf.getMaxConceptLength(), conf.getMaxDepth(), conf.getInferDirectSuperClasses(), conf.getNamespace()));
+            LOGGER.info("Generated {} positive concepts.", conf.getConcepts().size());
+        }
+        createTypesExpr();
+
+        LOGGER.info("Starting to generate examples from concepts");
+        Collection<LPProblem> problems = generateProblems(conf.getConcepts());
+
+        //for all individuals in LP problem add them
+        LOGGER.info("Filling ABox now.");
+        ABoxFiller filler = new ABoxFiller(retriever, types);
+        fillAbox(filler, problems,conf.getMaxIndividualsPerExampleConcept());
+        LOGGER.info("Filled ABox.");
+
+        LOGGER.info("Validating problems now using reasoner.");
+        validateProblems(problems, conf.isEndpointInfersRules(), conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
+        LOGGER.info("Ontology has now {} Individuals", parser.getOntology().getIndividualsInSignature().size());
+
+        if(conf.isRemoveLiterals()){
+            LOGGER.info("Removing Literals from Ontology now.");
+            removeLiteralsFromOntology();
+        }
+        LOGGER.info("Finished generation, saving now...");
+        saveOntology(name+"-ontology.ttl", parser.getOntology());
+        saveLPProblem(name+"-lp.json", problems);
+        LOGGER.info("Benchmark generation done.");
     }
 
     private void createTypesExpr() {
@@ -108,94 +147,99 @@ public class LPGenerator {
         typesExpr = new OWLObjectUnionOfImpl(classes);
     }
 
-    private void measure(LPProblem problem, OWLOntology ontology) {
-        org.semanticweb.HermiT.Configuration conf = new org.semanticweb.HermiT.Configuration();
-        conf.ignoreUnsupportedDatatypes=true;
-        conf.throwInconsistentOntologyException=false;
+    private void measure(LPProblem problem, OWLOntology ontology, Reasoner res) {
+        LOGGER.info("Checking concept {}.",problem.goldStandardConcept);
 
-        Reasoner res = new Reasoner(conf, ontology);
-        Set<OWLNamedIndividual> instances = res.getInstances(parser.parseManchesterConcept(problem.goldStandardConcept), true).getFlattened();
-        Set<String> temp = new HashSet<String>();
-        instances.forEach(i ->{
-            temp.add(i.getIRI().toString());
-        });
-        Set<String> temp2 = new HashSet<String>();
-        problem.positives.forEach(indi ->{
-            temp2.add(indi);
-        });
-        temp2.removeAll(temp);
-        if(temp2.size()!=0){
-            System.out.println("Found "+temp+" not found.");
+        OWLDataFactory factory = new OWLDataFactoryImpl();
+
+        Set<String> rem = new HashSet<>();
+        for(String pos : problem.positives){
+            if(!res.hasType(factory.getOWLNamedIndividual(pos), problem.goldStandardConceptExpr, true)){
+                LOGGER.warn("FP: {}", pos);
+                rem.add(pos);
+            }
         }
-        int negCount=0;
-        Set<String> rem = new HashSet<String>();
-        for(String p : problem.negatives){
-            if(temp.contains(p)){
-                rem.add(p);
-                negCount++;
+        problem.positives.removeAll(rem);
+        rem.clear();
+        for(String nes : problem.negatives){
+            if(res.hasType(factory.getOWLNamedIndividual(nes), problem.goldStandardConceptExpr, true)){
+                LOGGER.warn("FN: {}", nes);
+                LOGGER.warn("Negative concept: {}", parser.render(problem.negativeMap.get(nes).getNNF()));
+                rem.add(nes);
             }
         }
         problem.negatives.removeAll(rem);
-        if(rem.size()>0) {
-            System.out.println("Found " + negCount + " which shouldn't be found");
+    }
+
+    private AtomicReference<OWLClassExpression>  fillNegativeConcept(OWLClassExpression negativeExpr, boolean isNegativeGenerated){
+        AtomicReference<OWLClassExpression> actNegExa = new AtomicReference<>(negativeExpr);
+        if(isNegativeGenerated) {
+            negativeExpr.components().forEach(x->{
+                if(x instanceof List){
+                    ((List)x).forEach(e->{
+
+                        if (!((OWLClassExpression)e).equals(typesExpr)) {
+                            actNegExa.set((OWLClassExpression) e);
+                        }
+                    });
+
+                }else {
+                    if (!x.equals(typesExpr)) {
+                        actNegExa.set((OWLClassExpression) x);
+                    }
+                }
+            });
+        }
+        return actNegExa;
+    }
+
+    private void fillAboxForProblem(LPProblem problem, ABoxFiller filler, Integer maxIndividualsPerExampleConcept){
+        problem.positives = getRandom(new ArrayList<>(problem.positives), maxIndividualsPerExampleConcept);
+        problem.negatives = getRandom(new ArrayList<>(problem.negatives), maxIndividualsPerExampleConcept);
+        ArrayList<String> rem = new ArrayList<>();
+        problem.positives.forEach(pos ->{
+            if(!filler.addIndividualsFromConcept(problem.goldStandardConceptAsExpr(), pos, parser.getOntology())){
+                rem.add(pos);
+            }
+        });
+        if(!rem.isEmpty()) {
+            LOGGER.info("Errors occured at individuals, removing {} from positives.", rem);
+            problem.positives.removeAll(rem);
+        }
+        rem.clear();
+        problem.negatives.forEach(nes ->{
+            OWLClassExpression negativeExpr = problem.getExpr(nes);
+            AtomicReference<OWLClassExpression> actNegExa = fillNegativeConcept(negativeExpr, problem.negativeGenerated);
+            if(!filler.addIndividualsFromConcept(actNegExa.get(), nes, parser.getOntology())){
+                rem.add(nes);
+            }
+        });
+        if(!rem.isEmpty()) {
+            LOGGER.info("Errors occured at individuals, removing {} from negatives.", rem);
+            problem.negatives.removeAll(rem);
+            rem.clear();
         }
     }
 
     private void fillAbox(ABoxFiller filler, Collection<LPProblem> problems, Integer maxIndividualsPerExampleConcept) {
         AtomicInteger count= new AtomicInteger();
+        AtomicInteger emptyCount= new AtomicInteger();
+        AtomicLong size = new AtomicLong(problems.size());
         problems.forEach(problem ->{
-            problem.positives = getRandom(new ArrayList<>(problem.positives), maxIndividualsPerExampleConcept);
-            problem.negatives = getRandom(new ArrayList<>(problem.negatives), maxIndividualsPerExampleConcept);
-            ArrayList<String> rem = new ArrayList<>();
-            problem.positives.forEach(pos ->{
-                if(!filler.addIndividualsFromConcept(problem.goldStandardConceptAsExpr(), pos, parser.getOntology())){
-                    rem.add(pos);
-                }
-            });
-            if(!rem.isEmpty()) {
-                System.out.println("Errors occured at individuals, removing " + rem + " from positives");
-                problem.positives.removeAll(rem);
-            }
-            rem.clear();
-            problem.negatives.forEach(nes ->{
-                //TODO remove if error
-                OWLClassExpression negativeExpr = problem.getExpr(nes);
-                AtomicReference<OWLClassExpression> actNegExa = new AtomicReference<>(negativeExpr);
-                if(problem.negativeGenerated) {
-                    negativeExpr.components().forEach(x->{
-                        if(x instanceof List){
-                            ((List)x).forEach(e->{
-
-                                if (!((OWLClassExpression)e).equals(typesExpr)) {
-                                    actNegExa.set((OWLClassExpression) e);
-                                }
-                            });
-
-                        }else {
-                            if (!x.equals(typesExpr)) {
-                                actNegExa.set((OWLClassExpression) x);
-                            }
-                        }
-                    });
-                }
-                if(!filler.addIndividualsFromConcept(actNegExa.get(), nes, parser.getOntology())){
-                    rem.add(nes);
-                }
-            });
-            if(!rem.isEmpty()) {
-                System.out.println("Errors occured at individuals, removing " + rem + " from negatives");
-                problem.negatives.removeAll(rem);
-                rem.clear();
-            }
+            fillAboxForProblem(problem, filler, maxIndividualsPerExampleConcept);
             count.getAndIncrement();
-            System.out.println("Filled Abox for problem "+(count)+"/"+problems.size());
+            if(problem.positives.isEmpty() || problem.negatives.isEmpty()){
+                emptyCount.getAndIncrement();
+                size.getAndDecrement();
+            }
+            LOGGER.info("Filled Abox for problem {}/{} [{} empty]", count, size, emptyCount.get());
         });
     }
 
-    private List<PosNegExample> generateConcepts(Integer maxGenerateConcepts, Integer minConceptLength, Integer maxConceptLength, Integer maxDepth, boolean inferDirectSuperClasses) {
+    private List<PosNegExample> generateConcepts(Integer maxGenerateConcepts, Integer minConceptLength, Integer maxConceptLength, Integer maxDepth, boolean inferDirectSuperClasses, String namespace) {
         List<PosNegExample> examples =new ArrayList<PosNegExample>();
 
-        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(retriever, parser.getOntology(), types, parser, res);
+        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(retriever, parser.getOntology(), types, parser, res, namespace);
         creator.minConceptLength=minConceptLength;
         creator.maxConceptLength=maxConceptLength;
         creator.maxDepth=maxDepth;
@@ -225,39 +269,6 @@ public class LPGenerator {
         keepPercentage(problem.positives, percentageOfPositiveExamples);
         keepPercentage(problem.negatives, percentageOfNegativeExamples);
     }
-
-    private Collection<String> getIndividuals(Collection<LPProblem> problems, List<String> types, Integer maxNoOfIndividuals,Integer maxNoOfIndividualsPerExampleConcept) {
-        Collection<String> ret = new TreeSet<String>();
-
-        for(String type : types){
-            List<String> typeIndividuals = retriever.retrieveIndividualsForType(type);
-            ret.addAll(getRandom(typeIndividuals, maxNoOfIndividuals));
-        }
-        for(LPProblem problem : problems){
-            //TODO Axioms from
-            problem.positives = getRandom(new ArrayList<>(problem.positives), maxNoOfIndividualsPerExampleConcept);
-            problem.negatives = getRandom(new ArrayList<>(problem.negatives), maxNoOfIndividualsPerExampleConcept);
-            ret.addAll(problem.positives);
-            ret.addAll(problem.negatives);
-
-            addRules(ret, problem.positives, problem.rules, problem.dataRules);
-            addRules(ret, problem.negatives, problem.rules, problem.dataRules);
-        }
-        return ret;
-    }
-
-    private void addRules(Collection<String> addTo, Collection<String> examples, Collection<String> rules, Collection<OWLDataProperty> dataRules) {
-        for (String uri : examples) {
-            Collection<String[]> retrvRules = retriever.retrieveIndividualsForRule(uri, rules);
-            Collection<Object[]> retrvDataRules = retriever.retrieveIndividualsForDataRule(uri, dataRules);
-            dataRulesMapping.put(uri, retrvDataRules);
-            rulesMapping.put(uri, retrvRules);
-            retrvRules.forEach(rule -> {
-                addTo.add(rule[1]);
-            });
-        }
-    }
-
 
     private Collection<String> getRandom(List<String> list, Integer max) {
         int maxNoOfIndividuals = Math.min(max, list.size());
@@ -297,7 +308,6 @@ public class LPGenerator {
         pos = transformConceptSubClasses(pos, "OR", false);
         problem.goldStandardConceptExpr=pos;
         problem.rules = parser.getRulesInExpr(pos, problem.dataRules);
-        //TODO check core:Protein  and (core:encodedBy some core:Gene),  http://purl.uniprot.org/EMBLWGS/ECF0332865
 
         problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos));
         for(OWLClassExpression neg : concept.getNegatives()){
@@ -322,16 +332,15 @@ public class LPGenerator {
         if(rem){
              expr = removeExpr(neg);
         }
-
         String conceptString = parser.render(expr);
+
         for(String type : types){
-            String shortFormType = parser.getShortName(type);
-            if(conceptString.contains(shortFormType)) {
-                conceptString = conceptString.replace(shortFormType, getIntersectSubClasses(type, combiner));
-            }
+            ConceptSubClassesExchanger exchanger = new ConceptSubClassesExchanger();
+            exchanger.replace=type;
+            exchanger.replacer=parser.parseManchesterConcept(getUnionSubClasses(type, combiner).toString());
+            expr.accept(exchanger);
         }
-        //parser.getShortName(conceptString);
-        return new OWLObjectIntersectionOfImpl(Lists.newArrayList(parser.parseManchesterConcept(conceptString), typesExpr));
+        return new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, typesExpr));
     }
 
     private OWLClassExpression removeExpr(OWLClassExpression neg) {
@@ -354,23 +363,7 @@ public class LPGenerator {
 
     }
 
-    private CharSequence getUnionSubClasses(String type) {
-        OWLDataFactory factory = new OWLDataFactoryImpl();
-        StringBuilder builder = new StringBuilder("( ").append(parser.getShortName(type)).append(" OR ");
-        AtomicInteger count= new AtomicInteger();
-        res.getSubClasses(factory.getOWLClass(type)).getFlattened().stream()
-                .filter(subClass -> types.contains(subClass.getIRI().toString())).forEach(containedSubClass ->{
-                    builder.append(parser.getShortName(containedSubClass.getIRI().toString()));
-                    builder.append(" OR ");
-                    count.getAndIncrement();
-        });
-        if(count.get() ==0) {
-            return parser.getShortName(type);
-        }
-        return builder.subSequence(0, builder.length() - 4) + ")";
-    }
-
-    private CharSequence getIntersectSubClasses(String type, String combiner) {
+    private CharSequence getUnionSubClasses(String type, String combiner) {
         OWLDataFactory factory = new OWLDataFactoryImpl();
         StringBuilder builder = new StringBuilder("( ").append(parser.getShortName(type)).append(" OR ");
         AtomicInteger count= new AtomicInteger();
@@ -381,61 +374,11 @@ public class LPGenerator {
                 count.getAndIncrement();
             }
         }
-        /*
-        for(OWLClass subClass : res.getSuperClasses(factory.getOWLClass(type)).getFlattened()){
-            if(types.contains(subClass.getIRI().toString())){
-                builder.append(parser.getShortName(subClass.getIRI().toString()));
-                builder.append(" ").append(combiner).append(" ");
-                count.getAndIncrement();
-            }
-        }
-        */
 
         if(count.get() ==0) {
             return parser.getShortName(type);
         }
         return builder.subSequence(0, builder.length() - 4) + ")";
-    }
-
-    public Collection<OWLAxiom> createIndividual(String uri, Collection<String> typesAllowed){
-        OWLDataFactory factory = new OWLDataFactoryImpl();
-        Collection<OWLAxiom> axioms = new ArrayList<OWLAxiom>();
-        //1. retrieve all types (which are also in the config) for uri as subject
-        Collection<String> types = retriever.retrieveTypesForIndividual(uri);
-        Collection<String> disallowed = new HashSet<String>();
-        for(String type : types){
-            if(!typesAllowed.contains(type)){
-                disallowed.add(type);
-            }
-        }
-        types.removeAll(disallowed);
-        OWLNamedIndividual individual = factory.getOWLNamedIndividual(IRI.create(uri));
-        //3. create with OWLDataFactory assertions for all retrieved types
-        for(String type : types){
-            OWLClassExpression expr = factory.getOWLClass(IRI.create(type));
-            OWLAxiom axiom = factory.getOWLClassAssertionAxiom(expr, individual);
-            axioms.add(axiom);
-        }
-
-        if(rulesMapping.containsKey(uri)) {
-            for (String[] rule : rulesMapping.get(uri)) {
-                OWLNamedIndividual obj = factory.getOWLNamedIndividual(IRI.create(rule[1]));
-                OWLObjectProperty prop = factory.getOWLObjectProperty(IRI.create(rule[0]));
-                OWLAxiom axiom = factory.getOWLObjectPropertyAssertionAxiom(prop, individual, obj);
-                axioms.add(axiom);
-
-            }
-        }
-
-        if(dataRulesMapping.containsKey(uri)) {
-            for (Object[] rule : dataRulesMapping.get(uri)) {
-                OWLDataProperty prop = (OWLDataProperty) rule[0];
-                OWLAxiom axiom = factory.getOWLDataPropertyAssertionAxiom(prop, individual, (OWLLiteral)rule[1]);
-                axioms.add(axiom);
-
-            }
-        }
-        return axioms;
     }
 
     public void addIndividuals(OWLOntology ontology, Collection<OWLAxiom> individuals){
@@ -446,9 +389,9 @@ public class LPGenerator {
 
     public void saveOntology(String output, OWLOntology ontology){
         try(FileOutputStream fos = new FileOutputStream(output))   {
-            ontology.saveOntology(fos);
+            ontology.saveOntology(new TurtleDocumentFormat(), fos);
         } catch (IOException | OWLOntologyStorageException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not store ontology. ", e);
         }
 
     }
@@ -476,7 +419,7 @@ public class LPGenerator {
             });
             pw.print("\n]");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not write LP Problem as file was not found.", e);
         }
     }
 
@@ -492,5 +435,16 @@ public class LPGenerator {
             }
 
         }
+    }
+
+
+    public void removeLiteralsFromOntology(){
+        OWLOntology ontology = this.parser.getOntology();
+        List<OWLDataPropertyAxiom> rem = new ArrayList<OWLDataPropertyAxiom>();
+        ontology.getAxioms().stream().filter(x -> x instanceof OWLDataPropertyAxiom).forEach(ax ->{
+            OWLDataPropertyAxiom axiom = (OWLDataPropertyAxiom) ax;
+            rem.add(axiom);
+        });
+        ontology.remove(rem);
     }
 }
