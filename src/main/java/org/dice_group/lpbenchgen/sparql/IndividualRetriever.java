@@ -105,7 +105,7 @@ public class IndividualRetriever {
             //System.out.println("Code: "+code+", CT: "+actualContentType);
             //e.printStackTrace();
             String id = UUID.randomUUID().toString();
-            LOGGER.warn("Could not execute request due to {}, see debug id:{}", e.getMessage(), id);
+            LOGGER.debug("Could not execute request due to {}, see debug id:{}", e.getMessage(), id);
             LOGGER.debug(id+": ", e);
         }
         return ret;

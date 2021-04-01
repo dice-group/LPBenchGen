@@ -34,9 +34,7 @@ import java.util.*;
  * <p>
  * <p>
  * Copied the OWLClassExpressionToSPARQLConverter from https://github.com/SmartDataAnalytics/OWL2SPARQL and change some bits
- *
- * @author Lixi Alié Conrads
- */
+ **/
 public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpressionVisitor, OWLDataRangeVisitor{
 
     private static final Logger logger = LoggerFactory.getLogger(OWLClassExpressionToSPARQLConverter.class);

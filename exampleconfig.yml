@@ -11,18 +11,21 @@ types:
   - http://dbpedia.org/ontology/Mayor
   - http://dbpedia.org/ontology/Work
   - http://dbpedia.org/ontology/Band
+  - http://dbpedia.org/ontology/Band
+  - http://dbpedia.org/ontology/MusicalArtist
   - http://dbpedia.org/ontology/MusicalArtist
   - http://dbpedia.org/ontology/Album
+  - http://dbpedia.org/ontology/Album
+  - http://dbpedia.org/ontology/Actor
   - http://dbpedia.org/ontology/Actor
   - http://dbpedia.org/ontology/MusicGenre
-maxNoOfIndividuals: 5
+  - http://dbpedia.org/ontology/MusicGenre
+maxNoOfIndividuals: 0
 maxIndividualsPerExampleConcept: 30
 percentageOfPositiveExamples: 0.5
 percentageOfNegativeExamples: 0.5
 maxNoOfExamples: 30
 minNoOfExamples: 5
-maxGenerateConcepts: 100
+maxGenerateConcepts: 10
 maxConceptLength: 8
 maxDepth: 1
-removeLiterals: true
-namespace: http://dbpedia.org/ontology/

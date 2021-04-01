@@ -84,7 +84,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
                 continue;
             }
             try {
-                if (!retriever.retrieveIndividualsForConcept(concept, 1, 5).isEmpty()) {
+                if (!retriever.retrieveIndividualsForConcept(concept, 1, 2).isEmpty()) {
 
                     ret.add(parser.render(concept));
                     if (ret.size() >= noOfConcepts) {
