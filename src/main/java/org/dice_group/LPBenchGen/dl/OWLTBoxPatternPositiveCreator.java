@@ -9,6 +9,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
 
+/**
+ * The type Owlt box pattern positive creator.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class OWLTBoxPatternPositiveCreator implements  OWLTBoxConceptCreator{
 
     private OWLOntology ontology;
@@ -45,12 +50,24 @@ public class OWLTBoxPatternPositiveCreator implements  OWLTBoxConceptCreator{
         return null;
     }
 
+    /**
+     * Convert pattern string.
+     *
+     * @param pattern the pattern
+     * @return the string
+     */
     public String convertPattern(OWLClassExpression pattern){
         Pattern2ExprVisitor visitor = new Pattern2ExprVisitor(ontology);
         pattern.accept(visitor);
         return visitor.getExprAsString();
     }
 
+    /**
+     * Has solution boolean.
+     *
+     * @param concept the concept
+     * @return the boolean
+     */
     public boolean hasSolution(String concept){
         return true;
     }

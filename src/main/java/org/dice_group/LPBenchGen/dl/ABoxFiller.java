@@ -19,6 +19,11 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import java.util.*;
 
 
+/**
+ * The type A box filler.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class ABoxFiller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ABoxFiller.class.getName());
@@ -27,11 +32,25 @@ public class ABoxFiller {
     private List<String> allowedTypes;
     private IndividualRetriever retriever;
 
+    /**
+     * Instantiates a new A box filler.
+     *
+     * @param retriever    the retriever
+     * @param allowedTypes the allowed types
+     */
     public ABoxFiller(IndividualRetriever retriever, List<String> allowedTypes){
         this.retriever=retriever;
         this.allowedTypes=allowedTypes;
     }
 
+    /**
+     * Add individuals from concept boolean.
+     *
+     * @param concept         the concept
+     * @param startIndividual the start individual
+     * @param ontology        the ontology
+     * @return the boolean
+     */
     public boolean addIndividualsFromConcept(OWLClassExpression concept, String startIndividual, OWLOntology ontology){
 
         OWL2SPARQL sparql = new OWL2SPARQL();

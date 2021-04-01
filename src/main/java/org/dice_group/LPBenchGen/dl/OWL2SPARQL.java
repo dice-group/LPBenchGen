@@ -32,9 +32,11 @@ import java.util.*;
  * A converter from OWL 2 class expressions  to SPARQL queries.
  * Author:
  * Lorenz Buehmann
- *
- *
+ * <p>
+ * <p>
  * Copied the OWLClassExpressionToSPARQLConverter from https://github.com/SmartDataAnalytics/OWL2SPARQL and change some bits
+ *
+ * @author Lixi Alié Conrads
  */
 public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpressionVisitor, OWLDataRangeVisitor{
 
@@ -80,10 +82,23 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
 
     private boolean negatedDataRange = false;
 
+    /**
+     * Instantiates a new Owl 2 sparql.
+     */
     public OWL2SPARQL() {}
 
+    /**
+     * Instantiates a new Owl 2 sparql.
+     *
+     * @param useStar the use star
+     */
     public OWL2SPARQL(boolean useStar) {this.useStar=useStar;}
 
+    /**
+     * Instantiates a new Owl 2 sparql.
+     *
+     * @param mapping the mapping
+     */
     public OWL2SPARQL(VariablesMapping mapping) {
         this.mapping = mapping;
     }
@@ -93,10 +108,9 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
      * <code>rootVariable</code> as projection variable. It's possible to
      * return it as COUNT query if wanted.
      *
-     * @param ce the OWL class expression to convert
-     * @param rootVariable the name of the projection variable in the SPARQL
-     *            query
-     * @param countQuery whether to return a SELECT (COUNT(?var) as ?cnt) query
+     * @param ce           the OWL class expression to convert
+     * @param rootVariable the name of the projection variable in the SPARQL            query
+     * @param countQuery   whether to return a SELECT (COUNT(?var) as ?cnt) query
      * @return the SPARQL query
      */
     public String convert(OWLClassExpression ce, String rootVariable, boolean countQuery){
@@ -107,9 +121,8 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
      * Converts an OWL class expression into a SPARQL query with
      * <code>rootVariable</code> as projection variable.
      *
-     * @param ce the OWL class expression to convert
-     * @param rootVariable the name of the projection variable in the SPARQL
-     *            query
+     * @param ce           the OWL class expression to convert
+     * @param rootVariable the name of the projection variable in the SPARQL            query
      * @return the SPARQL query
      */
     public Query asQuery(OWLClassExpression ce, String rootVariable){
@@ -121,10 +134,9 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
      * <code>rootVariable</code> as projection variable. It's possible to
      * return it as COUNT query if wanted.
      *
-     * @param ce the OWL class expression to convert
-     * @param rootVariable the name of the projection variable in the SPARQL
-     *            query
-     * @param countQuery whether to return a SELECT (COUNT(?var) as ?cnt) query
+     * @param rootVariable the name of the projection variable in the SPARQL            query
+     * @param ce           the OWL class expression to convert
+     * @param countQuery   whether to return a SELECT (COUNT(?var) as ?cnt) query
      * @return the SPARQL query
      */
     public Query asQuery(String rootVariable, OWLClassExpression ce, boolean countQuery){
@@ -140,9 +152,8 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
      * in the query, that are then additionally used as projection variables
      * and grouping variables.
      *
-     * @param ce the OWL class expression to convert
-     * @param rootVariable the name of the projection variable in the SPARQL
-     *            query
+     * @param rootVariable     the name of the projection variable in the SPARQL            query
+     * @param ce               the OWL class expression to convert
      * @param variableEntities a set of entities that are replaced by variables
      * @return the SPARQL query
      */
@@ -158,11 +169,10 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
      * and grouping variables. Moreover, it's possible to
      * return a COUNT query if wanted.
      *
-     * @param ce the OWL class expression to convert
-     * @param rootVariable the name of the projection variable in the SPARQL
-     *            query
+     * @param rootVariable     the name of the projection variable in the SPARQL            query
+     * @param ce               the OWL class expression to convert
      * @param variableEntities a set of entities that are replaced by variables
-     * @param countQuery whether to return a SELECT (COUNT(?var) as ?cnt) query
+     * @param countQuery       whether to return a SELECT (COUNT(?var) as ?cnt) query
      * @return the SPARQL query
      */
     public Query asQuery(String rootVariable, OWLClassExpression ce, Set<? extends OWLEntity> variableEntities, boolean countQuery){
@@ -211,8 +221,9 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
     /**
      * Converts an OWL class expression into a GroupGraphPattern, which can be described
      * as the outer-most graph pattern in a query, sometimes also called the query pattern.
-     * @param ce the OWL class expression
-     * @param rootVariable  the name of the projection variable
+     *
+     * @param ce           the OWL class expression
+     * @param rootVariable the name of the projection variable
      * @return a SPARQL graph pattern
      */
     public String asGroupGraphPattern(OWLClassExpression ce, String rootVariable){
@@ -222,8 +233,9 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
     /**
      * Converts an OWL class expression into a GroupGraphPattern, which can be described
      * as the outer-most graph pattern in a query, sometimes also called the query pattern.
-     * @param ce the OWL class expression
-     * @param rootVariable the name of the projection variable
+     *
+     * @param ce                     the OWL class expression
+     * @param rootVariable           the name of the projection variable
      * @param needOuterTriplePattern whether
      * @return a SPARQL graph pattern
      */
@@ -248,6 +260,7 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
 
     /**
      * Whether to return SPARQL queries with DISTINCT keyword.
+     *
      * @param useDistinct <code>true</code> if use DISTINCT, otherwise <code>false</code>
      */
     public void setUseDistinct(boolean useDistinct) {
@@ -258,13 +271,13 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
      * Since SPARQL 1.1 there is a mechanism called property
      * paths (see <a href="http://www.w3.org/TR/sparql11-query/#propertypaths">W3C rec.</a>),
      * which allows to add some kind of light-weight inferencing to a SPARQL query.
-     *
+     * <p>
      * Currently, we do the following if enabled
      *
      * <ul>
      * <li>?s rdf:type :A . -&gt; ?s rdf:type/(rdfs:subClassOf|owl:equivalentClass)* :A . </li>
      * </ul>
-     *
+     * <p>
      * Note, this feature only works on query engines that support SPARQL 1.1 .
      *
      * @param useReasoning use inferencing
@@ -293,12 +306,18 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
 
     /**
      * How to express <code>owl:Thing</code> in SPARQL.
+     *
      * @param owlThingRendering the owlThingRendering to set
      */
     public void setOwlThingRendering(OWLThingRendering owlThingRendering) {
         this.owlThingRendering = owlThingRendering;
     }
 
+    /**
+     * Gets variables mapping.
+     *
+     * @return the variables mapping
+     */
     public VariablesMapping getVariablesMapping() {
         return mapping;
     }
@@ -957,6 +976,12 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
         }
     }
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     * @throws Exception the exception
+     */
     public static void main(String[] args) throws Exception {
         ToStringRenderer.setRenderer(()->new DLSyntaxObjectRenderer());
         OWLClassExpressionToSPARQLConverter converter = new OWLClassExpressionToSPARQLConverter();

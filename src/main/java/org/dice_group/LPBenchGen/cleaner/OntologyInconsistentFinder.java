@@ -17,6 +17,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * The type Ontology inconsistent finder.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class OntologyInconsistentFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OntologyInconsistentFinder.class.getName());
@@ -61,6 +66,14 @@ public class OntologyInconsistentFinder {
     private Set<String> rangeDone = new HashSet<String>();
     private Set<String> domainDone = new HashSet<String>();
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     * @throws OWLOntologyCreationException the owl ontology creation exception
+     * @throws FileNotFoundException        the file not found exception
+     * @throws OWLOntologyStorageException  the owl ontology storage exception
+     */
     public static void main(String[] args) throws OWLOntologyCreationException, FileNotFoundException, OWLOntologyStorageException {
         if(args.length==3) {
             OntologyInconsistentFinder finder = new OntologyInconsistentFinder();
@@ -81,6 +94,14 @@ public class OntologyInconsistentFinder {
         System.out.println("ontologyCleaner INPUT_ONTOLOGY SPARQL_ENDPOINT OUTPUT");
     }
 
+    /**
+     * Print inconsistents.
+     *
+     * @param endpoint the endpoint
+     * @param ontology the ontology
+     * @throws FileNotFoundException       the file not found exception
+     * @throws OWLOntologyStorageException the owl ontology storage exception
+     */
     public void printInconsistents(String endpoint, OWLOntology ontology) throws FileNotFoundException, OWLOntologyStorageException {
         this.endpoint=endpoint;
         Configuration conf = new Configuration();
@@ -145,6 +166,9 @@ public class OntologyInconsistentFinder {
         //ontology.saveOntology(new FileOutputStream(new File("fixed-ontology.owl")));
     }
 
+    /**
+     * Build tree.
+     */
     public void buildTree(){
         OWLClass owlThing =factory.getOWLClass("http://www.w3.org/2002/07/owl#Thing");
         Set<OWLClass> subClasses = res.getSubClasses(owlThing, true).getFlattened();
@@ -153,6 +177,12 @@ public class OntologyInconsistentFinder {
         addDSF(subClasses, root);
     }
 
+    /**
+     * Add dsf.
+     *
+     * @param subClasses the sub classes
+     * @param current    the current
+     */
     public void addDSF(Set<OWLClass> subClasses, TreeNode current){
         for(OWLClass sCL : subClasses){
             TreeNode node = new TreeNode();
@@ -164,6 +194,13 @@ public class OntologyInconsistentFinder {
     }
 
 
+    /**
+     * Get single value set.
+     *
+     * @param queryStr the query str
+     * @param var      the var
+     * @return the set
+     */
     public Set<String> getSingleValue(String queryStr, String var){
         Query q = QueryFactory.create(queryStr);
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, q);
@@ -185,6 +222,12 @@ public class OntologyInconsistentFinder {
         return ret;
     }
 
+    /**
+     * Suggest exchange.
+     *
+     * @param property the property
+     * @param isRange  the is range
+     */
     public void suggestExchange(String property, boolean isRange){
         //get a Class which all Individuals contain. -> worst case owl:Thing
         //For the property -> getMostSpecific Class
@@ -243,6 +286,12 @@ public class OntologyInconsistentFinder {
         return ret;
     }
 
+    /**
+     * Build tree set.
+     *
+     * @param classes the classes
+     * @return the set
+     */
     public Set<String> buildTree(Set<String> classes){
         Set<String> paths=null;
         for(String cl : classes){
@@ -266,8 +315,8 @@ public class OntologyInconsistentFinder {
     /**
      * Returns the most specific class of the set.
      *
-     * @param classes
-     * @return
+     * @param classes the classes
+     * @return owl class expression
      */
     public OWLClassExpression getMostSpecificClass(Set<String> classes){
         //TODO group all classes by the
@@ -293,6 +342,13 @@ public class OntologyInconsistentFinder {
     }
 
 
+    /**
+     * Print debug.
+     *
+     * @param endpoint the endpoint
+     * @param query    the query
+     * @param vars     the vars
+     */
     public void printDebug(String endpoint, String query, String[] vars){
         StringBuilder select = new StringBuilder("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT");
         for(String v : vars){

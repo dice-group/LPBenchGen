@@ -10,10 +10,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The type Variable collector.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class VariableCollector implements ElementVisitor  {
 
+    /**
+     * The Vars.
+     */
     public Set<String> vars = new HashSet<String>();
 
+    /**
+     * The Ignore.
+     */
     public String ignore="?var";
 
     @Override

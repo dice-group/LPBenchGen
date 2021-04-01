@@ -7,9 +7,20 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The type Concept sub classes exchanger.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class ConceptSubClassesExchanger extends DLSyntaxObjectRenderer {
 
+    /**
+     * The Replace.
+     */
     public String replace;
+    /**
+     * The Replacer.
+     */
     public OWLClassExpression replacer;
 
     private OWLDataFactory factory = new OWLDataFactoryImpl();

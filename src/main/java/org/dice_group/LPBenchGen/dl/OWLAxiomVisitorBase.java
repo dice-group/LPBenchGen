@@ -3,6 +3,11 @@ package org.dice_group.LPBenchGen.dl;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 
+/**
+ * The type Owl axiom visitor base.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class OWLAxiomVisitorBase implements OWLAxiomVisitor {
 
     private OWLClassExpression expr;
@@ -40,6 +45,11 @@ public class OWLAxiomVisitorBase implements OWLAxiomVisitor {
         this.doDefault(axiom);
     }
 
+    /**
+     * Gets expression.
+     *
+     * @return the expression
+     */
     public OWLClassExpression getExpression() {
         return this.expr;
     }

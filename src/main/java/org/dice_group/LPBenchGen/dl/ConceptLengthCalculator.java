@@ -3,8 +3,16 @@ package org.dice_group.LPBenchGen.dl;
 import org.semanticweb.owlapi.dlsyntax.renderer.DLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.*;
 
+/**
+ * The type Concept length calculator.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class ConceptLengthCalculator extends DLSyntaxObjectRenderer {
 
+    /**
+     * The Concept length.
+     */
     public int conceptLength=0;
 
     public void visit(OWLClass ce) {

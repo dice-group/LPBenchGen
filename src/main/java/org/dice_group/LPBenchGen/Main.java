@@ -7,8 +7,20 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.IOException;
 
+/**
+ * The type Main.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class Main {
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     * @throws OWLOntologyCreationException the owl ontology creation exception
+     * @throws IOException                  the io exception
+     */
     public static void main(String[] args) throws OWLOntologyCreationException, IOException {
         if(args.length!=4){
             printHelp();
@@ -38,6 +50,9 @@ public class Main {
         }
     }
 
+    /**
+     * Print help.
+     */
     public static void printHelp(){
         String help =" obscene --config <CONFIG.YML> --name <BENCHMARK-NAME> \n" +
                 "\n\twill create learning problems and an ontology " +

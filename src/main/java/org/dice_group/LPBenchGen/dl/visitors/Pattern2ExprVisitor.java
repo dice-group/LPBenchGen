@@ -4,12 +4,23 @@ import org.semanticweb.owlapi.model.*;
 
 import java.util.Random;
 
+/**
+ * The type Pattern 2 expr visitor.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class Pattern2ExprVisitor implements OWLClassExpressionVisitor {
 
     private final OWLOntology ontology;
     private String expr;
     private Random rand = new Random();
-    //TODO walk the string if CLASS is found getClass. if RULE is Found <- check last class get assoc rule
+
+    /**
+     * Instantiates a new Pattern 2 expr visitor.
+     *
+     * @param ontology the ontology
+     */
+//TODO walk the string if CLASS is found getClass. if RULE is Found <- check last class get assoc rule
     // if RULE some/all CLASS is found -> get CLASS
     public Pattern2ExprVisitor(OWLOntology ontology) {
         this.ontology=ontology;
@@ -83,6 +94,11 @@ public class Pattern2ExprVisitor implements OWLClassExpressionVisitor {
         this.doDefault(ce);
     }
 
+    /**
+     * Gets expr as string.
+     *
+     * @return the expr as string
+     */
     public String getExprAsString() {
         return expr;
     }

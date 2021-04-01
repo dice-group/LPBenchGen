@@ -11,12 +11,26 @@ import java.util.Collection;
 import java.util.List;
 
 
+/**
+ * The type Owl negation creator.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityVisitor {
 
 
+    /**
+     * The Negation concepts.
+     */
     public List<OWLClassExpression> negationConcepts = new ArrayList<OWLClassExpression>();
 
 
+    /**
+     * Add necc types.
+     *
+     * @param types     the types
+     * @param typesExpr the types expr
+     */
     public void addNeccTypes(Collection<String> types, OWLClassExpression typesExpr){
         List<OWLClassExpression> finalConcepts = new ArrayList<OWLClassExpression>();
 
@@ -35,6 +49,9 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
         return new OWLObjectUnionOfImpl(classes);
     }
 
+    /**
+     * Prune.
+     */
     public void prune(){
         List<OWLClassExpression> unions = new ArrayList<OWLClassExpression>();
         List<OWLClassExpression> remove = new ArrayList<OWLClassExpression>();
@@ -60,6 +77,13 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
     }
 
+    /**
+     * Contains boolean.
+     *
+     * @param union the union
+     * @param expr  the expr
+     * @return the boolean
+     */
     public boolean contains(OWLObjectUnionOf union, OWLClassExpression expr){
             if(union == expr) {
                 return false;

@@ -42,13 +42,32 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * The type Individual retriever.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class IndividualRetriever {
 
+    /**
+     * The constant LOGGER.
+     */
     public static final Logger LOGGER = LoggerFactory.getLogger(IndividualRetriever.class.getName());
+    /**
+     * The constant DEFAULT_VARIABLE_NAME.
+     */
     public static final String DEFAULT_VARIABLE_NAME = "var";
     private String endpoint;
+    /**
+     * The Use csv.
+     */
     public boolean useCSV=false;
 
+    /**
+     * Instantiates a new Individual retriever.
+     *
+     * @param endpoint the endpoint
+     */
     public IndividualRetriever(String endpoint){
         this.endpoint=endpoint;
     }
@@ -128,6 +147,14 @@ public class IndividualRetriever {
         return "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?"+DEFAULT_VARIABLE_NAME+" { <"+uriIndividual+"> rdf:type ?"+DEFAULT_VARIABLE_NAME+"}";
     }
 
+    /**
+     * Retrieve individuals for concept list.
+     *
+     * @param concept the concept
+     * @param limit   the limit
+     * @param timeOut the time out
+     * @return the list
+     */
     public List<String> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut){
         String sparqlQuery = createQuery(concept);
         Query q = QueryFactory.create(sparqlQuery);
@@ -135,6 +162,12 @@ public class IndividualRetriever {
         return createRequest(q.serialize(), timeOut );
     }
 
+    /**
+     * Retrieve individuals for concept list.
+     *
+     * @param concept the concept
+     * @return the list
+     */
     public List<String> retrieveIndividualsForConcept(OWLClassExpression concept){
         String sparqlQuery = createQuery(concept);
         return createRequest(sparqlQuery, 180);
@@ -147,11 +180,23 @@ public class IndividualRetriever {
         return q.serialize();
     }
 
+    /**
+     * Retrieve types for individual collection.
+     *
+     * @param uri the uri
+     * @return the collection
+     */
     public Collection<String> retrieveTypesForIndividual(String uri) {
         return createRequest(createTypesQuery(uri), 180);
     }
 
 
+    /**
+     * Gets result map.
+     *
+     * @param q the q
+     * @return the result map
+     */
     public ResultSet getResultMap(Query q) {
         try {
             //QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, q);

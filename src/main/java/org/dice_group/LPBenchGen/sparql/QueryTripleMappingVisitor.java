@@ -14,6 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Query triple mapping visitor.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class QueryTripleMappingVisitor implements ElementVisitor {
     private Map<String, List<String[]>> map = new HashMap<String, List<String[]>>();
     private Map<String, List<String[]>> pattern = new HashMap<String, List<String[]>>();
@@ -23,10 +28,20 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
     // -> START prop1 S0#1, START prop2 S1#1, S1#1 prop3 s3, S0#1 a TYPES, S1#1 a TYPES
     // MAP<String, List<String[]>> -> S1#1 -> [prop3, s3], [...]
 
+    /**
+     * Instantiates a new Query triple mapping visitor.
+     *
+     * @param start the start
+     */
     public QueryTripleMappingVisitor(String start){
         this.start=start;
     }
 
+    /**
+     * Pattern to map.
+     *
+     * @param res the res
+     */
     public void patternToMap(ResultSet res){
         while(res.hasNext()){
             QuerySolution row = res.next();
@@ -155,6 +170,11 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
         ElementWalker.walk(el.getQuery().getQueryPattern(), this);
     }
 
+    /**
+     * Gets map.
+     *
+     * @return the map
+     */
     public Map<String, List<String[]>> getMap() {
         return map;
     }

@@ -6,7 +6,15 @@ import org.apache.jena.sparql.syntax.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Query remove useless triples visitor.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class QueryRemoveUselessTriplesVisitor implements ElementVisitor {
+    /**
+     * The Found empty bg ps.
+     */
     boolean foundEmptyBGPs=false;
     @Override
     public void visit(ElementTriplesBlock el) {

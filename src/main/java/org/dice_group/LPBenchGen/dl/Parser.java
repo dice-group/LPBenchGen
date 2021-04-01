@@ -16,6 +16,11 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * The type Parser.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class Parser {
 
 
@@ -24,14 +29,30 @@ public class Parser {
     private BidirectionalShortFormProviderAdapter provider;
 
 
+    /**
+     * Gets ontology.
+     *
+     * @return the ontology
+     */
     public OWLOntology getOntology() {
         return ontology;
     }
 
+    /**
+     * Sets ontology.
+     *
+     * @param ontology the ontology
+     */
     public void setOntology(OWLOntology ontology) {
         this.ontology = ontology;
     }
 
+    /**
+     * Instantiates a new Parser.
+     *
+     * @param ontologyFile the ontology file
+     * @throws OWLOntologyCreationException the owl ontology creation exception
+     */
     public Parser(String ontologyFile) throws OWLOntologyCreationException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         ontology = manager.loadOntologyFromOntologyDocument(new File(ontologyFile));
@@ -40,6 +61,12 @@ public class Parser {
 
     }
 
+    /**
+     * Parse manchester concept owl class expression.
+     *
+     * @param concept the concept
+     * @return the owl class expression
+     */
     public  OWLClassExpression parseManchesterConcept(String concept){
         OWLEntityChecker checker = new ShortFormEntityChecker(provider);
 
@@ -50,6 +77,13 @@ public class Parser {
         return parser.parse(concept);
     }
 
+    /**
+     * Get rules in expr collection.
+     *
+     * @param ce        the ce
+     * @param dataRules the data rules
+     * @return the collection
+     */
     public Collection<String> getRulesInExpr(OWLClassExpression ce, Collection<OWLDataProperty> dataRules){
         Collection<String> rules = new HashSet<String>();
 
@@ -63,12 +97,24 @@ public class Parser {
         return rules;
     }
 
+    /**
+     * Render string.
+     *
+     * @param concept the concept
+     * @return the string
+     */
     public String render(OWLClassExpression concept) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         renderer.setShortFormProvider(provider);
         return renderer.render(concept);
     }
 
+    /**
+     * Gets short name.
+     *
+     * @param uri the uri
+     * @return the short name
+     */
     public String getShortName(String uri) {
         return provider.getShortForm(new OWLDataFactoryImpl().getOWLClass(uri));
     }

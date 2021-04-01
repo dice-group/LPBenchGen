@@ -18,6 +18,8 @@ import java.util.*;
 
 /**
  * Creating concepts based upon just a TBox
+ *
+ * @author Lixi Alié Conrads
  */
 public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
 
@@ -28,17 +30,42 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     private final String namespace;
     private IndividualRetriever retriever;
     private OWLOntology onto;
+    /**
+     * The Allowed types.
+     */
     public List<String> allowedTypes;
     private Parser parser;
     private OWLDataFactory dataFactory = new OWLDataFactoryImpl();
     private Map<String, Set<OWLAxiom>> type2axioms = new HashMap<String, Set<OWLAxiom>>();
     private Map<String, Collection<OWLClassExpression>> type2expr = new HashMap<String, Collection<OWLClassExpression>>();
 
+    /**
+     * The Max depth.
+     */
     public int maxDepth=2;
+    /**
+     * The Max concept length.
+     */
     public int maxConceptLength=8;
+    /**
+     * The Min concept length.
+     */
     public int minConceptLength=4;
+    /**
+     * The Infer direct super classes.
+     */
     public boolean inferDirectSuperClasses=true;
 
+    /**
+     * Instantiates a new Owlt box positive creator.
+     *
+     * @param retriever        the retriever
+     * @param onto             the onto
+     * @param allowedTypes     the allowed types
+     * @param parser           the parser
+     * @param res              the res
+     * @param allowedNamespace the allowed namespace
+     */
     public OWLTBoxPositiveCreator(IndividualRetriever retriever, OWLOntology onto, List<String> allowedTypes, Parser parser, Reasoner res, String allowedNamespace){
         this.retriever=retriever;
         this.onto=onto;
@@ -75,12 +102,23 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         return ret2;
     }
 
+    /**
+     * Gets concept length.
+     *
+     * @param concept the concept
+     * @return the concept length
+     */
     protected Double getConceptLength(OWLClassExpression concept) {
         ConceptLengthCalculator renderer = new ConceptLengthCalculator();
         renderer.render(concept);
         return 1.0*renderer.conceptLength;
     }
 
+    /**
+     * Create concepts collection.
+     *
+     * @return the collection
+     */
     public Collection<OWLClassExpression> createConcepts(){
         List<OWLClassExpression> concepts = new ArrayList<OWLClassExpression>();
         List<String> allowedTypes = new ArrayList<String>(this.allowedTypes);
@@ -276,6 +314,11 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         return ret;
     }
 
+    /**
+     * Get cardinalities int [ ].
+     *
+     * @return the int [ ]
+     */
     protected int[] getCardinalities(){
         return null;
     }

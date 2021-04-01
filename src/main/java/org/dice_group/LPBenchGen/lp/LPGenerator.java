@@ -27,6 +27,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * The type Lp generator.
+ *
+ * @author Lixi Alié Conrads
+ */
 public class LPGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LPGenerator.class.getName());
@@ -105,6 +110,14 @@ public class LPGenerator {
         }
     }
 
+    /**
+     * Create benchmark.
+     *
+     * @param configFile the config file
+     * @param name       the name
+     * @throws IOException                  the io exception
+     * @throws OWLOntologyCreationException the owl ontology creation exception
+     */
     public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
         Configuration conf = Configuration.loadFromFile(configFile);
         init(conf);
@@ -381,12 +394,24 @@ public class LPGenerator {
         return builder.subSequence(0, builder.length() - 4) + ")";
     }
 
+    /**
+     * Add individuals.
+     *
+     * @param ontology    the ontology
+     * @param individuals the individuals
+     */
     public void addIndividuals(OWLOntology ontology, Collection<OWLAxiom> individuals){
         for(OWLAxiom axiom : individuals){
             ontology.addAxiom(axiom);
         }
     }
 
+    /**
+     * Save ontology.
+     *
+     * @param output   the output
+     * @param ontology the ontology
+     */
     public void saveOntology(String output, OWLOntology ontology){
         try(FileOutputStream fos = new FileOutputStream(output))   {
             ontology.saveOntology(new TurtleDocumentFormat(), fos);
@@ -396,6 +421,12 @@ public class LPGenerator {
 
     }
 
+    /**
+     * Save lp problem.
+     *
+     * @param output   the output
+     * @param problems the problems
+     */
     public void saveLPProblem(String output, Collection<LPProblem> problems){
         try(PrintWriter pw = new PrintWriter(output)){
             // print end
@@ -438,6 +469,9 @@ public class LPGenerator {
     }
 
 
+    /**
+     * Remove literals from ontology.
+     */
     public void removeLiteralsFromOntology(){
         OWLOntology ontology = this.parser.getOntology();
         List<OWLDataPropertyAxiom> rem = new ArrayList<OWLDataPropertyAxiom>();
