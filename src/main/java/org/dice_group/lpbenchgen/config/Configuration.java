@@ -76,6 +76,15 @@ seed:
     private Integer maxConceptLength=10;
     @JsonProperty(required = false, defaultValue = "4")
     private Integer minConceptLength=4;
+    @JsonProperty(required = false, defaultValue = "100")
+    private Integer positiveLimit=100;
+    @JsonProperty(required = false, defaultValue = "100")
+    private Integer negativeLimit=100;
+    @JsonProperty(required = false, defaultValue = "0")
+    private Integer maxLateralDepth=0;
+    @JsonProperty(required = false, defaultValue = "0.5")
+    private Double splitContainment=0.5;
+
     @JsonProperty(required = false, defaultValue = "true")
     private Boolean inferDirectSuperClasses=true;
     @JsonProperty(required = true)
@@ -88,6 +97,59 @@ seed:
     private boolean removeLiterals=false;
     @JsonProperty(required = false)
     private String namespace;
+    @JsonProperty(required = false)
+    private boolean strict=false;
+    @JsonProperty(required = false)
+    private Double negationMutationRatio=0.0;
+
+
+    public Double getNegationMutationRatio() {
+        return negationMutationRatio;
+    }
+
+    public void setNegationMutationRatio(Double negationMutationRatio) {
+        this.negationMutationRatio = negationMutationRatio;
+    }
+
+    public Integer getMaxLateralDepth() {
+        return maxLateralDepth;
+    }
+
+    public void setMaxLateralDepth(Integer maxLateralDepth) {
+        this.maxLateralDepth = maxLateralDepth;
+    }
+
+    public boolean isStrict() {
+        return strict;
+    }
+
+    public void setStrict(boolean strict) {
+        this.strict = strict;
+    }
+
+    public Integer getPositiveLimit() {
+        return positiveLimit;
+    }
+
+    public void setPositiveLimit(Integer positiveLimit) {
+        this.positiveLimit = positiveLimit;
+    }
+
+    public Integer getNegativeLimit() {
+        return negativeLimit;
+    }
+
+    public void setNegativeLimit(Integer negativeLimit) {
+        this.negativeLimit = negativeLimit;
+    }
+
+    public Double getSplitContainment() {
+        return splitContainment;
+    }
+
+    public void setSplitContainment(Double splitContainment) {
+        this.splitContainment = splitContainment;
+    }
 
     /**
      * Gets namespace.

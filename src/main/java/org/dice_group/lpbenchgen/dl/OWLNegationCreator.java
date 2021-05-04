@@ -119,10 +119,6 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
     public void visit(OWLObjectUnionOf ce) {
             negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
-
-        for(OWLEntity entity : ce.getSignature()){
-            entity.accept(this);
-        }
     }
 
     public void visit(OWLObjectComplementOf ce) {
@@ -132,12 +128,12 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
     public void visit(OWLObjectSomeValuesFrom ce) {
         //some -> all
-            //negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
+            negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
 
     }
 
     public void visit(OWLObjectAllValuesFrom ce) {
-            //negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
+            negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
 
     }
 

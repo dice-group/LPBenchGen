@@ -1,12 +1,13 @@
 package org.dice_group.lpbenchgen.lp;
 
 import com.google.common.collect.Lists;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.vocabulary.RDF;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
-import org.dice_group.lpbenchgen.dl.ABoxFiller;
-import org.dice_group.lpbenchgen.dl.OWLNegationCreator;
-import org.dice_group.lpbenchgen.dl.OWLTBoxPositiveCreator;
-import org.dice_group.lpbenchgen.dl.Parser;
+import org.dice_group.lpbenchgen.dl.*;
 import org.dice_group.lpbenchgen.dl.visitors.ConceptSubClassesExchanger;
 import org.dice_group.lpbenchgen.sparql.IndividualRetriever;
 import org.semanticweb.HermiT.Reasoner;
@@ -18,14 +19,12 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectUnionOfImpl;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * The type Lp generator.
@@ -35,15 +34,29 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LPGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LPGenerator.class.getName());
+    public static final String RDF_PREFIX = "https://lpbenchgen.org/";
+    public static final String RESOURCE_PREFIX = RDF_PREFIX+"resource/";
+    public static final String PROPERTY_PREFIX = RDF_PREFIX+"property/";
+
+    public static final String RDF_PREFIX_LP = RESOURCE_PREFIX+"lp_";
+    public static final Resource LEARNING_PROBLEM_CLASS = ResourceFactory.createResource(RDF_PREFIX+"class/LearningProblem");
+    public static final Property RDF_PROPERTY_INCLUDE = ResourceFactory.createProperty(PROPERTY_PREFIX+"includesResource");
+    public static final Property RDF_PROPERTY_EXCLUDE = ResourceFactory.createProperty(PROPERTY_PREFIX+"excludesResource");
+
 
     private IndividualRetriever retriever;
     private long seed=0;
     private int minExamples;
     private int maxExamples;
+    private int positiveLimit;
+    private int negativeLimit;
     private Parser parser;
     private List<String> types;
     private OWLClassExpression typesExpr;
     private Reasoner res;
+    private boolean strict;
+    private int maxLateralDepth;
+    private Double negationMutationRatio;
 
     private void init(Configuration conf) throws OWLOntologyCreationException {
         parser = new Parser(conf.getOwlFile());
@@ -53,6 +66,7 @@ public class LPGenerator {
         //debugAdd();
         retriever = new IndividualRetriever(conf.getEndpoint());
         seed= conf.getSeed();
+        negationMutationRatio = conf.getNegationMutationRatio();
         types = conf.getTypes();
         if(types==null || types.isEmpty()){
             types=new ArrayList<>();
@@ -67,21 +81,19 @@ public class LPGenerator {
         }
         minExamples=conf.getMinNoOfExamples();
         maxExamples=conf.getMaxNoOfExamples();
+        positiveLimit = conf.getPositiveLimit();
+        negativeLimit = conf.getNegativeLimit();
+        maxLateralDepth = conf.getMaxLateralDepth();
+        strict = conf.isStrict();
     }
 
     private Collection<LPProblem> generateProblems(List<PosNegExample> concepts){
         Collection<LPProblem> problems = new ArrayList<LPProblem>();
         int count=0;
         for(PosNegExample concept : concepts){
-            boolean negativeGenerated=false;
-            if(concept.getNegatives() == null || concept.getNegatives().size()==0){
-                LOGGER.info("Generating negative concepts for {}th problem.", count+1);
-                concept.setNegatives(generateNegativeConcepts(concept.getPositive()));
-                LOGGER.info("Generated {} concepts for {}th problem.",concept.getNegatives().size(), count+1);
-                negativeGenerated=true;
-            }
+            boolean negativeGenerated=concept.isNegativeGenerated();
             try {
-                problems.add(generateLPProblem(concept, parser,negativeGenerated));
+                problems.add(generateLPProblem(concept, parser, negativeGenerated));
                 count++;
                 LOGGER.info("Finished generating examples for {}/{} problem.", count, concepts.size());
             }catch(Exception e ){
@@ -105,32 +117,14 @@ public class LPGenerator {
             if(!isEndpointInfersRules) {
                 measure(problem, parser.getOntology(), res);
             }
-            cutProblems(problem, percOfPositiveExamples, percOfNegativeExamples);
+            if(percOfPositiveExamples<1.0 || percOfNegativeExamples<1.0)
+                cutProblems(problem, percOfPositiveExamples, percOfNegativeExamples);
 
         }
     }
 
-    /**
-     * Create benchmark.
-     *
-     * @param configFile the config file
-     * @param name       the name
-     * @throws IOException                  the io exception
-     * @throws OWLOntologyCreationException the owl ontology creation exception
-     */
-    public void createBenchmark(String configFile, String name) throws IOException, OWLOntologyCreationException {
-        Configuration conf = Configuration.loadFromFile(configFile);
-        init(conf);
 
-        if(conf.getConcepts()==null) {
-            LOGGER.info("Generating concepts now...");
-            conf.setConcepts(generateConcepts(conf.getMaxGenerateConcepts(), conf.getMinConceptLength(), conf.getMaxConceptLength(), conf.getMaxDepth(), conf.getInferDirectSuperClasses(), conf.getNamespace()));
-            LOGGER.info("Generated {} positive concepts.", conf.getConcepts().size());
-        }
-        createTypesExpr();
-
-        LOGGER.info("Starting to generate examples from concepts");
-        Collection<LPProblem> problems = generateProblems(conf.getConcepts());
+    public void createConceptBenchmark(Configuration conf, Collection<LPProblem> problems, String name, String format) throws IOException, OWLOntologyCreationException {
 
         //for all individuals in LP problem add them
         LOGGER.info("Filling ABox now.");
@@ -138,18 +132,139 @@ public class LPGenerator {
         fillAbox(filler, problems,conf.getMaxIndividualsPerExampleConcept());
         LOGGER.info("Filled ABox.");
 
-        LOGGER.info("Validating problems now using reasoner.");
-        validateProblems(problems, conf.isEndpointInfersRules(), conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
-        LOGGER.info("Ontology has now {} Individuals", parser.getOntology().getIndividualsInSignature().size());
-
         if(conf.isRemoveLiterals()){
             LOGGER.info("Removing Literals from Ontology now.");
             removeLiteralsFromOntology();
         }
         LOGGER.info("Finished generation, saving now...");
         saveOntology(name+"-ontology.ttl", parser.getOntology());
-        saveLPProblem(name+"-lp.json", problems);
+        LOGGER.info("Validating problems now using reasoner.");
+        validateProblems(problems, conf.isEndpointInfersRules(), conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
+        LOGGER.info("Ontology has now {} Individuals", parser.getOntology().getIndividualsInSignature().size());
+
+        if(format.equals("json")) {
+            saveLPProblem(name+"-lp.json", problems);
+        }
+        else{
+            saveLPProblemAsRDF(name+"-lp.ttl", problems, true);
+        }
         LOGGER.info("Benchmark generation done.");
+    }
+
+    /**
+     * Create benchmark. TODO: return Benchmark object, save that
+     *
+     * @param configFile the config file
+     * @param name       the name
+     * @throws IOException                  the io exception
+     * @throws OWLOntologyCreationException the owl ontology creation exception
+     */
+    public void createBenchmark(String configFile, String name, String benchmarkType, String format) throws IOException, OWLOntologyCreationException {
+        Configuration conf = Configuration.loadFromFile(configFile);
+        init(conf);
+
+        if(conf.getConcepts()==null) {
+            LOGGER.info("Generating concepts now...");
+            conf.setConcepts(generateConcepts(conf.getMaxGenerateConcepts(), conf.getMinConceptLength(), conf.getMaxConceptLength(), conf.getMaxDepth(), conf.getInferDirectSuperClasses(), conf.getNamespace()));
+
+            /*
+            if(concept.getNegatives() == null || concept.getNegatives().size()==0){
+                LOGGER.info("Generating negative concepts for {}th problem.", count+1);
+                concept.setNegatives(generateNegativeConcepts(concept.getPositive()));
+                LOGGER.info("Generated {} concepts for {}th problem.",concept.getNegatives().size(), count+1);
+                negativeGenerated=true;
+            }*/
+            LOGGER.info("Generated {} positive concepts.", conf.getConcepts().size());
+        }
+        createTypesExpr();
+
+        LOGGER.info("Starting to generate examples from concepts");
+        Collection<LPProblem> problems = generateProblems(conf.getConcepts());
+        if(benchmarkType.toLowerCase().equals("concept")){
+            createConceptBenchmark(conf, problems, name, format);
+        }
+        else if(benchmarkType.toLowerCase().equals("containment")){
+            createContainmentBenchmark(conf, problems, name, format);
+        }
+
+
+    }
+
+    public void createContainmentBenchmark(Configuration conf, Collection<LPProblem> problems, String name, String format){
+        List<LPProblem> train = new ArrayList<LPProblem>();
+        List<LPProblem> gold = new ArrayList<LPProblem>();
+        List<LPProblem> test = new ArrayList<LPProblem>();
+        Double split = conf.getSplitContainment();
+        problems = problems.stream().filter(problem -> problem.negatives.size()>0).collect(Collectors.toList());
+        Double trainSize = split*problems.size();
+        AtomicInteger count = new AtomicInteger();
+        problems.stream().forEach(problem -> {
+            if(count.get() <trainSize){
+                train.add(problem);
+            }
+            else{
+                gold.add(problem);
+                test.add(problem);
+            }
+            count.getAndIncrement();
+        });
+        validateProblems(train, true, 1.0, conf.getPercentageOfNegativeExamples());
+        validateProblems(gold, true, 1.0, 1.0);
+
+        if(format.equals("json")) {
+            saveLPProblem(name+"-train.json", train);
+            saveLPProblem(name+"-test-goldstd.json", gold);
+            validateProblems(test, true, conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
+            saveLPProblem(name+"-test.json", test);
+        }
+        else{
+            saveLPProblemAsRDF(name+"-train.ttl", train, true);
+            saveLPProblemAsRDF(name+"-test-goldstd.ttl", gold, false);
+            validateProblems(test, true, conf.getPercentageOfPositiveExamples(), conf.getPercentageOfNegativeExamples());
+            saveLPProblemAsRDF(name+"-test.ttl", test, true);
+        }
+
+    }
+
+    private void saveLPProblemAsRDF(String out, Collection<LPProblem> problems, boolean includeNegative) {
+        Model m = ModelFactory.createDefaultModel();
+        m.setNsPrefix("lpres", RDF_PREFIX+"resource/");
+        m.setNsPrefix("lpprop", RDF_PREFIX+"property/");
+        m.setNsPrefix("lpclass", RDF_PREFIX+"class/");
+        for(String prefix : parser.getPrefix().getPrefixName2PrefixMap().keySet()){
+            if(!prefix.equals(":")){
+                m.setNsPrefix(prefix.replace(":",""), parser.getPrefix().getPrefixName2PrefixMap().get(prefix));
+            }
+        }
+        AtomicInteger count= new AtomicInteger(1);
+        problems.forEach(problem -> {
+            System.out.println(count.get()+"\t"+problem.goldStandardConcept);
+            addProblemToModel(m, problem, count.getAndIncrement(), includeNegative);
+
+        });
+        try(BufferedOutputStream bos  = new BufferedOutputStream(new FileOutputStream(out))) {
+            RDFDataMgr.write(bos, m, Lang.TTL);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addProblemToModel(Model m, LPProblem problem, int id, boolean includeNegative) {
+        /*
+          :lp_1 a :LearningProblem;
+          :includesResource :res_1  , :res_2
+          :excludesResource :res_1  , :res_3 , :res_4 .
+         */
+        Resource res = ResourceFactory.createResource(RDF_PREFIX_LP+id);
+        m.add(res, RDF.type, LEARNING_PROBLEM_CLASS);
+        problem.positives.forEach(include ->{
+            m.add(res, RDF_PROPERTY_INCLUDE, ResourceFactory.createResource(include));
+        });
+        if(includeNegative) {
+            problem.negatives.forEach(exclude -> {
+                m.add(res, RDF_PROPERTY_EXCLUDE, ResourceFactory.createResource(exclude));
+            });
+        }
     }
 
     private void createTypesExpr() {
@@ -166,8 +281,10 @@ public class LPGenerator {
         OWLDataFactory factory = new OWLDataFactoryImpl();
 
         Set<String> rem = new HashSet<>();
+        Set<String> actual = res.getInstances(problem.goldStandardConceptExpr).getFlattened().stream().map(x -> x.getIRI().toString()).collect(Collectors.toSet());
         for(String pos : problem.positives){
-            if(!res.hasType(factory.getOWLNamedIndividual(pos), problem.goldStandardConceptExpr, true)){
+            if(!actual.contains(pos)){
+            //if(!res.hasType(factory.getOWLNamedIndividual(pos), problem.goldStandardConceptExpr, false)){
                 LOGGER.warn("FP: {}", pos);
                 rem.add(pos);
             }
@@ -175,7 +292,8 @@ public class LPGenerator {
         problem.positives.removeAll(rem);
         rem.clear();
         for(String nes : problem.negatives){
-            if(res.hasType(factory.getOWLNamedIndividual(nes), problem.goldStandardConceptExpr, true)){
+            if(actual.contains(nes)){
+            //if(res.hasType(factory.getOWLNamedIndividual(nes), problem.goldStandardConceptExpr, false)){
                 LOGGER.warn("FN: {}", nes);
                 LOGGER.warn("Negative concept: {}", parser.render(problem.negativeMap.get(nes).getNNF()));
                 rem.add(nes);
@@ -222,8 +340,8 @@ public class LPGenerator {
         rem.clear();
         problem.negatives.forEach(nes ->{
             OWLClassExpression negativeExpr = problem.getExpr(nes);
-            AtomicReference<OWLClassExpression> actNegExa = fillNegativeConcept(negativeExpr, problem.negativeGenerated);
-            if(!filler.addIndividualsFromConcept(actNegExa.get(), nes, parser.getOntology())){
+            //AtomicReference<OWLClassExpression> actNegExa = fillNegativeConcept(negativeExpr, problem.negativeGenerated);
+            if(!filler.addIndividualsFromConcept(negativeExpr, nes, parser.getOntology())){
                 rem.add(nes);
             }
         });
@@ -252,14 +370,15 @@ public class LPGenerator {
     private List<PosNegExample> generateConcepts(Integer maxGenerateConcepts, Integer minConceptLength, Integer maxConceptLength, Integer maxDepth, boolean inferDirectSuperClasses, String namespace) {
         List<PosNegExample> examples =new ArrayList<PosNegExample>();
 
-        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(retriever, parser.getOntology(), types, parser, res, namespace);
+        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(retriever, parser.getOntology(), types, parser, res, namespace, strict, minExamples);
         creator.minConceptLength=minConceptLength;
         creator.maxConceptLength=maxConceptLength;
         creator.maxDepth=maxDepth;
+        creator.seed=seed;
+        creator.negationMutationRatio=negationMutationRatio;
+        creator.maxLateralDepth=maxLateralDepth;
         creator.inferDirectSuperClasses=inferDirectSuperClasses;
-        creator.createDistinctConcepts(maxGenerateConcepts).forEach(concept -> {
-            PosNegExample example = new PosNegExample();
-            example.setPositive(concept);
+        creator.createDistinctConcepts(maxGenerateConcepts).forEach(example -> {
             examples.add(example);
         });
         this.types=creator.allowedTypes;
@@ -272,7 +391,7 @@ public class LPGenerator {
         OWLNegationCreator creator = new OWLNegationCreator();
         expr.accept(creator);
         creator.prune();
-        creator.addNeccTypes(types, typesExpr);
+        //creator.addNeccTypes(types, typesExpr);
         List<OWLClassExpression> concepts= creator.negationConcepts;
 
         return concepts;
@@ -285,30 +404,29 @@ public class LPGenerator {
 
     private Collection<String> getRandom(List<String> list, Integer max) {
         int maxNoOfIndividuals = Math.min(max, list.size());
-        Set<Integer> indexes = new HashSet<Integer>();
         Random rand = new Random(seed);
-        while(indexes.size()<maxNoOfIndividuals) {
-            indexes.add(rand.nextInt(list.size()));
-        }
+        Collections.shuffle(list, rand);
         Collection<String> ret = new HashSet<String>();
-        for(Integer index : indexes){
-            ret.add(list.get(index));
+        int i=0;
+        while(ret.size()<maxNoOfIndividuals){
+            ret.add(list.get(i++));
         }
         return ret;
     }
 
     private List<String> keepPercentage(Collection<String> removeFrom, Double percentage) {
-        List<String> removed = new ArrayList<String>();
+        List<String> removed = new ArrayList<String>(removeFrom);
         Double max = removeFrom.size()*percentage;
-        if(max<minExamples){
+        if(max<minExamples && !strict){
             max=minExamples*1.0;
         }
         if(max>maxExamples){
             max=maxExamples*1.0;
         }
+
         Collection<String> keep = getRandom(new ArrayList(removeFrom), max.intValue());
-        removeFrom.clear();
-        removeFrom.addAll(keep);
+        removed.removeAll(keep);
+        removeFrom.removeAll(removed);
         return removed;
     }
 
@@ -318,18 +436,18 @@ public class LPGenerator {
         problem.goldStandardConcept=concept.getPositive();
 
         OWLClassExpression pos = parser.parseManchesterConcept(concept.getPositive());
-        pos = transformConceptSubClasses(pos, "OR", false);
+        //pos = transformConceptSubClasses(pos, "OR", false);
         problem.goldStandardConceptExpr=pos;
         problem.rules = parser.getRulesInExpr(pos, problem.dataRules);
 
-        problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos));
+        problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos, positiveLimit,180, true));
         for(OWLClassExpression neg : concept.getNegatives()){
             OWLClassExpression conc = neg;
             if(negativeGenerated){
-                conc = transformConceptSubClasses(neg, "OR", true);
+                //conc = transformConceptSubClasses(neg, "OR", true);
             }
 
-            List<String> retrieved = retriever.retrieveIndividualsForConcept(conc);
+            List<String> retrieved = retriever.retrieveIndividualsForConcept(conc,  negativeLimit, 180, true);
             problem.negatives.addAll(retrieved);
             problem.rules.addAll(parser.getRulesInExpr(neg, problem.dataRules));
             OWLClassExpression finalConc = conc;
@@ -337,6 +455,9 @@ public class LPGenerator {
                 problem.negativeMap.put(retr, finalConc);
             });
         }
+        List<String> negativeShuffle = new ArrayList<>(problem.negatives);
+        Collections.shuffle(negativeShuffle, new Random(seed));
+        problem.negatives=new HashSet<String>(negativeShuffle);
         return problem;
     }
 

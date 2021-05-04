@@ -23,10 +23,15 @@ import java.util.HashSet;
 public class Parser {
 
 
+    private final ManchesterOWLSyntaxPrefixNameShortFormProvider prefix;
     private OWLOntology ontology;
     private OWLOntology owlOntology;
     private BidirectionalShortFormProviderAdapter provider;
 
+
+    public ManchesterOWLSyntaxPrefixNameShortFormProvider getPrefix() {
+        return prefix;
+    }
 
     /**
      * Gets ontology.
@@ -56,8 +61,8 @@ public class Parser {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         ontology = manager.loadOntologyFromOntologyDocument(new File(ontologyFile));
         owlOntology = manager.loadOntologyFromOntologyDocument(IRI.create("http://www.w3.org/2002/07/owl"));
-        provider = new BidirectionalShortFormProviderAdapter(Sets.newHashSet(ontology, owlOntology), new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology));
-
+        prefix  =new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology);
+        provider = new BidirectionalShortFormProviderAdapter(Sets.newHashSet(ontology, owlOntology), prefix);
     }
 
     /**

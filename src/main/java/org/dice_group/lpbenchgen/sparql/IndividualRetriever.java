@@ -84,7 +84,7 @@ public class IndividualRetriever {
             get.addHeader(HttpHeaders.ACCEPT, QueryEngineHTTP.defaultSelectHeader());
             HttpResponse resp = client.execute(get);
             code = resp.getStatusLine().getStatusCode();
-            actualContentType = resp.getEntity().getContentType().getValue();
+            actualContentType = resp.getEntity().getContentType().getValue().replace("; charset=utf-8","");
             if(actualContentType==null || actualContentType.isEmpty()){
                 actualContentType=QueryEngineHTTP.defaultSelectHeader();
             }
@@ -144,10 +144,13 @@ public class IndividualRetriever {
      * @param timeOut the time out
      * @return the list
      */
-    public List<String> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut){
-        String sparqlQuery = createQuery(concept);
+    public List<String> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning){
+        String sparqlQuery = createQuery(concept, limit, reasoning);
         Query q = QueryFactory.create(sparqlQuery);
-        q.setLimit(limit);
+        if(limit>0){
+            q.setLimit(limit);
+        }
+
         return createRequest(q.serialize(), timeOut );
     }
 
@@ -157,15 +160,21 @@ public class IndividualRetriever {
      * @param concept the concept
      * @return the list
      */
-    public List<String> retrieveIndividualsForConcept(OWLClassExpression concept){
-        String sparqlQuery = createQuery(concept);
+    public List<String> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning){
+        String sparqlQuery = createQuery(concept, reasoning);
         return createRequest(sparqlQuery, 180);
     }
 
-    private String createQuery(OWLClassExpression concept) {
+    private String createQuery(OWLClassExpression concept, boolean reasoning) {
+        return createQuery(concept, 10000, reasoning);
+    }
+
+        private String createQuery(OWLClassExpression concept, int limit, boolean reasoning) {
         OWL2SPARQL converter = new OWL2SPARQL();
+        converter.setUseReasoning(reasoning);
         Query q  = converter.asQuery(concept, "?var");
-        q.setLimit(100);
+        if(limit>0)
+            q.setLimit(limit);
         return q.serialize();
     }
 
@@ -198,7 +207,7 @@ public class IndividualRetriever {
             if(actualContentType==null || actualContentType.isEmpty()){
                 actualContentType=QueryEngineHTTP.defaultSelectHeader();
             }
-            Lang lang = WebContent.contentTypeToLangResultSet(actualContentType);
+            Lang lang = WebContent.contentTypeToLangResultSet(actualContentType.replace("; charset=utf-8",""));
             String test = read(resp.getEntity().getContent());
             InputStream is = new ByteArrayInputStream(test.getBytes(StandardCharsets.UTF_8));
             ResultSet res= ResultSetMgr.read(is, lang);

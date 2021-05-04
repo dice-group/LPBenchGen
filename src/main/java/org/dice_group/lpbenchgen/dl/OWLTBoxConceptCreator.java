@@ -1,5 +1,7 @@
 package org.dice_group.lpbenchgen.dl;
 
+import org.dice_group.lpbenchgen.config.PosNegExample;
+
 import java.util.Collection;
 
 /**
@@ -13,5 +15,5 @@ public interface OWLTBoxConceptCreator {
      * @param noOfConcepts the no of concepts
      * @return the collection
      */
-    public Collection<String> createDistinctConcepts(int noOfConcepts);
+    public Collection<PosNegExample> createDistinctConcepts(int noOfConcepts);
 }

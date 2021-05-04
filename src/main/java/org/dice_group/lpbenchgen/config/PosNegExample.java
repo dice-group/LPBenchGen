@@ -17,6 +17,15 @@ public class PosNegExample {
     private String positive;
     @JsonProperty(required = false)
     private List<OWLClassExpression> negatives = new ArrayList<OWLClassExpression>();
+    private boolean negativeGenerated=false;
+
+    public boolean isNegativeGenerated() {
+        return negativeGenerated;
+    }
+
+    public void setNegativeGenerated(boolean negativeGenerated) {
+        this.negativeGenerated = negativeGenerated;
+    }
 
     /**
      * Gets positive.
@@ -57,5 +66,18 @@ public class PosNegExample {
     @Override
     public String toString(){
         return positive;
+    }
+
+    @Override
+    public int hashCode(){
+        return positive.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object anotherObject){
+        if(anotherObject instanceof PosNegExample){
+            anotherObject.toString().equals(positive);
+        }
+        return false;
     }
 }

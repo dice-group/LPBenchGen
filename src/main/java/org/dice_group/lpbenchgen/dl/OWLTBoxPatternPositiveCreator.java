@@ -1,5 +1,6 @@
 package org.dice_group.lpbenchgen.dl;
 
+import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.visitors.Pattern2ExprVisitor;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -21,7 +22,7 @@ public class OWLTBoxPatternPositiveCreator implements  OWLTBoxConceptCreator{
 
 
     @Override
-    public Collection<String> createDistinctConcepts(int noOfConcepts) {
+    public Collection<PosNegExample> createDistinctConcepts(int noOfConcepts) {
         Collection<String> ret = new HashSet<String>();
         int currentPattern=0;
         int fails=0;

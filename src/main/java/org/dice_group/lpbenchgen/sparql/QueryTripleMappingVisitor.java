@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Lixi Alié Conrads
  */
 public class QueryTripleMappingVisitor implements ElementVisitor {
-    private Map<String, List<String[]>> map = new HashMap<String, List<String[]>>();
+    private Map<String, List<Object[]>> map = new HashMap<String, List<Object[]>>();
     private Map<String, List<String[]>> pattern = new HashMap<String, List<String[]>>();
     private String start;
     // walk the query and map Triple to rules e.g.
@@ -48,14 +48,18 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
                     node = row.get(key).toString();
                 }
                 List<String[]> pat = pattern.get(key);
-                List<String[]> triples = new ArrayList<String[]>();
+                List<Object[]> triples = new ArrayList<Object[]>();
                 //for every pattern which has node as subject
                 for(String[] p2 : pat){
-                    String[] add;
+                    Object[] add;
+                    String property = p2[0];
+                    if(property.startsWith("?")){
+                        property=row.get(p2[0]).toString();
+                    }
                     if(p2[1].equals(start)){
-                        add = new String[]{p2[0], start};
+                        add = new Object[]{property, start};
                     }else {
-                        add = new String[]{p2[0], row.get(p2[1]).toString()};
+                        add = new Object[]{property, row.get(p2[1])};
                     }
                     triples.add(add);
                 }
@@ -77,8 +81,14 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
     @Override
     public void visit(ElementPathBlock el) {
         el.getPattern().forEach(triple ->{
-            String[] tr = new String[]{triple.getPredicate().toString(), triple.getObject().toString()};
-            if(!triple.getPredicate().toString().equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
+            String predicate;
+            if(triple.getPredicate()!=null){
+                predicate = triple.getPredicate().toString();
+            }else{
+                predicate=triple.getPath().toString();
+            }
+            String[] tr = new String[]{predicate, triple.getObject().toString()};
+            if(!(predicate.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") || predicate.equals("<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>/(<http://www.w3.org/2000/01/rdf-schema#subClassOf>)*"))) {
                 if (pattern.containsKey(triple.getSubject().toString())) {
                     pattern.get(triple.getSubject().toString()).add(tr);
                 } else {
@@ -170,7 +180,7 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
      *
      * @return the map
      */
-    public Map<String, List<String[]>> getMap() {
+    public Map<String, List<Object[]>> getMap() {
         return map;
     }
 }

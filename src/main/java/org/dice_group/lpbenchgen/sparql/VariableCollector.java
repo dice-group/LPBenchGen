@@ -45,7 +45,7 @@ public class VariableCollector implements ElementVisitor  {
                     vars.add(triple.getObject().toString().substring(1));
                 }
             }
-            if(triple.getPredicate().isVariable()){
+            if(triple.getPredicate()!=null && triple.getPredicate().isVariable()){
                 if(!triple.getPredicate().toString().equals(ignore)){
                     vars.add(triple.getPredicate().toString().substring(1));
                 }

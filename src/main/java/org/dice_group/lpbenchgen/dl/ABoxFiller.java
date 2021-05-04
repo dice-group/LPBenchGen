@@ -1,8 +1,11 @@
 package org.dice_group.lpbenchgen.dl;
 
+import org.apache.jena.graph.impl.LiteralLabelFactory;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.syntax.ElementWalker;
 import org.dice_group.lpbenchgen.sparql.IndividualRetriever;
@@ -50,8 +53,9 @@ public class ABoxFiller {
      * @return the boolean
      */
     public boolean addIndividualsFromConcept(OWLClassExpression concept, String startIndividual, OWLOntology ontology){
-
+        //TODO ABox filler wrong
         OWL2SPARQL sparql = new OWL2SPARQL();
+        sparql.setUseReasoning(true);
         Query q = sparql.asQuery(concept, "?var");
         VariableCollector varC= new VariableCollector();
         ElementWalker.walk(q.getQueryPattern(), varC);
@@ -94,20 +98,38 @@ public class ABoxFiller {
         return true;
     }
 
-    private List<OWLAxiom> createAxiomsFromMap(Map<String, List<String[]>> map) {
+    private List<OWLAxiom> createAxiomsFromMap(Map<String, List<Object[]>> map) {
         List<OWLAxiom> axioms = new ArrayList<OWLAxiom>();
         map.keySet().forEach(individual ->{
             OWLNamedIndividual subject = factory.getOWLNamedIndividual(individual);
             axioms.addAll(getTypeAxiomsForIndividual(subject));
             map.get(individual).forEach(triple -> {
-                OWLObjectPropertyExpression property = factory.getOWLObjectProperty(triple[0]);
-                if(triple[1].startsWith(":no prefix")){
-                    triple[1]=individual+"#"+triple[1].substring(10);
+
+                if(((RDFNode)triple[1]).isLiteral()){
+                    OWLDataPropertyExpression property = factory.getOWLDataProperty(triple[0].toString());
+                    Literal lit = ((RDFNode)triple[1]).asLiteral();
+                    OWLDatatype type = factory.getOWLDatatype(IRI.create(lit.getDatatypeURI()));
+                    OWLLiteral literal = factory.getOWLLiteral(lit.getValue().toString(), type);
+                    OWLAxiom axiom = factory.getOWLDataPropertyAssertionAxiom(property, subject, literal);
+                    axioms.add(axiom);
                 }
-                OWLNamedIndividual object = factory.getOWLNamedIndividual(triple[1]);
-                axioms.addAll(getTypeAxiomsForIndividual(object));
-                OWLAxiom axiom = factory.getOWLObjectPropertyAssertionAxiom(property, subject, object);
-                axioms.add(axiom);
+                else{
+                    OWLObjectPropertyExpression property = factory.getOWLObjectProperty(triple[0].toString());
+                    if(triple[1].toString().startsWith(":no prefix")){
+                        triple[1]=individual+"#"+triple[1].toString().substring(10);
+                    }
+                    if(triple[0].toString().equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
+                        OWLAxiom axiom = factory.getOWLClassAssertionAxiom(factory.getOWLClass(triple[1].toString()), subject);
+                        axioms.add(axiom);
+                    }
+                    else {
+                        OWLNamedIndividual object = factory.getOWLNamedIndividual(triple[1].toString());
+                        axioms.addAll(getTypeAxiomsForIndividual(object));
+                        OWLAxiom axiom = factory.getOWLObjectPropertyAssertionAxiom(property, subject, object);
+                        axioms.add(axiom);
+                    }
+                }
+
             });
         });
         return axioms;
@@ -116,7 +138,7 @@ public class ABoxFiller {
     private Collection<OWLAxiom> getTypeAxiomsForIndividual(OWLNamedIndividual subject) {
         List<OWLAxiom> axioms = new ArrayList<OWLAxiom>();
         retriever.retrieveTypesForIndividual(subject.getIRI().toString()).forEach(type ->{
-            if(allowedTypes.contains(type)){
+            if(allowedTypes.contains(type) && !type.equals("http://www.w3.org/2002/07/owl#NamedIndividual")){
                 OWLClassExpression expr = factory.getOWLClass(IRI.create(type));
                 OWLAxiom axiom = factory.getOWLClassAssertionAxiom(expr, subject);
                 axioms.add(axiom);

@@ -175,7 +175,7 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
     public Query asQuery(String rootVariable, OWLClassExpression ce, Set<? extends OWLEntity> variableEntities, boolean countQuery){
         this.variableEntities = variableEntities;
 
-        String queryString = "SELECT DISTINCT ";
+        String queryString = "PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  PREFIX owl:     <http://www.w3.org/2002/07/owl#> SELECT DISTINCT ";
 
         String triplePattern = asGroupGraphPattern(ce, rootVariable);
 
@@ -198,6 +198,8 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
         }
 
         queryString += triplePattern;
+        //TODO add filter: FILTER {NOT EXIST {rootVar rdf:type owl:DatatypeProperty}
+        queryString += " FILTER ( ( NOT EXISTS { "+rootVariable+"  rdf:type  owl:DatatypeProperty } && NOT EXISTS { "+rootVariable+"  rdf:type  owl:ObjectProperty } ) && NOT EXISTS { "+rootVariable+" rdf:type  owl:Class } ) ";
         queryString += "}";
 
         if(!variableEntities.isEmpty()){
@@ -238,6 +240,10 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
      */
     public String asGroupGraphPattern(OWLClassExpression ce, String rootVariable, boolean needOuterTriplePattern){
         this.needOuterTriplePattern = needOuterTriplePattern;
+
+        if(ce.getNNF() instanceof OWLObjectComplementOf) {
+            this.needOuterTriplePattern=true;
+        }
         reset();
         variables.push(rootVariable);
 
@@ -406,7 +412,7 @@ public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpress
     }
 
     private String typeTriplePattern(String var, String type){
-        return var + (useReasoning ? " <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>/<http://www.w3.org/2000/01/rdf-schema#subClassOf>* " : " a ") + type + " .\n";
+        return var + (useReasoning ? " <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>/<http://www.w3.org/2000/01/rdf-schema#subClassOf>* " : " <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  ") + type + " .\n";
     }
 
     private String equalExpressions(String expr1, String expr2, boolean negated){

@@ -27,7 +27,7 @@ public class QueryRemoveUselessTriplesVisitor implements ElementVisitor {
     public void visit(ElementPathBlock el) {
         List<TriplePath> rem = new ArrayList<TriplePath>();
         for(TriplePath triple : el.getPattern().getList()){
-            if(!(triple.getSubject().isVariable() || triple.getPredicate().isVariable() || triple.getObject().isVariable())){
+            if(!(triple.getSubject().isVariable() || (triple.getPredicate()!=null&&triple.getPredicate().isVariable()) || triple.getObject().isVariable())){
                 rem.add(triple);
             }
         }
