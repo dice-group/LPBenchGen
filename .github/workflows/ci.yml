@@ -23,6 +23,8 @@ jobs:
       - run: sed -i "s/\$VERSION/$(cat version.log)/g" mkdocs.yml
       - run: mkdocs build -d site/$(cat version.log)
       - run: mvn javadoc:javadoc
+      - run sed -i "s/\$VERSION/$(cat version.log)/g" index.html
+      - run: cp index.html ./site
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
