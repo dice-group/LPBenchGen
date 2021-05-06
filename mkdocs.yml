@@ -1,0 +1,58 @@
+
+extra:
+  version: 1.0-SNAPSHOT
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/dice-group/LPBenchGen
+
+site_name: LPBenchGen 
+
+
+edit_uri: ""
+theme:
+  name: material
+#  custom_dir: mkdocs-material/material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - toc.integrate
+    
+  # 404 page
+#  static_templates:
+#    - 404.html
+
+  # Necessary for search to work properly
+#  include_search_page: false
+#  search_index_only: true
+
+  # Default values, taken from mkdocs_theme.yml
+  language: en
+  font:
+    text: Roboto
+    code: Roboto Mono
+  favicon: assets/favicon.png
+  icon:
+    logo: logo
+    repo: fontawesome/brands/git-alt
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep orange
+      accent: deep purple
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
+
+
+repo_url: https://github.com/dice-group/LPBenchGen
+repo_name: dice-group/LPBenchGen
+
+plugins:
+  - macros
+
