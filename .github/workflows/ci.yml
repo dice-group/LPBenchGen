@@ -21,8 +21,8 @@ jobs:
       - run: pip install mkdocs-material
       - run: pip install mkdocs-macros-plugin
       - run: sed -i "s/\$VERSION/$(cat version.log)/g" mkdocs.yml
-      - run: mvn javadoc:javadoc
-      #- run: mkdocs build -d site/$(cat version.log)
+      #- run: mvn javadoc:javadoc
+      - run: mkdocs build -d site/$(cat version.log)
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
