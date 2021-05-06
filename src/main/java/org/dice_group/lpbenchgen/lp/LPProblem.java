@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * The type Lp problem.
+ * The Learning Problem Class
  *
  * @author Lixi Alié Conrads
  */
@@ -40,16 +40,16 @@ public class LPProblem {
      */
     public Collection<OWLDataProperty> dataRules = new HashSet<OWLDataProperty>();
     /**
-     * The Negative map.
+     * The Negative map containing the examples 2 classExpression map.
      */
     public Map<String, OWLClassExpression> negativeMap = new HashMap<String, OWLClassExpression>();
     /**
-     * The Negative generated.
+     * Are negative examples derived from generated Class Expressions
      */
     public boolean negativeGenerated=false;
 
     /**
-     * Gold standard concept as expr owl class expression.
+     * Returns the gold Standard concept as OWLClassExpression.
      *
      * @return the owl class expression
      */
@@ -58,7 +58,7 @@ public class LPProblem {
     }
 
     /**
-     * Gets expr.
+     * Gets the class expression which retrieved the negative Individual.
      *
      * @param nes the nes
      * @return the expr

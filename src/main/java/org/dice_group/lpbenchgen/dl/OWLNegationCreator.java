@@ -11,7 +11,7 @@ import java.util.List;
 
 
 /**
- * The type Owl negation creator.
+ * Creates Class Expression which are complements of an original class Expression
  *
  * @author Lixi Alié Conrads
  */
@@ -19,34 +19,10 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
 
     /**
-     * The Negation concepts.
+     * The complement concepts.
      */
     public List<OWLClassExpression> negationConcepts = new ArrayList<OWLClassExpression>();
 
-
-    /**
-     * Add necc types.
-     *
-     * @param types     the types
-     * @param typesExpr the types expr
-     */
-    public void addNeccTypes(Collection<String> types, OWLClassExpression typesExpr){
-        List<OWLClassExpression> finalConcepts = new ArrayList<OWLClassExpression>();
-
-        for(OWLClassExpression expr : negationConcepts){
-
-            finalConcepts.add(new OWLObjectIntersectionOfImpl(Lists.newArrayList(expr, typesExpr)));
-        }
-        negationConcepts=finalConcepts;
-    }
-
-    private OWLClassExpression getTypeExpr(Collection<String> types) {
-        List<OWLClassExpression> classes = new ArrayList<OWLClassExpression>();
-        for(String type: types){
-            classes.add(new OWLDataFactoryImpl().getOWLClass(IRI.create(type)));
-        }
-        return new OWLObjectUnionOfImpl(classes);
-    }
 
     /**
      * Prune.

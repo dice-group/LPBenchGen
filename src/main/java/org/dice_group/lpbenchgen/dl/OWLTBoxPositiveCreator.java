@@ -1,10 +1,11 @@
 package org.dice_group.lpbenchgen.dl;
 
 import com.google.common.collect.Lists;
+import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.sparql.IndividualRetriever;
-import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.*;
@@ -13,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Creating concepts based upon just a TBox
+ * Creating positive and negative concepts based upon a TBox and checks if they have results using an ABox
  *
  * @author Lixi Alié Conrads
  */
@@ -22,68 +23,68 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     private static final Logger LOGGER = LoggerFactory.getLogger(OWLTBoxPositiveCreator.class.getName());
 
     private final List<String> originalTypes;
-    private final Reasoner res;
+    private final OWLReasoner res;
     private final String namespace;
     private final boolean strict;
     private IndividualRetriever retriever;
     private OWLOntology onto;
-    /**
-     * The Allowed types.
-     */
-    public List<String> allowedTypes;
+    private List<String> allowedTypes;
     private Parser parser;
     private OWLDataFactory dataFactory = new OWLDataFactoryImpl();
     private Map<String, Set<OWLAxiom>> type2axioms = new HashMap<String, Set<OWLAxiom>>();
     private Map<String, Collection<OWLClassExpression>> type2expr = new HashMap<String, Collection<OWLClassExpression>>();
-
     private Random negationMutationRandom;
-
-    public long seed=0;
-
-    /**
-     * The Max depth.
-     */
-    public int maxDepth=2;
-    /**
-     * The Max concept length.
-     */
-    public int maxConceptLength=8;
-    /**
-     * The Min concept length.
-     */
-    public int minConceptLength=4;
-    /**
-     * The Infer direct super classes.
-     */
-    public boolean inferDirectSuperClasses=true;
+    private long seed=0;
+    private int maxDepth=2;
+    private int maxConceptLength=8;
+    private int minConceptLength=4;
+    private boolean inferDirectSuperClasses=true;
     private int testLimit=1;
-    public int maxLateralDepth=0;
-    public double negationMutationRatio;
+    private int maxLateralDepth=0;
+    private double negationMutationRatio;
 
     /**
-     * Instantiates a new Owlt box positive creator.
+     * Instantiates a new OWL TBox Creator
      *
      * @param retriever        the retriever
-     * @param onto             the onto
+     * @param ontology             the onto
      * @param allowedTypes     the allowed types
      * @param parser           the parser
      * @param res              the res
-     * @param allowedNamespace the allowed namespace
+     * @param namespace the allowed namespace
      */
-    public OWLTBoxPositiveCreator(IndividualRetriever retriever, OWLOntology onto, List<String> allowedTypes, Parser parser, Reasoner res, String allowedNamespace, boolean strict, Integer minimum){
+    public OWLTBoxPositiveCreator(Configuration conf, IndividualRetriever retriever, OWLOntology ontology, List<String> allowedTypes, Parser parser, OWLReasoner res, String namespace) {
         this.retriever=retriever;
-        this.onto=onto;
+        this.onto=ontology;
         this.originalTypes = allowedTypes;
         this.allowedTypes=new ArrayList<String>(new HashSet<String>(allowedTypes));
         this.parser=parser;
         this.res=res;
-        this.namespace=allowedNamespace;
-        if(strict){
-            testLimit=minimum;
+        this.namespace=namespace;
+        if(conf.isStrict()){
+            testLimit=conf.getMinNoOfExamples();
         }
-        this.strict= strict;
+        this.strict= conf.isStrict();
+        minConceptLength=conf.getMinConceptLength();
+        maxConceptLength=conf.getMaxConceptLength();
+        maxDepth=conf.getMaxDepth();
+        seed=conf.getSeed();
+        negationMutationRatio=conf.getNegationMutationRatio();
+        maxLateralDepth=conf.getMaxLateralDepth();
+        inferDirectSuperClasses=conf.getInferDirectSuperClasses();
+
     }
 
+    /**
+     * returns all allowed types. (will include the direct retrieved ones if inferDirectSuperClasses is true
+     *
+     * @return
+     */
+    public List<String> getAllowedTypes() {
+        return allowedTypes;
+    }
+
+    @Override
     public Collection<PosNegExample> createDistinctConcepts(int noOfConcepts){
         negationMutationRandom = new Random(seed);
         Set<PosNegExample> ret = new HashSet<PosNegExample>();
@@ -127,7 +128,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     }
 
     /**
-     * Gets concept length.
+     * Gets the concept length of a class expression
      *
      * @param concept the concept
      * @return the concept length
@@ -139,12 +140,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     }
 
 
-    /**
-     * Create concepts collection.
-     *
-     * @return the collection
-     */
-    public Collection<OWLClassExpression> createConcepts(){
+    private Collection<OWLClassExpression> createConcepts(){
         List<OWLClassExpression> concepts = new ArrayList<OWLClassExpression>();
         List<String> allowedTypes = new ArrayList<String>(this.allowedTypes);
         allowedTypes.forEach(type -> {
@@ -193,7 +189,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         Collection<OWLClassExpression> ret = new ArrayList<OWLClassExpression>();
         ret.add(owlClass);
         addNegationMutation(ret, owlClass);
-        //TODO create OR with other Classes if both are not sub/super classes of each other and or concats allowed
         createConceptFromExpression(owlClass, depth, ret);
         getAxiomsForClass(owlClass).forEach(axiom ->{
             if(axiom instanceof OWLObjectPropertyRangeAxiom){
@@ -251,7 +246,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         ret.addAll(createConceptFromExpression(start, getRangePropertiesForClass(start), depth));
     }
 
-    //TODO allow random negative Mutations
+
     private Collection<OWLClassExpression> createConceptFromExpression(OWLClassExpression start, Collection<OWLObjectPropertyExpression> properties, int depth) {
         Collection<OWLClassExpression> ret = new ArrayList<OWLClassExpression>();
         List<OWLClassExpression> sub = new ArrayList<OWLClassExpression>();
@@ -305,6 +300,9 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
             return;
         }
         for(int j=i;j<sub.size();j++){
+            if(isAlreadySatisfied(current, sub.get(j))){
+                continue;
+            }
             List<OWLClassExpression> newList = new ArrayList<>(current);
             newList.add(sub.get(j));
             int size=newList.size()-1;
@@ -316,6 +314,52 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
                 addLateral(lateral, sub, j, newList, depth + 1);
             }
         }
+    }
+
+    private boolean isAlreadySatisfied(OWLClassExpression current, OWLClassExpression now) {
+        if(current.equals(now)){return true;}
+        if(current instanceof OWLClass && now instanceof OWLClass){
+            if(res.getSuperClasses(current).containsEntity((OWLClass) now)){return true;}
+            if(res.getSuperClasses(now).containsEntity((OWLClass) current)){return true;}
+        }
+        else if(current instanceof OWLObjectSomeValuesFrom && now instanceof OWLObjectSomeValuesFrom){
+            OWLObjectPropertyExpression currentProperty = ((OWLObjectSomeValuesFrom) current).getProperty();
+            OWLObjectPropertyExpression nowProperty = ((OWLObjectSomeValuesFrom) now).getProperty();
+            OWLClassExpression currentFiller = ((OWLObjectSomeValuesFrom) current).getFiller();
+            OWLClassExpression nowFiller = ((OWLObjectSomeValuesFrom) now).getFiller();
+            if(nowProperty.equals(currentProperty) ||
+                    res.getSuperObjectProperties(currentProperty).containsEntity(nowProperty) ||
+                    res.getSuperObjectProperties(nowProperty).containsEntity(currentProperty)
+            ){
+                return isAlreadySatisfied(currentFiller, nowFiller);
+            }
+            return false;
+
+        }
+        else if(current instanceof OWLObjectAllValuesFrom && now instanceof OWLObjectAllValuesFrom){
+            OWLObjectPropertyExpression currentProperty = ((OWLObjectAllValuesFrom) current).getProperty();
+            OWLObjectPropertyExpression nowProperty = ((OWLObjectAllValuesFrom) now).getProperty();
+            OWLClassExpression currentFiller = ((OWLObjectAllValuesFrom) current).getFiller();
+            OWLClassExpression nowFiller = ((OWLObjectAllValuesFrom) now).getFiller();
+            if(nowProperty.equals(currentProperty) ||
+                    res.getSuperObjectProperties(currentProperty).containsEntity(nowProperty) ||
+                    res.getSuperObjectProperties(nowProperty).containsEntity(currentProperty)
+            ){
+                if(res.getSuperClasses(now).containsEntity((OWLClass) current)){return true;}
+                return isAlreadySatisfied(currentFiller, nowFiller);
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private boolean isAlreadySatisfied(List<OWLClassExpression> current, OWLClassExpression now) {
+        for(OWLClassExpression cur : current){
+            if(isAlreadySatisfied(cur, now)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private Collection<OWLObjectPropertyExpression> getRangePropertiesForClass(OWLClass owlClass) {

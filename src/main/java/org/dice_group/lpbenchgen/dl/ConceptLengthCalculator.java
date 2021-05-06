@@ -4,7 +4,7 @@ import org.semanticweb.owlapi.dlsyntax.renderer.DLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.*;
 
 /**
- * The type Concept length calculator.
+ * Calculates the Concept Length of an OWL Class Expression
  *
  * @author Lixi Alié Conrads
  */

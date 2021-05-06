@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The type Configuration.
+ * The overall Configuration.
  *
  * @author Lixi Alié Conrads
  */
 public class Configuration {
 
     /**
-     * Load from file configuration.
+     * Loads the configuration from a yaml file.
      *
      * @param file the file
      * @return the configuration
@@ -27,28 +27,6 @@ public class Configuration {
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         return mapper.readValue(new File(file), Configuration.class);
     }
-
-    /*
-endpoint: http://..
-owlFile: /raki/owl.owl
-types:
-  - Musician
-  - Album
-  - Actor
-  - Country
-maxNoOfIndividuals: 5
-percentageOfPositiveExamples: 0.25
-percentageOfNegativeExamples: 0.25
-concepts:
-  - positive: president and female
-    negatives:
-      - president and male
-      - female and not president
-  - positive: musician and actor
-    negatives: ...
-seed:
-*/
-
 
     @JsonProperty(required = false)
     private List<String> types = new ArrayList<>();
@@ -82,9 +60,10 @@ seed:
     private Integer negativeLimit=100;
     @JsonProperty(required = false, defaultValue = "0")
     private Integer maxLateralDepth=0;
+    @JsonProperty(required = false, defaultValue = "100")
+    private Integer aboxResultRetrievalLimit=100;
     @JsonProperty(required = false, defaultValue = "0.5")
     private Double splitContainment=0.5;
-
     @JsonProperty(required = false, defaultValue = "true")
     private Boolean inferDirectSuperClasses=true;
     @JsonProperty(required = true)
@@ -92,7 +71,7 @@ seed:
     @JsonProperty(required = true)
     private String owlFile;
     @JsonProperty(required = false)
-    private boolean endpointInfersRules=false;
+    private boolean openWorldAssumption = false;
     @JsonProperty(required = false)
     private boolean removeLiterals=false;
     @JsonProperty(required = false)
@@ -102,57 +81,155 @@ seed:
     @JsonProperty(required = false)
     private Double negationMutationRatio=0.0;
 
+    /**
+     * An internal limit for retrieving only this amount of query solutions.
+     * Will determine mostly how big the ABox will be.
+     *
+     * @return aboxResultRetrievalLimit
+     */
+    public Integer getAboxResultRetrievalLimit() {
+        return aboxResultRetrievalLimit;
+    }
 
+    /**
+     * An internal limit for retrieving only this amount of query solutions.
+     * Will determine mostly how big the ABox will be.
+     *
+     * @param aboxResultRetrievalLimit
+     */
+    public void setAboxResultRetrievalLimit(Integer aboxResultRetrievalLimit) {
+        this.aboxResultRetrievalLimit = aboxResultRetrievalLimit;
+    }
+
+    /**
+     * If this ratio is set to anything greater 0, the Concept creation allows random negation mutations on
+     * the concepts.
+     * The original concept will still be added, however a concept containing a Complement of a part of it might be added as well
+     *
+     * @return negationMutationRatio
+     */
     public Double getNegationMutationRatio() {
         return negationMutationRatio;
     }
 
+    /**
+     * If this ratio is set to anything greater 0, the Concept creation allows random negation mutations on
+     * the concepts.
+     * The original concept will still be added, however a concept containing a Complement of a part of it might be added as well
+     *
+     * @param negationMutationRatio
+     */
     public void setNegationMutationRatio(Double negationMutationRatio) {
         this.negationMutationRatio = negationMutationRatio;
     }
 
+    /**
+     * Lateral Depth allows combinations using laterals rather than recursive.
+     * </br></br>
+     * Allowing expressions like A and B and C if set to 2 f.e.
+     * However this might lead to a OOM as a lot of expressions are generated.
+     *
+     * @return maxLateralDepth
+     */
     public Integer getMaxLateralDepth() {
         return maxLateralDepth;
     }
 
+    /**
+     * Lateral Depth allows combinations using laterals rather than recursive.
+     * </br></br>
+     * Allowing expressions like A and B and C if set to 2 f.e.
+     * However this might lead to a OOM as a lot of expressions are generated.
+     *
+     * @param maxLateralDepth
+     */
     public void setMaxLateralDepth(Integer maxLateralDepth) {
         this.maxLateralDepth = maxLateralDepth;
     }
 
+    /**
+     * assures that if minimal number of examples are not less than that value.
+     *
+     *
+     * @return strict
+     */
     public boolean isStrict() {
         return strict;
     }
 
+    /**
+     * assures that if minimal number of examples are not less than that value.
+     *
+     * @param strict
+     */
     public void setStrict(boolean strict) {
         this.strict = strict;
     }
 
+    /**
+     * Sets the Query limit for positive example retrievals.
+     * </br>
+     * 0: no limit (there might still a limit if a SPARQL endpoint is used)
+     *
+     * @return positiveLimit
+     */
     public Integer getPositiveLimit() {
         return positiveLimit;
     }
 
+    /**
+     * Sets the Query limit for positive example retrievals.
+     * </br>
+     * 0: no limit (there might still a limit if a SPARQL endpoint is used)
+     *
+     * @param positiveLimit
+     */
     public void setPositiveLimit(Integer positiveLimit) {
         this.positiveLimit = positiveLimit;
     }
 
+    /**
+     * Gets the Query limit for negative example retrievals.
+     *
+     * @return negativeLimit
+     */
     public Integer getNegativeLimit() {
         return negativeLimit;
     }
 
+    /**
+     * Sets the Query limit for negative example retrievals.
+     *
+     * @param negativeLimit
+     */
     public void setNegativeLimit(Integer negativeLimit) {
         this.negativeLimit = negativeLimit;
     }
 
+    /**
+     * Sets the ratio how many problems will be set to train and how many to test.
+     * </br>
+     * 1 = all train, 0 all test
+     *
+     * @return ratio train/test
+     */
     public Double getSplitContainment() {
         return splitContainment;
     }
 
+    /**
+     * Sets the ratio how many problems will be set to train and how many to test.
+     * </br>
+     * 1 = all train, 0 all test
+     *
+     * @param splitContainment
+     */
     public void setSplitContainment(Double splitContainment) {
         this.splitContainment = splitContainment;
     }
 
     /**
-     * Gets namespace.
+     * Gets the namespace to use.
      *
      * @return the namespace
      */
@@ -161,7 +238,7 @@ seed:
     }
 
     /**
-     * Sets namespace.
+     * Sets the namespace to use.
      *
      * @param namespace the namespace
      */
@@ -170,7 +247,7 @@ seed:
     }
 
     /**
-     * Is remove literals boolean.
+     * if set true, will remove literals from Ontology.
      *
      * @return the boolean
      */
@@ -179,7 +256,7 @@ seed:
     }
 
     /**
-     * Sets remove literals.
+     * if set true, will remove literals from Ontology.
      *
      * @param removeLiterals the remove literals
      */
@@ -188,25 +265,25 @@ seed:
     }
 
     /**
-     * Is endpoint infers rules boolean.
+     * Sets Open World or Closed World Assumption
      *
-     * @return the boolean
+     * @return true of is OWA, false if it is CWA
      */
-    public boolean isEndpointInfersRules() {
-        return endpointInfersRules;
+    public boolean isOpenWorldAssumption() {
+        return openWorldAssumption;
     }
 
     /**
-     * Sets endpoint infers rules.
+     * Sets Open World or Closed World Assumption
      *
-     * @param endpointInfersRules the endpoint infers rules
+     * @param openWorldAssumption Open World or Closed World Assumption
      */
-    public void setEndpointInfersRules(boolean endpointInfersRules) {
-        this.endpointInfersRules = endpointInfersRules;
+    public void setOpenWorldAssumption(boolean openWorldAssumption) {
+        this.openWorldAssumption = openWorldAssumption;
     }
 
     /**
-     * Gets max depth.
+     * Gets the maximum depth for generating concepts.
      *
      * @return the max depth
      */
@@ -215,7 +292,7 @@ seed:
     }
 
     /**
-     * Sets max depth.
+     * Sets the maximum depth for generating concepts.
      *
      * @param maxDepth the max depth
      */
@@ -224,7 +301,7 @@ seed:
     }
 
     /**
-     * Gets max concept length.
+     * Gets the maximum concept length
      *
      * @return the max concept length
      */
@@ -233,7 +310,7 @@ seed:
     }
 
     /**
-     * Sets max concept length.
+     * Sets the maximum concept length
      *
      * @param maxConceptLength the max concept length
      */
@@ -242,7 +319,7 @@ seed:
     }
 
     /**
-     * Gets min concept length.
+     * Gets the minimum concept length
      *
      * @return the min concept length
      */
@@ -251,7 +328,7 @@ seed:
     }
 
     /**
-     * Sets min concept length.
+     * Sets the minimum concept length.
      *
      * @param minConceptLength the min concept length
      */
@@ -260,7 +337,9 @@ seed:
     }
 
     /**
-     * Gets infer direct super classes.
+     * Allows to expand the allowed types by using direct super classes of the allowed types.
+     * These will not be used to directly generate concepts, but merely allow these direct super classes
+     * to be in the concept.
      *
      * @return the infer direct super classes
      */
@@ -269,7 +348,9 @@ seed:
     }
 
     /**
-     * Sets infer direct super classes.
+     * Allows to expand the allowed types by using direct super classes of the allowed types.
+     * These will not be used to directly generate concepts, but merely allow these direct super classes
+     * to be in the concept.
      *
      * @param inferDirectSuperClasses the infer direct super classes
      */
@@ -278,7 +359,8 @@ seed:
     }
 
     /**
-     * Gets max generate concepts.
+     * Gets the amount of concepts which should be generated.
+     * May be less if there are no more concepts (with enough examples
      *
      * @return the max generate concepts
      */
@@ -287,7 +369,9 @@ seed:
     }
 
     /**
-     * Sets max generate concepts.
+     * the amount of concepts which should be generated.
+     * May be less if there are no more concepts (with enough examples).
+     *
      *
      * @param maxGenerateConcepts the max generate concepts
      */
@@ -295,26 +379,10 @@ seed:
         this.maxGenerateConcepts = maxGenerateConcepts;
     }
 
-    /**
-     * Gets max individuals per example concept.
-     *
-     * @return the max individuals per example concept
-     */
-    public Integer getMaxIndividualsPerExampleConcept() {
-        return maxIndividualsPerExampleConcept;
-    }
-
-    /**
-     * Sets max individuals per example concept.
-     *
-     * @param maxIndividualsPerExampleConcept the max individuals per example concept
-     */
-    public void setMaxIndividualsPerExampleConcept(Integer maxIndividualsPerExampleConcept) {
-        this.maxIndividualsPerExampleConcept = maxIndividualsPerExampleConcept;
-    }
 
     /**
      * Gets max no of examples.
+     * Every problem will have at most this amount of positive as well as negative examples.
      *
      * @return the max no of examples
      */
@@ -324,6 +392,8 @@ seed:
 
     /**
      * Sets max no of examples.
+     * Every problem will have at most this amount of positive as well as negative examples.
+     *
      *
      * @param maxNoOfExamples the max no of examples
      */
@@ -332,7 +402,12 @@ seed:
     }
 
     /**
-     * Gets min no of examples.
+     * Gets the minimal no of examples.
+     * -> keeps this amount of examples no matter what.
+     *
+     * </br>
+     * If strict is set as well, all problems will have at least
+     * minNoOfExamples positive as well as negative examples
      *
      * @return the min no of examples
      */
@@ -341,7 +416,12 @@ seed:
     }
 
     /**
-     * Sets min no of examples.
+     * Sets the minimal no of examples.
+     * -> keeps this amount of examples no matter what.
+     *
+     * </br>
+     * If strict is set as well, all problems will have at least
+     * minNoOfExamples positive as well as negative examples
      *
      * @param minNoOfExamples the min no of examples
      */
@@ -350,7 +430,7 @@ seed:
     }
 
     /**
-     * Gets seed.
+     * Gets the seed which will determine all random things.
      *
      * @return the seed
      */
@@ -359,7 +439,7 @@ seed:
     }
 
     /**
-     * Sets seed.
+     * Sets the seed which will determine all random things.
      *
      * @param seed the seed
      */
@@ -368,7 +448,7 @@ seed:
     }
 
     /**
-     * Gets types.
+     * Gets the allowed types.
      *
      * @return the types
      */
@@ -377,7 +457,7 @@ seed:
     }
 
     /**
-     * Sets types.
+     * Sets the allowed types to use.
      *
      * @param types the types
      */
@@ -386,25 +466,7 @@ seed:
     }
 
     /**
-     * Gets max no of individuals.
-     *
-     * @return the max no of individuals
-     */
-    public Integer getMaxNoOfIndividuals() {
-        return maxNoOfIndividuals;
-    }
-
-    /**
-     * Sets max no of individuals.
-     *
-     * @param maxNoOfIndividuals the max no of individuals
-     */
-    public void setMaxNoOfIndividuals(Integer maxNoOfIndividuals) {
-        this.maxNoOfIndividuals = maxNoOfIndividuals;
-    }
-
-    /**
-     * Gets percentage of positive examples.
+     * Gets the percentage of positive examples the test should keep.
      *
      * @return the percentage of positive examples
      */
@@ -413,7 +475,7 @@ seed:
     }
 
     /**
-     * Sets percentage of positive examples.
+     * Sets the percentage of positive examples the test should keep..
      *
      * @param percentageOfPositiveExamples the percentage of positive examples
      */
@@ -422,7 +484,7 @@ seed:
     }
 
     /**
-     * Gets percentage of negative examples.
+     * the percentage of negative examples the test & train should keep.
      *
      * @return the percentage of negative examples
      */
@@ -431,7 +493,7 @@ seed:
     }
 
     /**
-     * Sets percentage of negative examples.
+     * Sets the percentage of negative examples the test & train should keep.
      *
      * @param percentageOfNegativeExamples the percentage of negative examples
      */
@@ -440,7 +502,7 @@ seed:
     }
 
     /**
-     * Gets concepts.
+     * Sets the positive and negative concepts to retrieve examples from.
      *
      * @return the concepts
      */
@@ -449,7 +511,7 @@ seed:
     }
 
     /**
-     * Sets concepts.
+     * Sets the positive and negative concepts to retrieve examples from.
      *
      * @param concepts the concepts
      */
@@ -458,7 +520,7 @@ seed:
     }
 
     /**
-     * Gets endpoint.
+     * The endpoint, either representing an RDF file or a SPARQL endpoint which includes the ABox..
      *
      * @return the endpoint
      */
@@ -467,7 +529,7 @@ seed:
     }
 
     /**
-     * Sets endpoint.
+     * The endpoint, either representing an RDF file or a SPARQL endpoint which includes the ABox.
      *
      * @param endpoint the endpoint
      */
@@ -476,7 +538,7 @@ seed:
     }
 
     /**
-     * Gets owl file.
+     * The Ontology File containing at least the TBox
      *
      * @return the owl file
      */
@@ -485,7 +547,7 @@ seed:
     }
 
     /**
-     * Sets owl file.
+     * The Ontology File containing at least the TBox
      *
      * @param owlFile the owl file
      */

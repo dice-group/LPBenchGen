@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ContainmentEvaluation {
+public class Evaluation {
 
     public static void main(String[] args) throws FileNotFoundException {
         if(args.length<4 || args.length>5){
@@ -48,7 +48,7 @@ public class ContainmentEvaluation {
     }
 
     private static void printHelp() {
-        System.out.println("Usage: ContainmentEvaluation (--pertain-format | --includes-format) gold.ttl test.ttl answers.ttl OUTPUT_REPORT_FILE");
+        System.out.println("Usage: Evaluation (--pertain-format | --includes-format) gold.ttl test.ttl answers.ttl OUTPUT_REPORT_FILE");
         System.out.println("\n\t--pertain-format  -  answers.ttl is in pertain format");
         System.out.println("\t--includes-format (DEFAULT)  -  answers.ttl is in includes format");
         System.out.println("\n\tPertain Format: ");

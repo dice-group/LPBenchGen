@@ -10,19 +10,19 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The type Variable collector.
+ * Collect Varibales occuring in a Query.
  *
  * @author Lixi Alié Conrads
  */
 public class VariableCollector implements ElementVisitor  {
 
     /**
-     * The Vars.
+     * The varibles which occured.
      */
     public Set<String> vars = new HashSet<String>();
 
     /**
-     * The Ignore.
+     * If a variable should be ignored. (use ?v)
      */
     public String ignore="?var";
 
@@ -68,10 +68,6 @@ public class VariableCollector implements ElementVisitor  {
 
     }
 
-    @Override
-    public void visit(ElementFind elementFind) {
-
-    }
 
     @Override
     public void visit(ElementData elementData) {

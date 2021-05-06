@@ -33,7 +33,7 @@ import java.util.*;
  * Lorenz Buehmann
  * <p>
  * <p>
- * Copied the OWLClassExpressionToSPARQLConverter from https://github.com/SmartDataAnalytics/OWL2SPARQL and change some bits
+ * Copied the OWLClassExpressionToSPARQLConverter from https://github.com/SmartDataAnalytics/OWL2SPARQL and changed some bits
  **/
 public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpressionVisitor, OWLDataRangeVisitor{
 

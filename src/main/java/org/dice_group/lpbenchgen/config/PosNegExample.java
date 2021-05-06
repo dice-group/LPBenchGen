@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The type Pos neg example.
+ * The Positive Negative Concept template
  *
  * @author Lixi Alié Conrads
  */
@@ -19,16 +19,24 @@ public class PosNegExample {
     private List<OWLClassExpression> negatives = new ArrayList<OWLClassExpression>();
     private boolean negativeGenerated=false;
 
+    /**
+     * If negative concepts were generated
+     * @return
+     */
     public boolean isNegativeGenerated() {
         return negativeGenerated;
     }
 
+    /**
+     * If negative concepts were generated
+     * @param negativeGenerated
+     */
     public void setNegativeGenerated(boolean negativeGenerated) {
         this.negativeGenerated = negativeGenerated;
     }
 
     /**
-     * Gets positive.
+     * Gets positive concept.
      *
      * @return the positive
      */
@@ -37,7 +45,7 @@ public class PosNegExample {
     }
 
     /**
-     * Sets positive.
+     * Sets positive concept.
      *
      * @param positive the positive
      */
@@ -46,7 +54,7 @@ public class PosNegExample {
     }
 
     /**
-     * Gets negatives.
+     * Gets negatives concepts.
      *
      * @return the negatives
      */
@@ -55,7 +63,7 @@ public class PosNegExample {
     }
 
     /**
-     * Sets negatives.
+     * Sets negatives concepts.
      *
      * @param negatives the negatives
      */

@@ -24,7 +24,7 @@ public class Main {
      * @throws IOException                  the io exception
      */
     public static void main(String[] args) throws OWLOntologyCreationException, IOException {
-        if(args.length!=7){
+        if(args.length<6 || args.length>7){
             printHelp();
         }
         else {
@@ -34,15 +34,15 @@ public class Main {
             String name="";
             String config="";
             String format="";
-            if(!arguments.contains("--format") || !arguments.contains("--name") || ! arguments.contains("--config") || !(arguments.contains("--concept") || arguments.contains("--containment"))){
+            if(!arguments.contains("--format") || !arguments.contains("--name") || ! arguments.contains("--config")){
                 printHelp();
                 System.exit(1);
             }
             name = arguments.get(arguments.indexOf("--name")+1);
             config = arguments.get(arguments.indexOf("--config")+1);
-            String benchmarkType = arguments.contains("--concept")?"concept":"containment";
+            boolean generateABox = arguments.contains("--generate-abox");
             format = arguments.get(arguments.indexOf("--format")+1).toLowerCase();
-            new LPGenerator().createBenchmark(config, name, benchmarkType, format);
+            new LPGenerator().createBenchmark(config, name, generateABox, format);
         }
     }
 
@@ -50,17 +50,10 @@ public class Main {
      * Print help.
      */
     public static void printHelp(){
-        String help =" lpbenchgen --format [json|rdf] --config <CONFIG.YML> --name <BENCHMARK-NAME> [--concept|--containment]\n" +
-                "\n\tCONCEPT:" +
-                "\n\twill create learning problems and an ontology " +
-                "\n\tbased upon a SPARQL endpoint and a base ontology" +
-                "\n\tfor each concept in <CONFIG.YML> a learning problem will be created" +
-                "\n\tand the corresponding Individuals will be added to the ontology" +
-                "\n\tfurther on a certain amount of random Individuals will be added as well which will be retrieved using the types" +
-                "\n\tstated in <CONFIG.YML>" +
-                "\n\n\tOutput at <BENCHMARK-NAME>-lp.json and <BENCHMARK-NAME>-ontology.owl" +
-                "\n\n\n\tCONTAINMENT:" +
-                "\n\twill create learning problems and split them into trainingsdata as well as two additional sets of test data and gold standard" +
+        String help =" lpbenchgen --format [json|rdf] --config <CONFIG.YML> --name <BENCHMARK-NAME> [--generate-abox]\n" +
+                "\n\n\n" +
+                "\n\twill create learning problems from an ABox and TBox and split them into trainings data as well as two additional sets of test data and gold standard" +
+                "\n\tif --generate-abox : will create a minimal ABox and saves that at <BENCHMARK-NAME>-ontology.ttl" +
                 "\n\n\tOutput at <BENCHMARK-NAME>-(train/test).(json/ttl) and <BENCHMARK-NAME>-test-goldstd.(json/ttl)";
         System.out.println(help);
     }

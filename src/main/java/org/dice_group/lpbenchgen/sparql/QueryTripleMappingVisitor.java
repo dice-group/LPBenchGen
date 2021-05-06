@@ -2,21 +2,19 @@ package org.dice_group.lpbenchgen.sparql;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.sparql.syntax.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * The type Query triple mapping visitor.
+ * Creates a Triples from a Query and the corresponding ResultSet
  *
  * @author Lixi Alié Conrads
  */
 public class QueryTripleMappingVisitor implements ElementVisitor {
-    private Map<String, List<Object[]>> map = new HashMap<String, List<Object[]>>();
-    private Map<String, List<String[]>> pattern = new HashMap<String, List<String[]>>();
+    private Set<Triple> mapping = new HashSet<>();
+    private Set<Triple> map = new HashSet<Triple>();
     private String start;
     // walk the query and map Triple to rules e.g.
     // START prop1 ?s0 ; prop2 ?s1 . ?s1 prop3 ?s3!
@@ -33,43 +31,43 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
     }
 
     /**
-     * Pattern to map.
+     * Creates the actual triples from the previously created mapping to actual Triples.
      *
      * @param res the res
      */
     public void patternToMap(ResultSet res){
         while(res.hasNext()){
             QuerySolution row = res.next();
-            pattern.keySet().forEach(key -> {
-                String node;
-                if(key.equals(start)) {
-                    node=start;
-                }else{
-                    node = row.get(key).toString();
-                }
-                List<String[]> pat = pattern.get(key);
-                List<Object[]> triples = new ArrayList<Object[]>();
-                //for every pattern which has node as subject
-                for(String[] p2 : pat){
-                    Object[] add;
-                    String property = p2[0];
-                    if(property.startsWith("?")){
-                        property=row.get(p2[0]).toString();
+            for(Triple tripleMap :mapping){
+                //fill triple
+                String subject=tripleMap.subject, predicate=tripleMap.predicate;
+                Object object=tripleMap.object;
+                if(tripleMap.subject.startsWith("?")){
+                    if(row.contains(tripleMap.subject)){
+                        subject = row.get(tripleMap.subject).toString();
+                    }else{
+                        //UNION
+                        continue;
                     }
-                    if(p2[1].equals(start)){
-                        add = new Object[]{property, start};
-                    }else {
-                        add = new Object[]{property, row.get(p2[1])};
+                }
+                if(tripleMap.predicate.startsWith("?")){
+                    if(row.contains(tripleMap.predicate)){
+                        predicate = row.get(tripleMap.predicate).toString();
+                    }else{
+                        //UNION
+                        continue;
                     }
-                    triples.add(add);
                 }
-                if(map.containsKey(node.toString())){
-                    map.get(node.toString()).addAll(triples);
+                if(tripleMap.object.toString().startsWith("?")){
+                    if(row.contains(tripleMap.object.toString())){
+                        object = row.get(tripleMap.object.toString());
+                    }else{
+                        //UNION
+                        continue;
+                    }
                 }
-                else {
-                    map.put(node.toString(), triples);
-                }
-            });
+                map.add(new Triple(subject, predicate, object));
+            }
         }
     }
 
@@ -85,18 +83,14 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
             if(triple.getPredicate()!=null){
                 predicate = triple.getPredicate().toString();
             }else{
-                predicate=triple.getPath().toString();
+                predicate="http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
             }
-            String[] tr = new String[]{predicate, triple.getObject().toString()};
-            if(!(predicate.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") || predicate.equals("<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>/(<http://www.w3.org/2000/01/rdf-schema#subClassOf>)*"))) {
-                if (pattern.containsKey(triple.getSubject().toString())) {
-                    pattern.get(triple.getSubject().toString()).add(tr);
-                } else {
-                    List<String[]> coll = new ArrayList<String[]>();
-                    coll.add(tr);
-                    pattern.put(triple.getSubject().toString(), coll);
-                }
+            Object object = triple.getObject().toString();
+            if(triple.getObject().isURI()){
+                object = ResourceFactory.createResource(triple.getObject().getURI());
             }
+            Triple tr = new Triple(triple.getSubject().toString(), predicate, object);
+            mapping.add(tr);
         });
     }
 
@@ -112,11 +106,6 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
 
     @Override
     public void visit(ElementBind elementBind) {
-
-    }
-
-    @Override
-    public void visit(ElementFind elementFind) {
 
     }
 
@@ -180,7 +169,7 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
      *
      * @return the map
      */
-    public Map<String, List<Object[]>> getMap() {
+    public Set<Triple> getMap() {
         return map;
     }
 }

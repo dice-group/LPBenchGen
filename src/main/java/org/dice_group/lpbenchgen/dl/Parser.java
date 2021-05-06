@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * The type Parser.
+ * OWL Ontology Parser
  *
  * @author Lixi Alié Conrads
  */
@@ -82,7 +82,7 @@ public class Parser {
     }
 
     /**
-     * Get rules in expr collection.
+     * Get rules in expressions.
      *
      * @param ce        the ce
      * @param dataRules the data rules
@@ -102,7 +102,7 @@ public class Parser {
     }
 
     /**
-     * Render string.
+     * Render a Class Expression to Manchester Syntax.
      *
      * @param concept the concept
      * @return the string
@@ -114,7 +114,7 @@ public class Parser {
     }
 
     /**
-     * Gets short name.
+     * Gets a short form for a URI
      *
      * @param uri the uri
      * @return the short name
