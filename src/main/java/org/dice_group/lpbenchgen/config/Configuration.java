@@ -95,7 +95,7 @@ public class Configuration {
      * An internal limit for retrieving only this amount of query solutions.
      * Will determine mostly how big the ABox will be.
      *
-     * @param aboxResultRetrievalLimit
+     * @param aboxResultRetrievalLimit individual retrieval limit
      */
     public void setAboxResultRetrievalLimit(Integer aboxResultRetrievalLimit) {
         this.aboxResultRetrievalLimit = aboxResultRetrievalLimit;
@@ -117,7 +117,7 @@ public class Configuration {
      * the concepts.
      * The original concept will still be added, however a concept containing a Complement of a part of it might be added as well
      *
-     * @param negationMutationRatio
+     * @param negationMutationRatio negation mutation ratio
      */
     public void setNegationMutationRatio(Double negationMutationRatio) {
         this.negationMutationRatio = negationMutationRatio;
@@ -125,7 +125,7 @@ public class Configuration {
 
     /**
      * Lateral Depth allows combinations using laterals rather than recursive.
-     * </br></br>
+     * 
      * Allowing expressions like A and B and C if set to 2 f.e.
      * However this might lead to a OOM as a lot of expressions are generated.
      *
@@ -137,11 +137,11 @@ public class Configuration {
 
     /**
      * Lateral Depth allows combinations using laterals rather than recursive.
-     * </br></br>
+     * 
      * Allowing expressions like A and B and C if set to 2 f.e.
      * However this might lead to a OOM as a lot of expressions are generated.
      *
-     * @param maxLateralDepth
+     * @param maxLateralDepth maximum lateral depth
      */
     public void setMaxLateralDepth(Integer maxLateralDepth) {
         this.maxLateralDepth = maxLateralDepth;
@@ -160,7 +160,7 @@ public class Configuration {
     /**
      * assures that if minimal number of examples are not less than that value.
      *
-     * @param strict
+     * @param strict if is strict
      */
     public void setStrict(boolean strict) {
         this.strict = strict;
@@ -168,7 +168,7 @@ public class Configuration {
 
     /**
      * Sets the Query limit for positive example retrievals.
-     * </br>
+     * 
      * 0: no limit (there might still a limit if a SPARQL endpoint is used)
      *
      * @return positiveLimit
@@ -179,10 +179,10 @@ public class Configuration {
 
     /**
      * Sets the Query limit for positive example retrievals.
-     * </br>
+     * 
      * 0: no limit (there might still a limit if a SPARQL endpoint is used)
      *
-     * @param positiveLimit
+     * @param positiveLimit positive query limit
      */
     public void setPositiveLimit(Integer positiveLimit) {
         this.positiveLimit = positiveLimit;
@@ -200,7 +200,7 @@ public class Configuration {
     /**
      * Sets the Query limit for negative example retrievals.
      *
-     * @param negativeLimit
+     * @param negativeLimit negative query limit
      */
     public void setNegativeLimit(Integer negativeLimit) {
         this.negativeLimit = negativeLimit;
@@ -208,7 +208,7 @@ public class Configuration {
 
     /**
      * Sets the ratio how many problems will be set to train and how many to test.
-     * </br>
+     * 
      * 1 = all train, 0 all test
      *
      * @return ratio train/test
@@ -219,10 +219,10 @@ public class Configuration {
 
     /**
      * Sets the ratio how many problems will be set to train and how many to test.
-     * </br>
+     * 
      * 1 = all train, 0 all test
      *
-     * @param splitContainment
+     * @param splitContainment train/test split
      */
     public void setSplitContainment(Double splitContainment) {
         this.splitContainment = splitContainment;
@@ -403,9 +403,9 @@ public class Configuration {
 
     /**
      * Gets the minimal no of examples.
-     * -> keeps this amount of examples no matter what.
+     * hence keeps this amount of examples no matter what.
      *
-     * </br>
+     * 
      * If strict is set as well, all problems will have at least
      * minNoOfExamples positive as well as negative examples
      *
@@ -417,9 +417,9 @@ public class Configuration {
 
     /**
      * Sets the minimal no of examples.
-     * -> keeps this amount of examples no matter what.
+     * hence keeps this amount of examples no matter what.
      *
-     * </br>
+     * 
      * If strict is set as well, all problems will have at least
      * minNoOfExamples positive as well as negative examples
      *
@@ -484,7 +484,7 @@ public class Configuration {
     }
 
     /**
-     * the percentage of negative examples the test & train should keep.
+     * the percentage of negative examples the test and train should keep.
      *
      * @return the percentage of negative examples
      */
@@ -493,7 +493,7 @@ public class Configuration {
     }
 
     /**
-     * Sets the percentage of negative examples the test & train should keep.
+     * Sets the percentage of negative examples the test and train should keep.
      *
      * @param percentageOfNegativeExamples the percentage of negative examples
      */

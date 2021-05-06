@@ -30,9 +30,9 @@ import java.util.*;
 /**
  * A converter from OWL 2 class expressions  to SPARQL queries.
  * Author:
- * Lorenz Buehmann
- * <p>
- * <p>
+ * @author Lorenz Buehmann
+ * 
+ * 
  * Copied the OWLClassExpressionToSPARQLConverter from https://github.com/SmartDataAnalytics/OWL2SPARQL and changed some bits
  **/
 public class OWL2SPARQL implements OWLClassExpressionVisitor, OWLPropertyExpressionVisitor, OWLDataRangeVisitor{

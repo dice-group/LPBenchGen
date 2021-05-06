@@ -78,7 +78,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     /**
      * returns all allowed types. (will include the direct retrieved ones if inferDirectSuperClasses is true
      *
-     * @return
+     * @return the allowed types
      */
     public List<String> getAllowedTypes() {
         return allowedTypes;

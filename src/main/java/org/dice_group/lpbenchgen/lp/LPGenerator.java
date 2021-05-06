@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
- * The type Lp generator.
+ * The  Learning Problem Generator
  *
  * @author Lixi Alié Conrads
  */
@@ -208,7 +208,7 @@ public class LPGenerator {
      * Depending on the format will save these in json or turtle format to
      * name-train.ttl name-test.ttl name-test-goldstd.ttl
      *
-     * If Open World Assumption is used -> will also validate the problems using an Openllet Reasoner.
+     * If Open World Assumption is used it will also validate the problems using an Openllet Reasoner.
      *
      * @param conf the benchmark configuration
      * @param problems the problems the abox should be created for

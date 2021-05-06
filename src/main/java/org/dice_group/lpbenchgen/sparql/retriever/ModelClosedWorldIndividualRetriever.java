@@ -46,6 +46,8 @@ public class ModelClosedWorldIndividualRetriever extends AbstractSPARQLIndividua
     /**
      * Creates a ModelClosedWorldIndividualRetriever using an file containing the ABox
      *
+     * @param aboxFile the rdf file containing the abox
+     * @throws FileNotFoundException if the abox file doesn't exists
      */
     public ModelClosedWorldIndividualRetriever(String aboxFile) throws FileNotFoundException {
         RDFDataMgr.read(model, new FileInputStream(aboxFile), RDFLanguages.filenameToLang(aboxFile));

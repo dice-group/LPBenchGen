@@ -37,6 +37,7 @@ public class ABoxFiller {
      *
      * @param retriever    the retriever
      * @param allowedTypes the allowed types
+     * @param limit the internal query limit
      */
     public ABoxFiller(IndividualRetriever retriever, List<String> allowedTypes, int limit){
         this.retriever=retriever;
@@ -52,7 +53,7 @@ public class ABoxFiller {
      * @param concept         the concept
      * @param startIndividual the start individual
      * @param ontology        the ontology
-     * @return the boolean
+     * @return true if addition was successful, false otherwise
      */
     public boolean addIndividualsFromConcept(OWLClassExpression concept, String startIndividual, OWLOntology ontology){
         OWL2SPARQL sparql = new OWL2SPARQL();

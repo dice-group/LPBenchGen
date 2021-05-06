@@ -36,9 +36,9 @@ public class ModelOpenWorldIndividualRetriever  implements IndividualRetriever {
     /**
      * Creates a ModelOpenWorldIndividualRetriever using an file containing the ABox
      *
-     * @param aboxFile
-     * @throws FileNotFoundException
-     * @throws OWLOntologyCreationException
+     * @param aboxFile the rdf file containing the abox
+     * @throws FileNotFoundException if the abox file doesn't exist
+     * @throws OWLOntologyCreationException if the ontology cannot be created
      */
     public ModelOpenWorldIndividualRetriever(String aboxFile) throws FileNotFoundException, OWLOntologyCreationException {
         RDFDataMgr.read(model, new FileInputStream(aboxFile), RDFLanguages.filenameToLang(aboxFile));
@@ -48,7 +48,7 @@ public class ModelOpenWorldIndividualRetriever  implements IndividualRetriever {
 
     /**
      * Returns the Reasoner used.
-     * @return
+     * @return the OWLReasoner used
      */
     public OWLReasoner getReasoner(){
         return reasoner;

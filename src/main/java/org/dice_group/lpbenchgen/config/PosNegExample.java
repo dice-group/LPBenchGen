@@ -21,7 +21,7 @@ public class PosNegExample {
 
     /**
      * If negative concepts were generated
-     * @return
+     * @return if the negative concepts were generated
      */
     public boolean isNegativeGenerated() {
         return negativeGenerated;
@@ -29,7 +29,7 @@ public class PosNegExample {
 
     /**
      * If negative concepts were generated
-     * @param negativeGenerated
+     * @param negativeGenerated sets if the negative concepts were/are generated
      */
     public void setNegativeGenerated(boolean negativeGenerated) {
         this.negativeGenerated = negativeGenerated;
