@@ -17,7 +17,15 @@ jobs:
         with:
           python-version: 3.x
       - shell: bash
-        run: mvn help:evaluate -Dexpression=project.version -q -DforceStdout > version.log
+        run: mvn help:evaluate -Dexpression=major.minor.version -q -DforceStdout > version.log
+      - shell: bash
+        run: mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout > artifactid.log
+      - name: Set env version
+        run: echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+      - name: Set env name
+        run: echo "RELEASE_ARTIFACTID=$(cat artifactid.log)" >> $GITHUB_ENV
+      - name: test
+        run: echo ${{ RELEASE_VERSION }} ${{ RELEASE_ARTIFACTID }}
       - run: pip install mkdocs-material
       - run: pip install mkdocs-macros-plugin
       - run: sed -i "s/\$VERSION/$(cat version.log)/g" mkdocs.yml
@@ -31,4 +39,25 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
           destination_dir: ./
-
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ RELEASE_VERSION }}
+          release_name: v${{ RELEASE_VERSION }}
+          draft: false
+          prerelease: false
+      - uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/${{ RELEASE_ARTIFACTID }}-${{ RELEASE_VERSION }}-shaded.jar
+          asset_name: ${{ RELEASE_ARTIFACTID }}-${{ RELEASE_VERSION }}.jar
+          asset_content_type: application/zip

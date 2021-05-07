@@ -3,5 +3,4 @@
 
 ## JavaDoc
 
-
-The JavaDoc can be found at [javadocs/{{ version }}/](../../javadoc/{{ version }}/)
+The JavaDoc can be found at [here](../../javadoc/{{ version }}/apidocs/)
