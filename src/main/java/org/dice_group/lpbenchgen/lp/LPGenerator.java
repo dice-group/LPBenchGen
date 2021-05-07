@@ -9,6 +9,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.ABoxFiller;
+import org.dice_group.lpbenchgen.dl.OWLNegationCreator;
 import org.dice_group.lpbenchgen.dl.OWLTBoxPositiveCreator;
 import org.dice_group.lpbenchgen.dl.Parser;
 import org.dice_group.lpbenchgen.sparql.IndividualRetriever;
@@ -191,7 +192,10 @@ public class LPGenerator {
             conf.setConcepts(generateConcepts(conf.getMaxGenerateConcepts(), conf.getMinConceptLength(), conf.getMaxConceptLength(), conf.getMaxDepth(), conf.getInferDirectSuperClasses(), conf.getNamespace()));
             LOGGER.info("Generated {} positive concepts.", conf.getConcepts().size());
         }
-
+        else {
+            //generate negative for all concepts that do not have set negatives.
+            generateNegativeConcepts(conf.getConcepts());
+        }
         LOGGER.info("Starting to generate examples from concepts");
         Collection<LPProblem> problems = generateProblems(conf.getConcepts());
         if(generateABox){
@@ -200,6 +204,32 @@ public class LPGenerator {
         }
         createBenchmarkFiles(conf, problems, name, format);
 
+    }
+
+    private void generateNegativeConcepts(List<PosNegExample> concepts) {
+        List<PosNegExample> remove = new ArrayList<>();
+        for(PosNegExample example : concepts){
+            if(example.getNegatives().isEmpty()){
+                LOGGER.info("Generating negative examples for concept {}", example.getPositive());
+                OWLNegationCreator creator = new OWLNegationCreator();
+                OWLClassExpression concept = parser.parseManchesterConcept(example.getPositive());
+                concept.accept(creator);
+                //creator.prune();
+                int negativeSize=0;
+                for(OWLClassExpression negativeConcept : creator.negationConcepts) {
+                    negativeSize += retriever.retrieveIndividualsForConcept(negativeConcept, conf.getMinNoOfExamples(), 5, true).size();
+                }
+                if ((conf.isStrict() && negativeSize>=conf.getMinNoOfExamples()) || (!conf.isStrict() && negativeSize>0) ) {
+                    example.setNegativeGenerated(true);
+                    example.setNegatives(creator.negationConcepts);
+                }
+                else{
+                    LOGGER.warn("Couldn't retrieve enough negative examples for concept {}. Removing problem", example.getPositive());
+                    remove.add(example);
+                }
+            }
+        }
+        concepts.removeAll(remove);
     }
 
     /**

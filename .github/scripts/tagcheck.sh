@@ -1,10 +1,10 @@
 #!/bin/sh
 
 if git rev-parse "$1" >/dev/null 2>&1; then
-  echo "exists"
+  echo "Tag $1 exist - update version in pom!"
   exit 1
 else
-  echo "$1 does not exists"
+  echo "Tag $1 does not exist - good to go."
   exit 0
 fi
 

@@ -1,6 +1,7 @@
 
 extra:
   version: $VERSION
+  release_version: $RELEASE_VERSION
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/dice-group/LPBenchGen
