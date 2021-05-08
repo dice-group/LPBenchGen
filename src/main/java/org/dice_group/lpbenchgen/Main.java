@@ -3,6 +3,7 @@ package org.dice_group.lpbenchgen;
 
 import com.google.common.collect.Lists;
 import org.apache.jena.query.ARQ;
+import org.dice_group.lpbenchgen.lp.LPBenchmark;
 import org.dice_group.lpbenchgen.lp.LPGenerator;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
@@ -42,7 +43,9 @@ public class Main {
             config = arguments.get(arguments.indexOf("--config")+1);
             boolean generateABox = arguments.contains("--generate-abox");
             format = arguments.get(arguments.indexOf("--format")+1).toLowerCase();
-            new LPGenerator().createBenchmark(config, name, generateABox, format);
+            LPGenerator generator = new LPGenerator();
+            LPBenchmark benchmark = generator.createBenchmark(config, generateABox);
+            generator.saveLPBenchmark(benchmark, name, format);
         }
     }
 

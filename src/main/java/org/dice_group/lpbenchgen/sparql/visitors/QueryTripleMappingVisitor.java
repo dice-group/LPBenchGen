@@ -1,9 +1,10 @@
-package org.dice_group.lpbenchgen.sparql;
+package org.dice_group.lpbenchgen.sparql.visitors;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.sparql.syntax.*;
+import org.dice_group.lpbenchgen.sparql.Triple;
 
 import java.util.*;
 

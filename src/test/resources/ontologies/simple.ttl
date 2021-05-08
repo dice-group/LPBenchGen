@@ -1,0 +1,112 @@
+@prefix : <http://example.com#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://example.com#> .
+
+<http://example.com> rdf:type owl:Ontology .
+
+# A, B, C
+# hasRuleAB, hasRuleBC, hasRuleAB-2
+#
+# Normal:
+# A:
+# D0
+#   A             3
+#   A-1           1
+# D1
+#   A and hasRuleAB some B          3
+#   A and hasRuleAB some B-1        3
+#   A and hasRuleAB some B-2        3
+#   A-1 and hasRuleAB some B        1
+#   A-1 and hasRuleAB some B-1      1
+#   A-1 and hasRuleAB some B-2      1
+#   A and hasRuleAB-2 some B-2      1
+#   A-1 and hasRuleAB-2 some B-2    0
+# D2
+#   A and hasRuleAB some (B and hasRuleBC some C)               2
+#   A and hasRuleAB some (B-1 and hasRuleBC some C)             1
+#   A and hasRuleAB some (B-2 and hasRuleBC some C)             1
+#   A-1 and hasRuleAB some (B and  and hasRuleBC some C)        0
+#   A-1 and hasRuleAB some (B-1 and  and hasRuleBC some C)      0
+#   A-1 and hasRuleAB some (B-2 and  and hasRuleBC some C)      0
+#   A and hasRuleAB-2 some (B-2 and  and hasRuleBC some C)      0
+#   A-1 and hasRuleAB-2 some (B-2 and  and hasRuleBC some C)    0
+#
+#
+# B:
+# D0
+#   B                       7
+#   B-1                     2
+#   B-2                     4
+#   hasRuleAB B             6
+#   hasRuleAB B-1           1
+#   hasRuleAB B-2           4
+#   hasRuleAB-2 B-2         2
+#
+# D1
+#   B and hasRuleBC some C                              3
+#   B-1 and hasRuleBC some C                            1
+#   B-2 and hasRuleBC some C                            1
+#   and hasRuleAB (B and  and hasRuleBC some C)         2
+#   and hasRuleAB (B-1 and  and hasRuleBC some C)       1
+#   and hasRuleAB (B-2 and  and hasRuleBC some C)       1
+#   and hasRuleAB-2 (B-2 and  and hasRuleBC some C)     0
+#
+#
+# C:
+# D0
+#   C                       1
+#   hasRuleBC some C        1
+
+
+:A rdf:type owl:Class .
+:B rdf:type owl:Class .
+:C rdf:type owl:Class ;
+    owl:disjointWith :A .
+
+:A-1 rdf:type owl:Class ;
+           rdfs:subClassOf :A .
+
+:B-1 rdf:type owl:Class ;
+        rdfs:subClassOf :B .
+
+:B-2 rdf:type owl:Class ;
+        rdfs:subClassOf :B .
+
+
+:hasRuleAB rdf:type owl:ObjectProperty ;
+         rdfs:domain :A ;
+         rdfs:range :B .
+
+:hasRuleAB-2 rdf:type owl:ObjectProperty ;
+         rdfs:domain :A ;
+         rdfs:range :B-2 .
+
+:hasRuleBC rdf:type owl:ObjectProperty ;
+         rdfs:domain :B ;
+         rdfs:range :C .
+
+:Individual-A1 rdf:type :A ;
+    :hasRuleAB :Individual-B1, :Individual-B1-2-1.
+:Individual-A2 rdf:type :A ;
+    :hasRuleAB :Individual-B2-1;
+    :hasRuleAB-2 :Individual-B2-2-1.
+:Individual-A1-1 rdf:type :A-1 ;
+    :hasRuleAB :Individual-B1-1, :Individual-B1-2.
+
+:Individual-B1 rdf:type :B ;
+    :hasRuleBC :Individual-C1.
+:Individual-B1-1 rdf:type :B-1 .
+:Individual-B2-1 rdf:type :B-1 ;
+    :hasRuleBC :Individual-C1.
+:Individual-B1-2 rdf:type :B-2 .
+:Individual-B2-2 rdf:type :B-2 .
+:Individual-B1-2-1 rdf:type :B-2 ;
+    :hasRuleBC :Individual-C1.
+:Individual-B2-2-1 rdf:type :B-2 .
+
+:Individual-C1 rdf:type :C .
+

@@ -16,7 +16,9 @@ public class PosNegExample {
     @JsonProperty(required = true)
     private String positive;
     @JsonProperty(required = false)
-    private List<OWLClassExpression> negatives = new ArrayList<OWLClassExpression>();
+    private List<String> negatives = new ArrayList<String>();
+
+    private List<OWLClassExpression> negativesExpr = new ArrayList<OWLClassExpression>();
     private boolean negativeGenerated=false;
 
     /**
@@ -58,17 +60,17 @@ public class PosNegExample {
      *
      * @return the negatives
      */
-    public List<OWLClassExpression> getNegatives() {
-        return negatives;
+    public List<OWLClassExpression> getNegativesExpr() {
+        return negativesExpr;
     }
 
     /**
      * Sets negatives concepts.
      *
-     * @param negatives the negatives
+     * @param negativesExpr the negatives
      */
-    public void setNegatives(List<OWLClassExpression> negatives) {
-        this.negatives = negatives;
+    public void setNegativesExpr(List<OWLClassExpression> negativesExpr) {
+        this.negativesExpr = negativesExpr;
     }
 
     @Override
@@ -87,5 +89,14 @@ public class PosNegExample {
             anotherObject.toString().equals(positive);
         }
         return false;
+    }
+
+    /**
+     * Gets the negative concepts as strings - only set if loaded from config
+     *
+     * @return negative concepts as string
+     */
+    public List<String> getNegatives() {
+        return negatives;
     }
 }

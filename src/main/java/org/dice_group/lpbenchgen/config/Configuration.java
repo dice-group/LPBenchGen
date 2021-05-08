@@ -3,6 +3,7 @@ package org.dice_group.lpbenchgen.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.dice_group.lpbenchgen.dl.Parser;
 
 import java.io.File;
 import java.io.IOException;
@@ -553,5 +554,21 @@ public class Configuration {
      */
     public void setOwlFile(String owlFile) {
         this.owlFile = owlFile;
+    }
+
+    /**
+     * prepares the configuration.
+     * If negative concepts were set, convert them to ClassExpressions
+     *
+     * @param parser the parser containing the ontology to convert the expressions with
+     */
+    public void prepare(Parser parser) {
+        if(concepts!=null){
+            for(PosNegExample example : concepts){
+                for(String negativeConcept : example.getNegatives()){
+                    example.getNegativesExpr().add(parser.parseManchesterConcept(negativeConcept));
+                }
+            }
+        }
     }
 }

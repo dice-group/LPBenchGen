@@ -7,6 +7,7 @@
 * Better JavaDoc
 * Added Documentation
 * Cleaned up code
+* Added Unit Tests
 
 ## Added Features
 

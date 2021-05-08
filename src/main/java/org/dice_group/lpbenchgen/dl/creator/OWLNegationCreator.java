@@ -23,34 +23,6 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
 
     /**
-     * Prune.
-     */
-    public void prune(){
-        List<OWLClassExpression> unions = new ArrayList<OWLClassExpression>();
-        List<OWLClassExpression> remove = new ArrayList<OWLClassExpression>();
-
-        for(OWLClassExpression expression : negationConcepts){
-            if(expression instanceof OWLObjectUnionOf){
-                unions.add(expression);
-            }
-        }
-        for(OWLClassExpression union: unions){
-            for(OWLClassExpression expr : negationConcepts){
-                if(contains((OWLObjectUnionOf) union, expr)){
-                    remove.add(expr);
-                }
-            }
-        }
-
-        negationConcepts.removeAll(remove);
-        if(negationConcepts.size()> unions.size()){
-            negationConcepts.removeAll(unions);
-        }
-
-
-    }
-
-    /**
      * Contains boolean.
      *
      * @param union the union
@@ -86,7 +58,7 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
                 ops.remove(entity);
                 ops.add(new OWLObjectComplementOfImpl(entity));
-                negationConcepts.add(new OWLObjectIntersectionOfImpl(ops));
+                negationConcepts.add(new OWLObjectIntersectionOfImpl(ops).getNNF());
 
         }
     }

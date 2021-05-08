@@ -110,7 +110,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
                         PosNegExample example = new PosNegExample();
                         example.setPositive(parser.render(concept));
                         example.setNegativeGenerated(true);
-                        example.setNegatives(creator.negationConcepts);
+                        example.setNegativesExpr(creator.negationConcepts);
                         ret.add(example);
                         if (ret.size() >= noOfConcepts) {
                             break;

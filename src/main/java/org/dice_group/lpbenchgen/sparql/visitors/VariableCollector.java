@@ -1,4 +1,4 @@
-package org.dice_group.lpbenchgen.sparql;
+package org.dice_group.lpbenchgen.sparql.visitors;
 
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.core.Var;
@@ -10,14 +10,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Collect Varibales occuring in a Query.
+ * Collect Variables occurring in a Query.
+ * And removes FILTER clauses if the variable which should be ignored occurs in that clause.
+ *
+ * Variables in a FILTER clause will be ignored.
  *
  * @author Lixi Alié Conrads
  */
 public class VariableCollector implements ElementVisitor  {
 
     /**
-     * The varibles which occured.
+     * The variables which occurred.
      */
     public Set<String> vars = new HashSet<String>();
 
