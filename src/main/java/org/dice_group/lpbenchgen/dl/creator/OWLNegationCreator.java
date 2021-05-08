@@ -1,12 +1,10 @@
-package org.dice_group.lpbenchgen.dl;
+package org.dice_group.lpbenchgen.dl.creator;
 
 
-import com.google.common.collect.Lists;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 

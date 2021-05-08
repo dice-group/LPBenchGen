@@ -1,8 +1,11 @@
-package org.dice_group.lpbenchgen.dl;
+package org.dice_group.lpbenchgen.dl.creator;
 
 import com.google.common.collect.Lists;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
+import org.dice_group.lpbenchgen.dl.ConceptLengthCalculator;
+import org.dice_group.lpbenchgen.dl.OWLTBoxConceptCreator;
+import org.dice_group.lpbenchgen.dl.Parser;
 import org.dice_group.lpbenchgen.sparql.IndividualRetriever;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
  *
  * @author Lixi Alié Conrads
  */
-public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
+public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OWLTBoxPositiveCreator.class.getName());
 
@@ -26,22 +29,20 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     private final OWLReasoner res;
     private final String namespace;
     private final boolean strict;
-    private IndividualRetriever retriever;
-    private OWLOntology onto;
-    private List<String> allowedTypes;
-    private Parser parser;
-    private OWLDataFactory dataFactory = new OWLDataFactoryImpl();
-    private Map<String, Set<OWLAxiom>> type2axioms = new HashMap<String, Set<OWLAxiom>>();
-    private Map<String, Collection<OWLClassExpression>> type2expr = new HashMap<String, Collection<OWLClassExpression>>();
+    private final IndividualRetriever retriever;
+    private final OWLOntology onto;
+    private final List<String> allowedTypes;
+    private final Parser parser;
+    private final OWLDataFactory dataFactory = new OWLDataFactoryImpl();
     private Random negationMutationRandom;
-    private long seed=0;
-    private int maxDepth=2;
-    private int maxConceptLength=8;
-    private int minConceptLength=4;
-    private boolean inferDirectSuperClasses=true;
+    private final long seed;
+    private final int maxDepth;
+    private final int maxConceptLength;
+    private final int minConceptLength;
+    private final boolean inferDirectSuperClasses;
     private int testLimit=1;
-    private int maxLateralDepth=0;
-    private double negationMutationRatio;
+    private final int maxLateralDepth;
+    private final double negationMutationRatio;
 
     /**
      * Instantiates a new OWL TBox Creator
@@ -57,7 +58,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         this.retriever=retriever;
         this.onto=ontology;
         this.originalTypes = allowedTypes;
-        this.allowedTypes=new ArrayList<String>(new HashSet<String>(allowedTypes));
+        this.allowedTypes= new ArrayList<>(new HashSet<>(allowedTypes));
         this.parser=parser;
         this.res=res;
         this.namespace=namespace;
@@ -87,7 +88,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     @Override
     public Collection<PosNegExample> createDistinctConcepts(int noOfConcepts){
         negationMutationRandom = new Random(seed);
-        Set<PosNegExample> ret = new HashSet<PosNegExample>();
+        Set<PosNegExample> ret = new HashSet<>();
         int toSmallCount=0;
         int noResults=0;
         for(OWLClassExpression concept : createConcepts()){
@@ -122,7 +123,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
                 e.printStackTrace();
             }
         }
-        List<PosNegExample> ret2= new ArrayList<PosNegExample>(ret);
+        List<PosNegExample> ret2= new ArrayList<>(ret);
         LOGGER.info("Final {} concepts. [{} to small, {} with no results/timeout]", ret2.size(), toSmallCount, noResults);
         return ret2;
     }
@@ -141,14 +142,11 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
 
 
     private Collection<OWLClassExpression> createConcepts(){
-        List<OWLClassExpression> concepts = new ArrayList<OWLClassExpression>();
-        List<String> allowedTypes = new ArrayList<String>(this.allowedTypes);
+        List<OWLClassExpression> concepts = new ArrayList<>();
+        List<String> allowedTypes = new ArrayList<>(this.allowedTypes);
         allowedTypes.forEach(type -> {
             if(!type.equals("http://www.w3.org/2002/07/owl#Thing")) {
-                Set<OWLAxiom> axioms = getAxiomsForClass(dataFactory.getOWLClass(IRI.create(type)));
-                type2axioms.put(type, axioms);
-                Collection<OWLClassExpression> ret = createConceptsFromClass(dataFactory.getOWLClass(IRI.create(type)), false, 0);
-                type2expr.put(type, ret);
+                Collection<OWLClassExpression> ret = createConceptsFromClass(dataFactory.getOWLClass(IRI.create(type)));
                 concepts.addAll(ret);
             }
         });
@@ -161,71 +159,71 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
 
     private Set<OWLAxiom> getAxiomsForClass(OWLClass owlClass) {
 
-        Set<OWLAxiom> ret = new HashSet<OWLAxiom>();
+        Set<OWLAxiom> ret = new HashSet<>();
         if(inferDirectSuperClasses && originalTypes.contains(owlClass.getIRI().toString())) {
-            res.getSuperClasses(owlClass, true).forEach(node -> {
-                node.getEntities().forEach(superClass -> {
-                    if(namespace==null || superClass.getIRI().toString().startsWith(namespace)) {
-                        onto.getReferencingAxioms(superClass).stream().filter(x -> x instanceof OWLObjectPropertyRangeAxiom || x instanceof OWLObjectPropertyDomainAxiom).forEach(
-                                supClassAxiom -> {
+            res.getSuperClasses(owlClass, true).forEach(node -> node.getEntities().forEach(superClass -> {
+                if(namespace==null || superClass.getIRI().toString().startsWith(namespace)) {
+                    onto.getReferencingAxioms(superClass).stream().filter(x -> x instanceof OWLObjectPropertyRangeAxiom || x instanceof OWLObjectPropertyDomainAxiom).forEach(
+                            supClassAxiom -> {
 
-                                    ret.add(supClassAxiom);
-                                    String str = superClass.getIRI().toString();
-                                    if (!allowedTypes.contains(str))
-                                        allowedTypes.add(str);
+                                ret.add(supClassAxiom);
+                                String str = superClass.getIRI().toString();
+                                if (!allowedTypes.contains(str))
+                                    allowedTypes.add(str);
 
-                                }
-                        );
-                    }
-                });
-            });
+                            }
+                    );
+                }
+            }));
         }
         ret.addAll(onto.getReferencingAxioms(owlClass));
         return ret;
     }
 
 
-    private Collection<OWLClassExpression> createConceptsFromClass(OWLClass owlClass, boolean onlyRange, int depth){
-        Collection<OWLClassExpression> ret = new ArrayList<OWLClassExpression>();
+    private Collection<OWLClassExpression> createConceptsFromClass(OWLClass owlClass){
+        Collection<OWLClassExpression> ret = new ArrayList<>();
         ret.add(owlClass);
         addNegationMutation(ret, owlClass);
-        createConceptFromExpression(owlClass, depth, ret);
+        createConceptFromExpression(owlClass, ret);
         getAxiomsForClass(owlClass).forEach(axiom ->{
             if(axiom instanceof OWLObjectPropertyRangeAxiom){
-                createConceptFromExpression(((OWLObjectPropertyRangeAxiom) axiom), depth,ret);
+                createConceptFromExpression(((OWLObjectPropertyRangeAxiom) axiom), ret);
             }
 
         });
         return ret;
     }
 
-    private void createConceptFromExpression(OWLObjectPropertyRangeAxiom ax, int depth, Collection<OWLClassExpression> ret) {
-        OWLObjectPropertyExpression prop = ax.getProperty();
-        OWLClassExpression owlClass2 = ax.getRange();
-        OWLClassExpression propExpr = new OWLObjectSomeValuesFromImpl(prop, owlClass2);
-        if(getConceptLength(propExpr) <= maxConceptLength) {
-            ret.add(propExpr);
+    private void createConceptFromExpression(OWLObjectPropertyRangeAxiom ax, Collection<OWLClassExpression> ret) {
+        if(1 <= maxDepth) {
+            OWLObjectPropertyExpression prop = ax.getProperty();
+            OWLClassExpression owlClass2 = ax.getRange();
+            OWLClassExpression propExpr = new OWLObjectSomeValuesFromImpl(prop, owlClass2);
+            if (getConceptLength(propExpr) <= maxConceptLength) {
+                ret.add(propExpr);
 
-            addNegationMutation(ret, propExpr);
-            for (OWLClassExpression expr : createConceptFromExpression(owlClass2, getRangePropertiesForClass((OWLClass) owlClass2), depth)) {
-                OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
-                if (getConceptLength(pexpr) <= maxConceptLength) {
-                    addNegationMutation(ret, pexpr);
-                    ret.add(pexpr);
+                addNegationMutation(ret, propExpr);
+                for (OWLClassExpression expr : createConceptFromExpression(owlClass2, getRangePropertiesForClass((OWLClass) owlClass2), 1 + 1)) {
+                    OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
+                    if (getConceptLength(pexpr) <= maxConceptLength) {
+                        addNegationMutation(ret, pexpr);
+                        ret.add(pexpr);
+                    }
                 }
-            }
-            for (OWLClass inferredClass : res.getSubClasses(owlClass2).getFlattened()) {
-                if (allowedTypes.contains(inferredClass.getIRI().toString())) {
-                    OWLClassExpression negationPropExpr = new OWLObjectSomeValuesFromImpl(prop, inferredClass);
-                    ret.add(negationPropExpr);
-                    addNegationMutation(ret, negationPropExpr);
-                    for (OWLClassExpression expr : createConceptFromExpression(inferredClass, getRangePropertiesForClass((OWLClass) inferredClass), depth)) {
-                        OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
-                        if (getConceptLength(pexpr) <= maxConceptLength) {
-                            addNegationMutation(ret, pexpr);
-                            ret.add(pexpr);
-                        }
+                for (OWLClass inferredClass : res.getSubClasses(owlClass2).getFlattened()) {
+                    if (allowedTypes.contains(inferredClass.getIRI().toString())) {
+                        OWLClassExpression negationPropExpr = new OWLObjectSomeValuesFromImpl(prop, inferredClass);
+                        ret.add(negationPropExpr);
+                        addNegationMutation(ret, negationPropExpr);
+                        for (OWLClassExpression expr : createConceptFromExpression(inferredClass, getRangePropertiesForClass(inferredClass), 1 + 1)) {
+                            OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
+                            if (getConceptLength(pexpr) <= maxConceptLength) {
+                                addNegationMutation(ret, pexpr);
+                                ret.add(pexpr);
+                            }
 
+                        }
                     }
                 }
             }
@@ -242,51 +240,54 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
             }
         }
 
-    private void createConceptFromExpression(OWLClass start, int depth, Collection<OWLClassExpression> ret) {
-        ret.addAll(createConceptFromExpression(start, getRangePropertiesForClass(start), depth));
+    private void createConceptFromExpression(OWLClass start, Collection<OWLClassExpression> ret) {
+        ret.addAll(createConceptFromExpression(start, getRangePropertiesForClass(start), 1));
     }
 
 
     private Collection<OWLClassExpression> createConceptFromExpression(OWLClassExpression start, Collection<OWLObjectPropertyExpression> properties, int depth) {
-        Collection<OWLClassExpression> ret = new ArrayList<OWLClassExpression>();
-        List<OWLClassExpression> sub = new ArrayList<OWLClassExpression>();
+        Collection<OWLClassExpression> ret = new ArrayList<>();
+        if(depth<=maxDepth) {
+            List<OWLClassExpression> sub = new ArrayList<>();
 
-        for(OWLObjectPropertyExpression p0 : properties){
-            for(OWLClass rangeClass : getClassesForProperty(p0)){
-                OWLClassExpression propRange2 = new OWLObjectSomeValuesFromImpl(p0, rangeClass);
-                sub.add(propRange2);
+            for (OWLObjectPropertyExpression p0 : properties) {
+                for (OWLClass rangeClass : getClassesForProperty(p0)) {
+                    OWLClassExpression propRange2 = new OWLObjectSomeValuesFromImpl(p0, rangeClass);
+                    sub.add(propRange2);
 
-                OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(start, propRange2));
+                    OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(start, propRange2));
+                    if (getConceptLength(pexpr) <= maxConceptLength) {
+                        addNegationMutation(ret, pexpr);
+                        ret.add(pexpr);
+                    }
+
+                    for (OWLClassExpression expr : createConceptFromExpression(rangeClass, getRangePropertiesForClass(rangeClass), depth + 1)) {
+                        OWLClassExpression propRange3 = new OWLObjectSomeValuesFromImpl(p0, expr);
+                        sub.add(propRange3);
+                        OWLClassExpression pexpr2 = new OWLObjectIntersectionOfImpl(Lists.newArrayList(start, propRange3));
+                        if (getConceptLength(pexpr2) <= maxConceptLength) {
+                            addNegationMutation(ret, pexpr2);
+                            ret.add(pexpr2);
+                        }
+                    }
+                }
+            }
+
+
+            for (List<OWLClassExpression> lateral : lateralSub(sub)) {
+                lateral.add(start);
+                OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(lateral);
                 if (getConceptLength(pexpr) <= maxConceptLength) {
                     addNegationMutation(ret, pexpr);
                     ret.add(pexpr);
                 }
-
-                for(OWLClassExpression expr : createConceptFromExpression(rangeClass, getRangePropertiesForClass(rangeClass), depth+1)){
-                    OWLClassExpression propRange3 = new OWLObjectSomeValuesFromImpl(p0, expr);
-                    sub.add(propRange3);
-                    OWLClassExpression pexpr2 = new OWLObjectIntersectionOfImpl(Lists.newArrayList(start, propRange3));
-                    if (getConceptLength(pexpr2) <= maxConceptLength) {
-                        addNegationMutation(ret, pexpr2);
-                        ret.add(pexpr2);
-                    }
-                }
-            }
-        }
-
-        for(List<OWLClassExpression> lateral : lateralSub(sub)){
-            lateral.add(start);
-            OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(lateral);
-            if (getConceptLength(pexpr) <= maxConceptLength) {
-                addNegationMutation(ret, pexpr);
-                ret.add(pexpr);
             }
         }
         return ret;
     }
 
     private List<List<OWLClassExpression>> lateralSub(List<OWLClassExpression> sub) {
-        List<List<OWLClassExpression>> lateral  = new ArrayList<List<OWLClassExpression>>();
+        List<List<OWLClassExpression>> lateral  = new ArrayList<>();
         for(int i =0; i<sub.size();i++){
             OWLClassExpression current = sub.get(i);
             addLateral(lateral, sub, i+1, Lists.newArrayList(current), 1);
@@ -320,7 +321,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
         if(current.equals(now)){return true;}
         if(current instanceof OWLClass && now instanceof OWLClass){
             if(res.getSuperClasses(current).containsEntity((OWLClass) now)){return true;}
-            if(res.getSuperClasses(now).containsEntity((OWLClass) current)){return true;}
+            return res.getSuperClasses(now).containsEntity((OWLClass) current);
         }
         else if(current instanceof OWLObjectSomeValuesFrom && now instanceof OWLObjectSomeValuesFrom){
             OWLObjectPropertyExpression currentProperty = ((OWLObjectSomeValuesFrom) current).getProperty();
@@ -345,6 +346,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
                     res.getSuperObjectProperties(currentProperty).containsEntity(nowProperty) ||
                     res.getSuperObjectProperties(nowProperty).containsEntity(currentProperty)
             ){
+                assert current instanceof OWLClass;
                 if(res.getSuperClasses(now).containsEntity((OWLClass) current)){return true;}
                 return isAlreadySatisfied(currentFiller, nowFiller);
             }
@@ -363,21 +365,19 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator{
     }
 
     private Collection<OWLObjectPropertyExpression> getRangePropertiesForClass(OWLClass owlClass) {
-        Collection<OWLObjectPropertyExpression> ret = new ArrayList<OWLObjectPropertyExpression>();
+        Collection<OWLObjectPropertyExpression> ret = new ArrayList<>();
         getAxiomsForClass(owlClass).forEach(axiom -> {
             if (axiom instanceof OWLObjectPropertyDomainAxiom) {
                 OWLObjectPropertyDomainAxiom axiom1 = dataFactory.getOWLObjectPropertyDomainAxiom(((OWLObjectPropertyDomainAxiom) axiom).getProperty(), owlClass);
                 ret.add(axiom1.getProperty());
             }
         });
-        res.getSuperClasses(owlClass, false).getFlattened().forEach(inferredClass-> {
-            getAxiomsForClass(inferredClass).forEach(axiom -> {
-                if (axiom instanceof OWLObjectPropertyDomainAxiom) {
-                    OWLObjectPropertyDomainAxiom axiom1 = dataFactory.getOWLObjectPropertyDomainAxiom(((OWLObjectPropertyDomainAxiom) axiom).getProperty(), owlClass);
-                    ret.add(axiom1.getProperty());
-                }
-            });
-        });
+        res.getSuperClasses(owlClass, false).getFlattened().forEach(inferredClass-> getAxiomsForClass(inferredClass).forEach(axiom -> {
+            if (axiom instanceof OWLObjectPropertyDomainAxiom) {
+                OWLObjectPropertyDomainAxiom axiom1 = dataFactory.getOWLObjectPropertyDomainAxiom(((OWLObjectPropertyDomainAxiom) axiom).getProperty(), owlClass);
+                ret.add(axiom1.getProperty());
+            }
+        }));
         return ret;
     }
 

@@ -17,7 +17,7 @@
 * Added strict option to assure minimum examples
 * Added Evaluation script
 * Added BaseLine System 
-* SPARQL infers super types now
+* SPARQL infers super types directly now
 * Setting the ABox triple retrieval query limit
 * Allowing a positive and negative query limit for Instance Retrieval
 * A random pick of Concepts depending on seed
@@ -27,6 +27,7 @@
 ## Removed Features
 
 * Removed: Adding Individuals not in any learning problem
+* Removed: endpointInfersRules parameter removed, as SPARQL query now directly reasons types.
 
 ## Issues fixed
 

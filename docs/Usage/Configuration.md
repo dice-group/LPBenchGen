@@ -34,9 +34,12 @@ These parameters are set for all three methods.
 |`types` | The allowed types, whereas empty or not set means every class type is allowed | |
 |`percentageOfPositiveExamples` | The percentage of positive examples which should be kept from the `maxIndividualsPerExampleConcept` for the learning problem  | 0.5 |
 |`percentageOfNegativeExamples` | The percentage of negative examples which should be kept from the `maxIndividualsPerExampleConcept` for the learning problem  | 0.5 |
-|`maxNoOfExamples` | At most this amount of postive (resp. negative) examples should be kept for the learning problem. | 30 |
-|`minNoOfExamples` | At least this amount of postive (resp. negative) examples should be kept for the learning problem. However if there are less individuals than the value, it will just take the individuals. | 5 |
+|`maxNoOfExamples` | At most this amount of positive (resp. negative) examples should be kept for the learning problem. | 30 |
+|`minNoOfExamples` | At least this amount of positive (resp. negative) examples should be kept for the learning problem. However if there are less individuals than the value, it will just take the individuals. | 5 |
 |`removeLiterals` | If the final TBox+ABox should be pruned from Literals and thus making the file smaller. | false |
+|`aboxResultRetrievalLimit`| An internal limit for retrieving only this amount of query solutions if the ABox is generated. This will determine how big the ABox will get.  | 100 |
+|`splitContainment`| The split between training and test dataset. 0 = all problems in test, 1 = all problems in training. 0.5 = split the problems 50/50. | 0.5 |
+|`openWorldAssumption`| If the benchmark should be under the Open World Assumption. Closed World Assumption otherwise. If true will use Reasoner to assure that every problem is correct under OWA. | false |
 
 ### Use Positive and Negative Concepts
 Additional to the above parameters you can set the concepts.
@@ -123,8 +126,12 @@ Additional to the general parameters you can set the following parameters which 
 |`minConceptLength`| The minimum length a concept is allowed to be. | 4 |
 |`maxDepth`| The recursive depth on how deep a concept should be constructed | 2 |
 |`inferDirectSuperClasses`| If direct super Classes (e.g. Person for Artist) should be allowed during the construction of a concept. | true |
-|`endpointInfersRules`| If the triple store infers rules directly set this to true and you get better concepts and examples. | false |
 |`namespace`| The namespace in which a class or rule/property has to reside in. if empty or not set all are allowed. | (optional) |
+|`strict`| Assures that every (positive and negative) concept has at least minNoOfExamples Examples. | false |
+|`negationMutationRatio`| The ratio in which negative mutation of a class expression happens. Will always add the original class expression as well. If set to `1` will always add a negated mutation. | 0.0 |
+|`maxLateralDepth`| EXPERIMENTAL! Lateral Depth allows combinations using lateral combination rather than recursive. | 0 |
+|`negativeLimit`| Sets the Query limit for negative example retrievals. | 100 |
+|`positiveLimit`| Sets the Query limit for positive example retrievals. If set to 0 all results will be retrieved. Note that there might be still a limit if you're using a SPARQL endpoint and the endpoint sets the limit. | 0 |
 
 #### Example
 ```yaml
@@ -140,10 +147,12 @@ minNoOfExamples: 5
 maxGenerateConcepts: 10
 maxConceptLength: 8
 minConceptLength: 4
+strict: true
 maxDepth: 1
 endpointInfersRules: false
 removeLiterals: true
-namespace: http://dbpedia.org/ontology/
+negationMutationRatio: 0.5
+namespace: http://example.org/ontology/
 ```
 
 ## How to Achieve Good Examples

@@ -5,7 +5,6 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.vocabulary.RDF;
 import org.dice_group.lpbenchgen.lp.LPGenerator;
 
@@ -13,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Evaluation {
@@ -31,7 +29,7 @@ public class Evaluation {
                     isPertainFormat=true;
                 }
                 else if(args[0].equals("--includes-format")){
-                    isPertainFormat=false;
+                    //default, already set
                 }
                 else{
                     printHelp();

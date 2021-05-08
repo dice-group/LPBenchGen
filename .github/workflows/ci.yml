@@ -61,5 +61,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./target/${{ RELEASE_ARTIFACTID }}-${{ RELEASE_VERSION }}-shaded.jar
-          asset_name: ${{ RELEASE_ARTIFACTID }}-${{ RELEASE_VERSION }}.jar
+          asset_name: lpbenchgen-${{ RELEASE_VERSION }}.jar
           asset_content_type: application/zip
