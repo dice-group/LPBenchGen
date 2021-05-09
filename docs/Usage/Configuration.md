@@ -129,7 +129,6 @@ Additional to the general parameters you can set the following parameters which 
 |`namespace`| The namespace in which a class or rule/property has to reside in. if empty or not set all are allowed. | (optional) |
 |`strict`| Assures that every (positive and negative) concept has at least minNoOfExamples Examples. | false |
 |`negationMutationRatio`| The ratio in which negative mutation of a class expression happens. Will always add the original class expression as well. If set to `1` will always add a negated mutation. | 0.0 |
-|`maxLateralDepth`| EXPERIMENTAL! Lateral Depth allows combinations using lateral combination rather than recursive. | 0 |
 |`negativeLimit`| Sets the Query limit for negative example retrievals. | 100 |
 |`positiveLimit`| Sets the Query limit for positive example retrievals. If set to 0 all results will be retrieved. Note that there might be still a limit if you're using a SPARQL endpoint and the endpoint sets the limit. | 0 |
 

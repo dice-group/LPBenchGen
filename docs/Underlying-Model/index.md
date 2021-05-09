@@ -37,25 +37,6 @@ Afterwards the combination will take place using `A` and `not A`.
 This will lead to the following final class expressions:
 `A and hasRule some B`, `A and not (hasRule some B)`, `not A and hasRule some B` and `not A and not (hasRule some B)`.
 
-
-### Lateral Creation (experimental)
-
-Lateral Creation means a lateral combination of class expressions that were generated. 
-This step is included in the recursive generation of positive concepts. 
-
-At each recursive step of the concept generation, it will additionally add all lateral combinations of the given depth,
-whereas the depth allows combinations of `depth+1` expressions of the recursive step.
-
-The algorithm checks if the combined class expressions contain each other and thus removing unnecessary class expressions.
-(F.e. `A subClassOf B`: it wouldn't make sense to add `A and B`);
-
-This would allow combinations like:
-The generation created three concepts `A` , `D` and `B and hasRule some C`
-The lateral combination of depth 2 would create 
-`A and (B and hasRule some C) and D`, `A and D`, `A and (B and hasRule some C)` and `(B and hasRule some C) and D`.
-
-This can create a PowerSet at each recursive step and thus is still in experimental and should only be used with very small generated concepts.
-
 ## Negative Concept Generation
 
 For each positive class expression, several negative expressions can be created.

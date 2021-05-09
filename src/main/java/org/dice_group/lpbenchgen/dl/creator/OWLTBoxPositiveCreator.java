@@ -41,12 +41,12 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     private final int minConceptLength;
     private final boolean inferDirectSuperClasses;
     private int testLimit=1;
-    private final int maxLateralDepth;
     private final double negationMutationRatio;
 
     /**
      * Instantiates a new OWL TBox Creator
      *
+     * @param conf             the configuration to use
      * @param retriever        the retriever
      * @param ontology             the onto
      * @param allowedTypes     the allowed types
@@ -71,7 +71,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
         maxDepth=conf.getMaxDepth();
         seed=conf.getSeed();
         negationMutationRatio=conf.getNegationMutationRatio();
-        maxLateralDepth=conf.getMaxLateralDepth();
         inferDirectSuperClasses=conf.getInferDirectSuperClasses();
 
     }
@@ -115,6 +114,9 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
                         if (ret.size() >= noOfConcepts) {
                             break;
                         }
+                    }
+                    else{
+                        noResults++;
                     }
                 } else {
                     noResults++;
@@ -248,12 +250,10 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     private Collection<OWLClassExpression> createConceptFromExpression(OWLClassExpression start, Collection<OWLObjectPropertyExpression> properties, int depth) {
         Collection<OWLClassExpression> ret = new ArrayList<>();
         if(depth<=maxDepth) {
-            List<OWLClassExpression> sub = new ArrayList<>();
 
             for (OWLObjectPropertyExpression p0 : properties) {
                 for (OWLClass rangeClass : getClassesForProperty(p0)) {
                     OWLClassExpression propRange2 = new OWLObjectSomeValuesFromImpl(p0, rangeClass);
-                    sub.add(propRange2);
 
                     OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(start, propRange2));
                     if (getConceptLength(pexpr) <= maxConceptLength) {
@@ -263,7 +263,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
 
                     for (OWLClassExpression expr : createConceptFromExpression(rangeClass, getRangePropertiesForClass(rangeClass), depth + 1)) {
                         OWLClassExpression propRange3 = new OWLObjectSomeValuesFromImpl(p0, expr);
-                        sub.add(propRange3);
                         OWLClassExpression pexpr2 = new OWLObjectIntersectionOfImpl(Lists.newArrayList(start, propRange3));
                         if (getConceptLength(pexpr2) <= maxConceptLength) {
                             addNegationMutation(ret, pexpr2);
@@ -274,95 +273,11 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
             }
 
 
-            for (List<OWLClassExpression> lateral : lateralSub(sub)) {
-                lateral.add(start);
-                OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(lateral);
-                if (getConceptLength(pexpr) <= maxConceptLength) {
-                    addNegationMutation(ret, pexpr);
-                    ret.add(pexpr);
-                }
-            }
         }
         return ret;
     }
 
-    private List<List<OWLClassExpression>> lateralSub(List<OWLClassExpression> sub) {
-        List<List<OWLClassExpression>> lateral  = new ArrayList<>();
-        for(int i =0; i<sub.size();i++){
-            OWLClassExpression current = sub.get(i);
-            addLateral(lateral, sub, i+1, Lists.newArrayList(current), 1);
-        }
 
-        return lateral;
-     }
-
-    private void addLateral(List<List<OWLClassExpression>> lateral, List<OWLClassExpression> sub, int i, List<OWLClassExpression> current, int depth) {
-        if(depth>maxLateralDepth){
-            return;
-        }
-        for(int j=i;j<sub.size();j++){
-            if(isAlreadySatisfied(current, sub.get(j))){
-                continue;
-            }
-            List<OWLClassExpression> newList = new ArrayList<>(current);
-            newList.add(sub.get(j));
-            int size=newList.size()-1;
-            for(OWLClassExpression cexpr : newList) {
-                size += getConceptLength(cexpr);
-            }
-            if (size < maxConceptLength) {
-                lateral.add(newList);
-                addLateral(lateral, sub, j, newList, depth + 1);
-            }
-        }
-    }
-
-    private boolean isAlreadySatisfied(OWLClassExpression current, OWLClassExpression now) {
-        if(current.equals(now)){return true;}
-        if(current instanceof OWLClass && now instanceof OWLClass){
-            if(res.getSuperClasses(current).containsEntity((OWLClass) now)){return true;}
-            return res.getSuperClasses(now).containsEntity((OWLClass) current);
-        }
-        else if(current instanceof OWLObjectSomeValuesFrom && now instanceof OWLObjectSomeValuesFrom){
-            OWLObjectPropertyExpression currentProperty = ((OWLObjectSomeValuesFrom) current).getProperty();
-            OWLObjectPropertyExpression nowProperty = ((OWLObjectSomeValuesFrom) now).getProperty();
-            OWLClassExpression currentFiller = ((OWLObjectSomeValuesFrom) current).getFiller();
-            OWLClassExpression nowFiller = ((OWLObjectSomeValuesFrom) now).getFiller();
-            if(nowProperty.equals(currentProperty) ||
-                    res.getSuperObjectProperties(currentProperty).containsEntity(nowProperty) ||
-                    res.getSuperObjectProperties(nowProperty).containsEntity(currentProperty)
-            ){
-                return isAlreadySatisfied(currentFiller, nowFiller);
-            }
-            return false;
-
-        }
-        else if(current instanceof OWLObjectAllValuesFrom && now instanceof OWLObjectAllValuesFrom){
-            OWLObjectPropertyExpression currentProperty = ((OWLObjectAllValuesFrom) current).getProperty();
-            OWLObjectPropertyExpression nowProperty = ((OWLObjectAllValuesFrom) now).getProperty();
-            OWLClassExpression currentFiller = ((OWLObjectAllValuesFrom) current).getFiller();
-            OWLClassExpression nowFiller = ((OWLObjectAllValuesFrom) now).getFiller();
-            if(nowProperty.equals(currentProperty) ||
-                    res.getSuperObjectProperties(currentProperty).containsEntity(nowProperty) ||
-                    res.getSuperObjectProperties(nowProperty).containsEntity(currentProperty)
-            ){
-                assert current instanceof OWLClass;
-                if(res.getSuperClasses(now).containsEntity((OWLClass) current)){return true;}
-                return isAlreadySatisfied(currentFiller, nowFiller);
-            }
-            return false;
-        }
-        return false;
-    }
-
-    private boolean isAlreadySatisfied(List<OWLClassExpression> current, OWLClassExpression now) {
-        for(OWLClassExpression cur : current){
-            if(isAlreadySatisfied(cur, now)){
-                return true;
-            }
-        }
-        return false;
-    }
 
     private Collection<OWLObjectPropertyExpression> getRangePropertiesForClass(OWLClass owlClass) {
         Collection<OWLObjectPropertyExpression> ret = new ArrayList<>();

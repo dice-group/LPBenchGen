@@ -71,8 +71,6 @@ public class Configuration {
     private Integer positiveLimit=0;
     @JsonProperty(defaultValue = "100")
     private Integer negativeLimit=100;
-    @JsonProperty(defaultValue = "0")
-    private Integer maxLateralDepth=0;
     @JsonProperty(defaultValue = "true")
     private Boolean inferDirectSuperClasses=true;
     @JsonProperty
@@ -124,29 +122,6 @@ public class Configuration {
         this.negationMutationRatio = negationMutationRatio;
     }
 
-    /**
-     * Lateral Depth allows combinations using lateral combination rather than recursive.
-     * 
-     * Allowing expressions like A and B and C if set to 2 f.e.
-     * However this might lead to a OOM as a lot of expressions are generated.
-     *
-     * @return maxLateralDepth
-     */
-    public Integer getMaxLateralDepth() {
-        return maxLateralDepth;
-    }
-
-    /**
-     * Lateral Depth allows combinations using laterals rather than recursive.
-     * 
-     * Allowing expressions like A and B and C if set to 2 f.e.
-     * However this might lead to a OOM as a lot of expressions are generated.
-     *
-     * @param maxLateralDepth maximum lateral depth
-     */
-    public void setMaxLateralDepth(Integer maxLateralDepth) {
-        this.maxLateralDepth = maxLateralDepth;
-    }
 
     /**
      * assures that if minimal number of examples are not less than that value.

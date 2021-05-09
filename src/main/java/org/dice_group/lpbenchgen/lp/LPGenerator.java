@@ -57,7 +57,14 @@ public class LPGenerator {
     private boolean isSPARQLEndpoint=false;
     protected Configuration conf;
 
-    private void init(Configuration conf) throws OWLOntologyCreationException, FileNotFoundException {
+    /**
+     * Initializes the generator with a Configuration
+     * @param conf The configuration to initialize with.
+     *
+     * @throws OWLOntologyCreationException if the ontology inside the configuration cannot be created
+     * @throws FileNotFoundException If the owl File is not found
+     */
+    public void init(Configuration conf) throws OWLOntologyCreationException, FileNotFoundException {
         parser = new Parser(conf.getOwlFile());
         conf.prepare(parser);
         res = createReasoner();
@@ -252,12 +259,14 @@ public class LPGenerator {
     }
 
     /**
+     * <pre>
      * Creates the train, test and gold standard (test) files for the benchmark configuration and the problems
      *
      * If Open World Assumption is used it will also validate the problems using an Openllet Reasoner.
-     *
+     * </pre>
      * @param conf the benchmark configuration
      * @param problems the problems the abox should be created for
+     * @return The LPBenchmark containing train, test, gold and abox
      */
     protected LPBenchmark createBenchmark(Configuration conf, Collection<LPProblem> problems){
         List<LPProblem> train = new ArrayList<LPProblem>();
@@ -287,10 +296,11 @@ public class LPGenerator {
     }
 
     /**
+     * <pre>
      * Will save the abox, the train, test and gold standard datasets
      * Depending on the format will save these in json or turtle format to
      * name-train.ttl name-test.ttl name-test-goldstd.ttl
-     *
+     *</pre>
      * @param benchmark the benchmark
      * @param name the benchmark name
      * @param format json or rdf
@@ -307,9 +317,9 @@ public class LPGenerator {
         LOGGER.info("Generating benchmark files now... ");
 
         if(format.equals("json")) {
-            saveLPProblem(name+"-train.json", benchmark.getTrain());
-            saveLPProblem(name+"-test-goldstd.json", benchmark.getGold());
-            saveLPProblem(name+"-test.json", benchmark.getTest());
+            saveLPProblemAsJSON(name+"-train.json", benchmark.getTrain());
+            saveLPProblemAsJSON(name+"-test-goldstd.json", benchmark.getGold());
+            saveLPProblemAsJSON(name+"-test.json", benchmark.getTest());
         }
         else{
             saveLPProblemAsRDF(name+"-train.ttl", benchmark.getTrain(), true, true);
@@ -545,7 +555,7 @@ public class LPGenerator {
      * @param output   the output
      * @param problems the problems
      */
-    private void saveLPProblem(String output, Collection<LPProblem> problems){
+    private void saveLPProblemAsJSON(String output, Collection<LPProblem> problems){
         try(PrintWriter pw = new PrintWriter(output)){
             // print end
             pw.print("[\n");
@@ -592,7 +602,7 @@ public class LPGenerator {
      */
     private void removeLiteralsFromOntology(){
         OWLOntology ontology = this.parser.getOntology();
-        List<OWLDataPropertyAxiom> rem = new ArrayList<OWLDataPropertyAxiom>();
+        List<OWLDataPropertyAxiom> rem = new ArrayList<>();
         ontology.getAxioms().stream().filter(x -> x instanceof OWLDataPropertyAxiom).forEach(ax ->{
             OWLDataPropertyAxiom axiom = (OWLDataPropertyAxiom) ax;
             rem.add(axiom);

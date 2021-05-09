@@ -23,7 +23,6 @@
 * Allowing a positive and negative query limit for Instance Retrieval
 * A random pick of Concepts depending on seed
 * Allowing random negation mutations of concepts during generation
-* Allowing lateral creation of concepts.
 
 ## Removed Features
 

@@ -33,6 +33,7 @@ public class OWLNegationCreatorTest {
         data.add(new Object[]{"A and not B", new String[]{"A and B", "not (A and not B)", "not A and not B", "not A", "B"}});
         data.add(new Object[]{"hasRuleAB min 3", new String[]{"hasRuleAB max 2"}});
         data.add(new Object[]{"hasRuleAB max 3", new String[]{"hasRuleAB min 4"}});
+
         data.add(new Object[]{"A and (hasRuleAB some B)",
                 new String[]{"A and not (hasRuleAB some B)",
                         "not A and (hasRuleAB some B)",

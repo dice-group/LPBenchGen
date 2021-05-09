@@ -86,7 +86,7 @@ public class ABoxFiller {
                 if(res==null){
                     return false;
                 }
-                QueryTripleMappingVisitor visitor = new QueryTripleMappingVisitor(startIndividual);
+                QueryTripleMappingVisitor visitor = new QueryTripleMappingVisitor();
                 ElementWalker.walk(query.getQueryPattern(), visitor);
                 visitor.patternToMap(res);
                 Set<OWLAxiom> axioms = createAxiomsFromMap(visitor.getMap());

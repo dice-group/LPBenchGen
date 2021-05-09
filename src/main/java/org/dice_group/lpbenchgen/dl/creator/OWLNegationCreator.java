@@ -22,26 +22,6 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
     public List<OWLClassExpression> negationConcepts = new ArrayList<OWLClassExpression>();
 
 
-    /**
-     * Contains boolean.
-     *
-     * @param union the union
-     * @param expr  the expr
-     * @return the boolean
-     */
-    public boolean contains(OWLObjectUnionOf union, OWLClassExpression expr){
-            if(union == expr) {
-                return false;
-            }
-            for(OWLClassExpression unionExpr : ((OWLObjectUnionOf)union).getOperands()) {
-                if(unionExpr.toString().equals(expr.toString())){
-                    return true;
-                }
-            }
-            return false;
-    }
-
-
     public void visit(OWLClass ce) {
             negationConcepts.add(new OWLObjectComplementOfImpl(ce).getNNF());
 

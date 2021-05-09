@@ -11,8 +11,16 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * <pre>
  * Removes Useless Triples (e.g. triples which have no variable) from a query and stores them.
  *
+ * Query q = QueryFactory.create(query);
+ * QueryRemoveUselessTriplesVisitor visitor = new QueryRemoveUselessTriplesVisitor();
+ * ElementWalker.walk(q.getQueryPattern(), visitor);
+ *
+ * visitor.triples # removed triples from q.
+ *
+ * </pre>
  * @author Lixi Alié Conrads
  */
 public class QueryRemoveUselessTriplesVisitor implements ElementVisitor {

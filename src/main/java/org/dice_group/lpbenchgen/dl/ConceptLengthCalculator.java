@@ -4,10 +4,11 @@ import org.semanticweb.owlapi.dlsyntax.renderer.DLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.*;
 
 /**
+ * <pre>
  * Calculates the Concept Length of an OWL Class Expression
  *
  * Only supports Class, Intersection, Union, ComplementOf, someValuesFrom and allValuesFrom!
- *
+ * </pre>
  * @author Lixi Alié Conrads
  */
 public class ConceptLengthCalculator extends DLSyntaxObjectRenderer {

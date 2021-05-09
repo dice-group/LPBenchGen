@@ -9,14 +9,28 @@ import org.dice_group.lpbenchgen.sparql.Triple;
 import java.util.*;
 
 /**
- * Creates a Triples from a Query and the corresponding ResultSet
+ * <pre>
+ *  Creates a Triples from a Query and the corresponding ResultSet
+ *
+ * Usage:
+ *
+ * Query q =...;
+ * QueryExecution qexec = QueryExecutionFactory.create(model, q);
+ * QueryTripleMappingVisitor visitor = new QueryTripleMappingVisitor():
+ * ElementWalker.walk(q.getQueryPattern(), visitor);
+ *
+ * ResultSet res = qexec.executeSelect();
+ *
+ * visitor.patternToMap(results)
+ *
+ * visitor.getMap(); # Mapped triples
+ * </pre>
  *
  * @author Lixi Alié Conrads
  */
 public class QueryTripleMappingVisitor implements ElementVisitor {
     private Set<Triple> mapping = new HashSet<>();
     private Set<Triple> map = new HashSet<Triple>();
-    private String start;
     // walk the query and map Triple to rules e.g.
     // START prop1 ?s0 ; prop2 ?s1 . ?s1 prop3 ?s3!
     // -> START prop1 S0#1, START prop2 S1#1, S1#1 prop3 s3, S0#1 a TYPES, S1#1 a TYPES
@@ -25,10 +39,9 @@ public class QueryTripleMappingVisitor implements ElementVisitor {
     /**
      * Instantiates a new Query triple mapping visitor.
      *
-     * @param start the start
      */
-    public QueryTripleMappingVisitor(String start){
-        this.start=start;
+    public QueryTripleMappingVisitor(){
+
     }
 
     /**

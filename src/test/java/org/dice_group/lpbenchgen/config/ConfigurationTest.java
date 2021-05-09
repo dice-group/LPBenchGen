@@ -39,7 +39,6 @@ public class ConfigurationTest {
         assertEquals(4, conf.getMinConceptLength().intValue());
         assertEquals(0, conf.getPositiveLimit().intValue());
         assertEquals(100, conf.getNegativeLimit().intValue());
-        assertEquals(0, conf.getMaxLateralDepth().intValue());
     }
 
     @Test
@@ -80,6 +79,5 @@ public class ConfigurationTest {
         assertEquals(2, conf.getMinConceptLength().intValue());
         assertEquals(1000, conf.getPositiveLimit().intValue());
         assertEquals(1000, conf.getNegativeLimit().intValue());
-        assertEquals(2, conf.getMaxLateralDepth().intValue());
     }
 }

@@ -10,10 +10,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * <pre>
  * Collect Variables occurring in a Query.
  * And removes FILTER clauses if the variable which should be ignored occurs in that clause.
  *
  * Variables in a FILTER clause will be ignored.
+ *
+ * Usage:
+ *
+ * Query q =...;
+ * VariableCollector varCollector = new VariableCollector():
+ * ElementWalker.walk(q.getQueryPattern(), varCollector);
+ *
+ * varCollector.vars #Get occurring variables.
+ *
+ * </pre>
  *
  * @author Lixi Alié Conrads
  */

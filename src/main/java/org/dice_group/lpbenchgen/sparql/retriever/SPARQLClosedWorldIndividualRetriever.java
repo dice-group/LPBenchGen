@@ -17,6 +17,8 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.ResultSetMgr;
 import org.apache.jena.riot.WebContent;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
 import org.dice_group.lpbenchgen.dl.OWL2SPARQL;
 import org.dice_group.lpbenchgen.sparql.AbstractSPARQLIndividualRetriever;
 import org.dice_group.lpbenchgen.sparql.IndividualRetriever;
@@ -49,6 +51,8 @@ public class SPARQLClosedWorldIndividualRetriever  extends AbstractSPARQLIndivid
      */
     private String endpoint;
 
+    private final String ontologyResource;
+
 
     /**
      * Creates a retriever using endpoint as the HTTP SPARQL endpoint
@@ -57,6 +61,13 @@ public class SPARQLClosedWorldIndividualRetriever  extends AbstractSPARQLIndivid
      */
     public SPARQLClosedWorldIndividualRetriever(String endpoint){
         this.endpoint=endpoint;
+        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, "SELECT ?s WHERE { ?s <"+ RDF.type+"> <"+ OWL.Ontology+"> } LIMIT 1");
+        ResultSet res = qexec.execSelect();
+        if(res.hasNext()) {
+            ontologyResource = res.next().get("s").toString();
+        }else{
+            ontologyResource="";
+        }
     }
 
 
@@ -88,7 +99,10 @@ public class SPARQLClosedWorldIndividualRetriever  extends AbstractSPARQLIndivid
             ResultSet res= ResultSetMgr.read(is, lang);
 
             while (res.hasNext()) {
-                ret.add(res.next().get(DEFAULT_VARIABLE_NAME).toString());
+                String resource = res.next().get(DEFAULT_VARIABLE_NAME).toString();
+                if(!resource.equals(ontologyResource)){
+                    ret.add(resource);
+                }
             }
         }catch(Exception e){
             String id = UUID.randomUUID().toString();
