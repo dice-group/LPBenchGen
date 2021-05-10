@@ -1,6 +1,7 @@
 
 extra:
-  version: 2.0.0
+  version: $VERSION
+  release_version: $RELEASE_VERSION
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/dice-group/LPBenchGen
@@ -11,21 +12,14 @@ site_name: LPBenchGen
 edit_uri: ""
 theme:
   name: material
-#  custom_dir: mkdocs-material/material
   features:
     - navigation.tabs
     - navigation.top
     - toc.integrate
-    
-  # 404 page
-#  static_templates:
-#    - 404.html
 
-  # Necessary for search to work properly
-#  include_search_page: false
-#  search_index_only: true
+  include_search_page: false
+  search_index_only: true
 
-  # Default values, taken from mkdocs_theme.yml
   language: en
   font:
     text: Roboto
@@ -55,4 +49,4 @@ repo_name: dice-group/LPBenchGen
 
 plugins:
   - macros
-
+  - search

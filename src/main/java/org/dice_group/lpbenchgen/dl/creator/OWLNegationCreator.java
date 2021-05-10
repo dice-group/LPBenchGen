@@ -1,12 +1,10 @@
-package org.dice_group.lpbenchgen.dl;
+package org.dice_group.lpbenchgen.dl.creator;
 
 
-import com.google.common.collect.Lists;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -22,54 +20,6 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
      * The complement concepts.
      */
     public List<OWLClassExpression> negationConcepts = new ArrayList<OWLClassExpression>();
-
-
-    /**
-     * Prune.
-     */
-    public void prune(){
-        List<OWLClassExpression> unions = new ArrayList<OWLClassExpression>();
-        List<OWLClassExpression> remove = new ArrayList<OWLClassExpression>();
-
-        for(OWLClassExpression expression : negationConcepts){
-            if(expression instanceof OWLObjectUnionOf){
-                unions.add(expression);
-            }
-        }
-        for(OWLClassExpression union: unions){
-            for(OWLClassExpression expr : negationConcepts){
-                if(contains((OWLObjectUnionOf) union, expr)){
-                    remove.add(expr);
-                }
-            }
-        }
-
-        negationConcepts.removeAll(remove);
-        if(negationConcepts.size()> unions.size()){
-            negationConcepts.removeAll(unions);
-        }
-
-
-    }
-
-    /**
-     * Contains boolean.
-     *
-     * @param union the union
-     * @param expr  the expr
-     * @return the boolean
-     */
-    public boolean contains(OWLObjectUnionOf union, OWLClassExpression expr){
-            if(union == expr) {
-                return false;
-            }
-            for(OWLClassExpression unionExpr : ((OWLObjectUnionOf)union).getOperands()) {
-                if(unionExpr.toString().equals(expr.toString())){
-                    return true;
-                }
-            }
-            return false;
-    }
 
 
     public void visit(OWLClass ce) {
@@ -88,7 +38,7 @@ public class OWLNegationCreator implements OWLClassExpressionVisitor, OWLEntityV
 
                 ops.remove(entity);
                 ops.add(new OWLObjectComplementOfImpl(entity));
-                negationConcepts.add(new OWLObjectIntersectionOfImpl(ops));
+                negationConcepts.add(new OWLObjectIntersectionOfImpl(ops).getNNF());
 
         }
     }

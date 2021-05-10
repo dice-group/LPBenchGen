@@ -1,31 +1,15 @@
 endpoint: http://dbpedia.org/sparql
-owlFile: ./fixed-ontology.owl
+owlFile: ./dbpieda-ontology.owl
 seed: 123
 types:
   - http://dbpedia.org/ontology/Politician
   - http://dbpedia.org/ontology/Company
-  - http://dbpedia.org/ontology/RecordLabel
   - http://dbpedia.org/ontology/ArchitecturalStructure
   - http://dbpedia.org/ontology/Architect
-  - http://dbpedia.org/ontology/Person
-  - http://dbpedia.org/ontology/Mayor
-  - http://dbpedia.org/ontology/Work
-  - http://dbpedia.org/ontology/Band
-  - http://dbpedia.org/ontology/Band
-  - http://dbpedia.org/ontology/MusicalArtist
-  - http://dbpedia.org/ontology/MusicalArtist
-  - http://dbpedia.org/ontology/Album
-  - http://dbpedia.org/ontology/Album
-  - http://dbpedia.org/ontology/Actor
-  - http://dbpedia.org/ontology/Actor
-  - http://dbpedia.org/ontology/MusicGenre
-  - http://dbpedia.org/ontology/MusicGenre
-maxNoOfIndividuals: 0
-maxIndividualsPerExampleConcept: 30
 percentageOfPositiveExamples: 0.5
 percentageOfNegativeExamples: 0.5
 maxNoOfExamples: 30
 minNoOfExamples: 5
 maxGenerateConcepts: 10
-maxConceptLength: 8
-maxDepth: 1
+maxConceptLength: 20
+maxDepth: 3

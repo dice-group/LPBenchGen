@@ -1,36 +1,77 @@
-# LPBenchGen
+# About
 
 LPBenchGen is an OWL explainable structural learning problem Benchmark Generator.
-It can generate learning problems as negative and positive examples for positive and negative gold standard concept.
-It uses an ontology file for the TBox and a SPARQL endpoint for the ABox. (e.g. the dbpedia ontology and the dbpedia sparql endpoint)
-Furthermore it will fill the ontology file with a small ABox presenting the positive and negative examples.
 
-Another feature is that LPBenchGen can create negative concepts for a positive concept, which will be used to generate the negative examples.
-Or you can directly generate a certain amount of positive concepts.
-To achieve good negative examples you can set allowed Class types which then will result into better negative examples (e.g. allowed are Politicians and MusicalArtists - the negative concepts for MusicalArtists will be only Politicians, and the Abox will be filled with classes of only these two types). 
-For more information see our wiki.
+Explainable AI is becoming more important and more and more systems to tackle that problem are developed.
+However, there is a lack of benchmark datasets.
 
+LPBenchGen tries to tackle that problem by providing a tool that can generate benchmarks using a TBox and an ABox.
 
+The ABox can either be behind a SPARQL endpoint or in an RDF file.
+Using an RDF file allows an Open World Assumption. This is restricted in SPARQL, which generally allows only a Closed World Assumption.
 
-
-## Getting Started
-
-### Download
-
-Go to https://github.com/dice-group/LPBenchGen/releases/latest and download the `lpbenchgen-X.Y-SNAPSHOT.jar` file.
+Have a look at our latest Documentation at [https://dice-group.github.io/LPBenchGen/](https://dice-group.github.io/LPBenchGen/)
 
 
-### Execute
+## What is a Learning Problem in this context?
 
-Use the downloaded jar and execute as follows using a config file and a Benchmark name.
+A learning problem is a set of positive examples and negative examples, whereas one example is an Individual contained in the ABox.
 
-```bash
-java -jar lpbenchgen-X.Y-SNAPSHOT.jar --config config.yml --name YOUR_BENCHMARK_NAME
-```
+A system then may be benchmarked to find the best concept/class expression or try to find all other positive Individuals .
 
-The execution will use the config file `config.yml` and executes the configuration and saves the ontology to `YOUR_BENCHMARK_NAME-ontology.ttl` and the problems as a JSON file
-to `YOUR_BENCHMARK_NAME-lp.json`.
+## How does it work?
 
-## Configuration
+LPBenchGen will create a lot of theoretically class expression based upon the TBox and checks if these have enough solutions using the ABox.
+The user can set parameters allowing longer and more complex as well as smaller and easier expressions, how many of these should be created and a lot more.
 
-Please see our wiki pages for a full explanation on how to [configure LPBenchGen](https://github.com/dice-group/LPBenchGen/wiki/Configuration) to your needs.
+Using these expressions LPBenchGen creates positive examples for one learning problem.
+However, it is not straight forward to retrieve negative examples.
+
+For example if we have a big diverse Database and have a concept such as `Tree and (hasLeaves some Leaves)`:
+A negative Example such as `Elefant` wouldn't be useful at all.
+What would be useful is something like `WindFlower-1` as it has leaves, but is not a Tree.
+
+Hence, LPBenchGen creates a few class expression based upon the positive class expressions in that matter.
+These basically negate some parts of the original expression and hence providing useful negative examples.
+
+
+Afterwards these concepts will be used to retrieve positive and negative examples and thus creating the learning problem.
+
+A benchmark in this context is a set of such learning problems.
+
+
+For a detailed description please have a look at Underlying-Model
+
+
+## What does LPBenchGen generate?
+
+LPBenchGen generates a training benchmark set, a test benchmark set and  a gold standard for the test benchmark.
+
+
+## My ABox is huge, no current system can work with that!
+
+No worries. LPBenchGen can create a small ABox fitting the problems in the benchmark.
+
+## How do I evaluate my system?
+
+If you generated your benchmark accordingly (see Usage)
+LPBenchGen provides a small evaluation. Simply use the test benchmark, the gold standard, and the actual system answers and evaluate. See Usage for the correct format and eval.
+
+## How to download
+
+Download the latest release jar file at [https://github.com/dice-group/LPBenchGen/releases/latest](https://github.com/dice-group/LPBenchGen/releases/latest)
+
+See Getting-Started for how to execute the generation.
+
+## Where can I find the code?
+
+The code is open source at [https://github.com/dice-group/LPBenchGen](https://github.com/dice-group/LPBenchGen) and you can code with us if you want to :)
+
+## Where do I submit a bug or enhancement?
+
+Please use the Github Issue Tracker at [https://github.com/dice-group/LPBenchGen/issues](https://github.com/dice-group/LPBenchGen/issues)
+
+
+## Documentation
+
+Have a look at our latest Documentation at [https://dice-group.github.io/LPBenchGen/](https://dice-group.github.io/LPBenchGen/)

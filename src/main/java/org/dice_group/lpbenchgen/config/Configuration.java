@@ -3,6 +3,7 @@ package org.dice_group.lpbenchgen.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.dice_group.lpbenchgen.dl.Parser;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,57 +29,55 @@ public class Configuration {
         return mapper.readValue(new File(file), Configuration.class);
     }
 
-    @JsonProperty(required = false)
+    // GENERAL PARAMETERS
+    @JsonProperty
     private List<String> types = new ArrayList<>();
-    @JsonProperty(required = false, defaultValue = "0")
-    private Integer maxNoOfIndividuals=0;
-    @JsonProperty(required = false, defaultValue = "0.5")
+    @JsonProperty(defaultValue = "0.5")
     private Double percentageOfPositiveExamples=0.5;
-    @JsonProperty(required = false, defaultValue = "0.5")
+    @JsonProperty(defaultValue = "0.5")
     private Double percentageOfNegativeExamples=0.5;
-    @JsonProperty(required = false, defaultValue = "1")
+    @JsonProperty(defaultValue = "1")
     private Integer seed=1;
-    @JsonProperty(required = false, defaultValue = "200")
-    private Integer maxIndividualsPerExampleConcept=200;
-    @JsonProperty(required = false, defaultValue = "30")
+    @JsonProperty(defaultValue = "30")
     private Integer maxNoOfExamples=30;
-    @JsonProperty(required = false, defaultValue = "5")
+    @JsonProperty(defaultValue = "5")
     private Integer minNoOfExamples=5;
-    @JsonProperty(required = false)
-    private List<PosNegExample> concepts;
-    @JsonProperty(required = false, defaultValue = "20")
-    private Integer maxGenerateConcepts=20;
-    @JsonProperty(required = false, defaultValue = "2")
-    private Integer maxDepth=2;
-    @JsonProperty(required = false, defaultValue = "10")
-    private Integer maxConceptLength=10;
-    @JsonProperty(required = false, defaultValue = "4")
-    private Integer minConceptLength=4;
-    @JsonProperty(required = false, defaultValue = "100")
-    private Integer positiveLimit=100;
-    @JsonProperty(required = false, defaultValue = "100")
-    private Integer negativeLimit=100;
-    @JsonProperty(required = false, defaultValue = "0")
-    private Integer maxLateralDepth=0;
-    @JsonProperty(required = false, defaultValue = "100")
+    @JsonProperty(defaultValue = "100")
     private Integer aboxResultRetrievalLimit=100;
-    @JsonProperty(required = false, defaultValue = "0.5")
+    @JsonProperty(defaultValue = "0.5")
     private Double splitContainment=0.5;
-    @JsonProperty(required = false, defaultValue = "true")
-    private Boolean inferDirectSuperClasses=true;
     @JsonProperty(required = true)
     private String endpoint;
     @JsonProperty(required = true)
     private String owlFile;
-    @JsonProperty(required = false)
+    @JsonProperty
     private boolean openWorldAssumption = false;
-    @JsonProperty(required = false)
+    @JsonProperty
     private boolean removeLiterals=false;
-    @JsonProperty(required = false)
+
+    @JsonProperty
+    private List<PosNegExample> concepts;
+
+    // GENERATION PARAMETERS
+    @JsonProperty(defaultValue = "20")
+    private Integer maxGenerateConcepts=20;
+    @JsonProperty(defaultValue = "2")
+    private Integer maxDepth=2;
+    @JsonProperty(defaultValue = "10")
+    private Integer maxConceptLength=10;
+    @JsonProperty(defaultValue = "4")
+    private Integer minConceptLength=4;
+    @JsonProperty(defaultValue = "0")
+    private Integer positiveLimit=0;
+    @JsonProperty(defaultValue = "100")
+    private Integer negativeLimit=100;
+    @JsonProperty(defaultValue = "true")
+    private Boolean inferDirectSuperClasses=true;
+    @JsonProperty
     private String namespace;
-    @JsonProperty(required = false)
+    @JsonProperty
     private boolean strict=false;
-    @JsonProperty(required = false)
+    @JsonProperty
     private Double negationMutationRatio=0.0;
 
     /**
@@ -123,29 +122,6 @@ public class Configuration {
         this.negationMutationRatio = negationMutationRatio;
     }
 
-    /**
-     * Lateral Depth allows combinations using laterals rather than recursive.
-     * 
-     * Allowing expressions like A and B and C if set to 2 f.e.
-     * However this might lead to a OOM as a lot of expressions are generated.
-     *
-     * @return maxLateralDepth
-     */
-    public Integer getMaxLateralDepth() {
-        return maxLateralDepth;
-    }
-
-    /**
-     * Lateral Depth allows combinations using laterals rather than recursive.
-     * 
-     * Allowing expressions like A and B and C if set to 2 f.e.
-     * However this might lead to a OOM as a lot of expressions are generated.
-     *
-     * @param maxLateralDepth maximum lateral depth
-     */
-    public void setMaxLateralDepth(Integer maxLateralDepth) {
-        this.maxLateralDepth = maxLateralDepth;
-    }
 
     /**
      * assures that if minimal number of examples are not less than that value.
@@ -553,5 +529,21 @@ public class Configuration {
      */
     public void setOwlFile(String owlFile) {
         this.owlFile = owlFile;
+    }
+
+    /**
+     * prepares the configuration.
+     * If negative concepts were set, convert them to ClassExpressions
+     *
+     * @param parser the parser containing the ontology to convert the expressions with
+     */
+    public void prepare(Parser parser) {
+        if(concepts!=null){
+            for(PosNegExample example : concepts){
+                for(String negativeConcept : example.getNegatives()){
+                    example.getNegativesExpr().add(parser.parseManchesterConcept(negativeConcept));
+                }
+            }
+        }
     }
 }

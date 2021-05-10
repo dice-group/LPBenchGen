@@ -3,7 +3,7 @@
 LPBenchGen is an OWL explainable structural learning problem Benchmark Generator.
 
 Explainable AI is becoming more important and more and more systems to tackle that problem are developed. 
-However there is a lack of benchmark datasets. 
+However, there is a lack of benchmark datasets. 
 
 LPBenchGen tries to tackle that problem by providing a tool that can generate benchmarks using a TBox and an ABox.
 
@@ -14,7 +14,7 @@ Using an RDF file allows an Open World Assumption. This is restricted in SPARQL,
 
 A learning problem is a set of positive examples and negative examples, whereas one example is an Individual contained in the ABox.
 
-A system then may be benchmark to find the best concept/class expression or try to find all other positive Individuals .
+A system then may be benchmarked to find the best concept/class expression or try to find all other positive Individuals .
 
 ## How does it work?
 
@@ -22,14 +22,14 @@ LPBenchGen will create a lot of theoretically class expression based upon the TB
 The user can set parameters allowing longer and more complex as well as smaller and easier expressions, how many of these should be created and a lot more.
 
 Using these expressions LPBenchGen creates positive examples for one learning problem.
-However it is not straight forward to retrieve negative examples.
+However, it is not straight forward to retrieve negative examples.
 
-For example if we have a big diverse Database and have a concept such as `Car and (hasEngine some Engine)`:
+For example if we have a big diverse Database and have a concept such as `Tree and (hasLeaves some Leaves)`:
 A negative Example such as `Elefant` wouldn't be useful at all. 
-What would be useful is something like `Motorcycle-1` as it has an engine, but is not a car.
+What would be useful is something like `WindFlower-1` as it has leaves, but is not a Tree.
 
-Hence LPBenchGen creates a few class expression based upon the positive class expressions in that matter.
-These basically negate some parts of the original expression and hence providing usefull negative examples.
+Hence, LPBenchGen creates a few class expression based upon the positive class expressions in that matter.
+These basically negate some parts of the original expression and hence providing useful negative examples.
 
 
 Afterwards these concepts will be used to retrieve positive and negative examples and thus creating the learning problem. 

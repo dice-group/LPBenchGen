@@ -1,0 +1,11 @@
+id	tp	fp	fn	f1	recall	precision
+lp_1	0.0	0.0	0.0	1.0	1.0	1.0
+lp_2	0.0	1.0	1.0	0.0	0.0	0.0
+lp_3	1.0	0.0	0.0	1.0	1.0	1.0
+
+Micro F1	0.5
+Micro Recall	0.5
+Micro Precision	0.5
+Macro F1	0.6666666666666666
+Macro Recall	0.6666666666666666
+Macro Precision	0.6666666666666666

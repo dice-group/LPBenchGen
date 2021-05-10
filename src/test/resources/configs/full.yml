@@ -1,0 +1,29 @@
+owlFile: src/test/resources/ontologies/simple.ttl
+endpoint: endpoint
+types:
+  - "testType"
+percentageOfPositiveExamples: 1
+percentageOfNegativeExamples: 0.1
+seed: 123
+maxNoOfExamples: 100
+minNoOfExamples: 50
+aboxResultRetrievalLimit: 1000
+splitContainment: 0.3
+openWorldAssumption: true
+removeLiterals: true
+concepts:
+  - positive: B
+  - positive: A
+    negatives:
+      - C
+      - B
+strict: true
+inferDirectSuperClasses: false
+namespace: "http://example.com"
+negationMutationRatio: 1
+maxGenerateConcepts: 100
+maxDepth: 20
+maxConceptLength: 15
+minConceptLength: 2
+positiveLimit: 1000
+negativeLimit: 1000

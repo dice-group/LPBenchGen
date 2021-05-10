@@ -162,7 +162,6 @@ public class OntologyInconsistentFinder {
             // PROP_QUERY_DISJOINT_CLASSES_RANGE2
             //we cannot do much about them, but it's nice to know.
         });
-        //ontology.saveOntology(new FileOutputStream(new File("fixed-ontology.owl")));
     }
 
     /**

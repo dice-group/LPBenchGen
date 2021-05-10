@@ -8,8 +8,9 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.syntax.ElementWalker;
 import org.dice_group.lpbenchgen.sparql.*;
-import org.dice_group.lpbenchgen.sparql.retriever.SPARQLClosedWorldIndividualRetriever;
 import org.dice_group.lpbenchgen.sparql.visitors.QueryRemoveUselessTriplesVisitor;
+import org.dice_group.lpbenchgen.sparql.visitors.QueryTripleMappingVisitor;
+import org.dice_group.lpbenchgen.sparql.visitors.VariableCollector;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,7 @@ public class ABoxFiller {
                 if(res==null){
                     return false;
                 }
-                QueryTripleMappingVisitor visitor = new QueryTripleMappingVisitor(startIndividual);
+                QueryTripleMappingVisitor visitor = new QueryTripleMappingVisitor();
                 ElementWalker.walk(query.getQueryPattern(), visitor);
                 visitor.patternToMap(res);
                 Set<OWLAxiom> axioms = createAxiomsFromMap(visitor.getMap());
@@ -103,7 +104,7 @@ public class ABoxFiller {
     }
 
     private Set<OWLAxiom> createAxiomsFromMap(Set<Triple> map) {
-        Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
+        Set<OWLAxiom> axioms = new HashSet<>();
         for(Triple triple : map){
             String individual = triple.subject;
             OWLNamedIndividual subject = factory.getOWLNamedIndividual(individual);
@@ -125,7 +126,7 @@ public class ABoxFiller {
                     }
                     if(triple.predicate.toString().equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
                         OWLAxiom axiom = factory.getOWLClassAssertionAxiom(factory.getOWLClass(triple.object.toString()), subject);
-                        axioms.add(axiom);
+                        //axioms.add(axiom);
                     }
                     else {
                         OWLNamedIndividual object = factory.getOWLNamedIndividual(triple.object.toString());

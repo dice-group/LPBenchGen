@@ -15,6 +15,6 @@ sudo apt-get install java
 To download LPBenchGen get the latest release [here](https://github.com/dice-group/LPBenchGen/releases/latest).
 
 ```bash
-wget https://github.com/dice-group/LPBenchGen/releases/2.0.0/lpbenchgen-2.0.0.jar
+wget https://github.com/dice-group/LPBenchGen/releases/{{ release_version }}/lpbenchgen-{{ version }}.jar
 ```
 

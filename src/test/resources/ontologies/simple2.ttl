@@ -1,0 +1,63 @@
+@prefix : <http://example.com#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://example.com#> .
+
+<http://example.com> rdf:type owl:Ontology .
+
+:A rdf:type owl:Class .
+:B rdf:type owl:Class .
+:C rdf:type owl:Class ;
+    owl:disjointWith :A .
+
+:A-1 rdf:type owl:Class ;
+           rdfs:subClassOf :A .
+
+:C-1 rdf:type owl:Class ;
+           rdfs:subClassOf :C .
+
+:B-1 rdf:type owl:Class ;
+        rdfs:subClassOf :B .
+
+:B-2 rdf:type owl:Class ;
+        rdfs:subClassOf :B .
+
+
+:hasRuleAB rdf:type owl:ObjectProperty ;
+         rdfs:domain :A ;
+         rdfs:range :B .
+
+:hasRuleAB-2 rdf:type owl:ObjectProperty ;
+         rdfs:domain :A ;
+         rdfs:range :B-2 .
+
+:hasRuleBC rdf:type owl:ObjectProperty ;
+         rdfs:domain :B ;
+         rdfs:range :C .
+
+:Individual-A1 rdf:type :A ;
+    :hasRuleAB :Individual-B1, :Individual-B1-2-1.
+:Individual-A2 rdf:type :A ;
+    :hasRuleAB :Individual-B2-1;
+    :hasRuleAB-2 :Individual-B2-2-1.
+:Individual-A1-1 rdf:type :A-1 ;
+    :hasRuleAB :Individual-B1-1, :Individual-B1-2.
+
+:Individual-B1 rdf:type :B ;
+    :hasRuleBC :Individual-C1.
+:Individual-B1-1 rdf:type :B-1 .
+:Individual-B2-1 rdf:type :B-1 ;
+    :hasRuleBC :Individual-C1.
+:Individual-B1-2 rdf:type :B-2 .
+:Individual-B2-2 rdf:type :B-2 .
+:Individual-B1-2-1 rdf:type :B-2 ;
+    :hasRuleBC :Individual-C1.
+:Individual-B2-2-1 rdf:type :B-2 .
+
+:Individual-C1 rdf:type :C .
+
+:Individual-BC1 rdf:type :B-2, :C-1 .
+

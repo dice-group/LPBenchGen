@@ -5,7 +5,6 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.vocabulary.RDF;
 import org.dice_group.lpbenchgen.lp.LPGenerator;
 
@@ -13,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Evaluation {
@@ -31,7 +29,7 @@ public class Evaluation {
                     isPertainFormat=true;
                 }
                 else if(args[0].equals("--includes-format")){
-                    isPertainFormat=false;
+                    //default, already set
                 }
                 else{
                     printHelp();
@@ -68,6 +66,46 @@ public class Evaluation {
         System.exit(1);
     }
 
+    /**
+     *
+     * Evaluates the answerModel against the Gold standard and print the true positives, false positives, false negatives, F1-Measure, Recall and Precision into an TSV file.
+     * Further on evaluates the Macro and Micro F1-Measure and prints that to the TSV file to.
+     * <p>
+     *     Removes all resources in the test benchmark from the gold standard and answer model, to assure that the evaluation
+     *     only uses new found solutions.
+     * </p>
+     * <p>
+     * Answer Model can be in two formats. Either the pertains format or the includes format
+     * </p>
+     * Pertains Format
+     * <pre>
+     * \@prefix lpres:&lt;https://lpbenchgen.org/resource/&gt;
+     * \@prefix lpprop:&lt;ttps://lpbenchgen.org/property/&gt;
+     *
+     * lpres:result_1 lpprop:pertainsTo lpres:lp_1;
+     *     lpprop:resource test:Individual2;
+     *     lpprop:resource test:Individual1;
+     *     lpprop:belongsToLP true.
+     *
+     * lpres:result_2 lpprop:pertainsTo lpres:lp_1;
+     *     lpprop:resource test:Individual9;
+     *     lpprop:belongsToLP true.
+     * </pre>
+     * Includes Format
+     * <pre>
+     * \@prefix lpres:&lt;https://lpbenchgen.org/resource/&gt;
+     * \@prefix lpprop:&lt;https://lpbenchgen.org/property/&gt;
+     *
+     * lpres:lp_1 lpprop:includesResource test:Individual1, test:Individual9, test:Individual2 .
+     * </pre>
+     *
+     * @param goldStd the gold standard
+     * @param test the test benchmark model
+     * @param answerModel the system answers
+     * @param out the output tsv file
+     * @param pertainFormat if is in Pertain Format or Includes Format
+     * @throws FileNotFoundException can be ignored.
+     */
     public static void evaluate(Model goldStd, Model test, Model answerModel, String out, boolean pertainFormat) throws FileNotFoundException {
         try(PrintWriter pw = new PrintWriter(out)) {
             double f1=0.0, recall=0.0, precision=0.0;
@@ -112,7 +150,7 @@ public class Evaluation {
                 }
                 pw.println();
             }
-            double[] micro = fmeasure(tp,fp,fn);
+            double[] micro = f1measure(tp,fp,fn);
             double[] macro = new double[]{f1*1.0/problems.size(), recall*1.0/problems.size(), precision*1.0/problems.size()};
             pw.println();
             pw.println("Micro F1\t"+micro[0]);
@@ -143,7 +181,21 @@ public class Evaluation {
         });
     }
 
-    private static double[] evaluate(List<String> gold, List<String> answers) {
+    /**
+     * Evaluates two lists of string.
+     * <p>
+     * The first one is the gold standard, this list should contain all true answers.
+     * The second list contains the system answers.
+     * </p>
+     *
+     * It will determine the true positives, false positives and false negatives in the answer list
+     * and calculates the F1-measure, the Recall and the Precision
+     *
+     * @param gold the Gold Standard
+     * @param answers the system answers
+     * @return an array of doubles [tp,fp,fn,f1,recall,precision]
+     */
+    protected static double[] evaluate(List<String> gold, List<String> answers) {
         int tp = 0;
         int fp = 0;
         int fn = 0;
@@ -159,14 +211,22 @@ public class Evaluation {
             }
         }
         fn = gold.size()-tp;
-        double[] vals = fmeasure(tp, fp, fn);
+        double[] vals = f1measure(tp, fp, fn);
         f1 = vals[0];
         recall = vals[1];
         precision = vals[2];
         return new double[]{tp,fp,fn,f1,recall,precision};
     }
 
-    private static double[] fmeasure(int tp, int fp, int fn) {
+    /**
+     * Calculates the F1-Measure, Recall and Precision from the true positives, false positives and false negatives
+     *
+     * @param tp true positives
+     * @param fp false positives
+     * @param fn false negatives
+     * @return A double array [f1,recall,precision]
+     */
+    protected static double[] f1measure(int tp, int fp, int fn) {
         //if all are 0
         if(tp==0&&fp==0&&fn==0){
             return new double[]{1,1,1};
