@@ -25,11 +25,11 @@ jobs:
       - name: Set env name
         run: echo "RELEASE_ARTIFACTID=$(cat artifactid.log)" >> $GITHUB_ENV
       - name: test
-        run: echo ${{ RELEASE_VERSION }} ${{ RELEASE_ARTIFACTID }}
+        run: echo $RELEASE_VERSION $RELEASE_ARTIFACTID
       - run: pip install mkdocs-material
       - run: pip install mkdocs-macros-plugin
       - run: sed -i "s/\$VERSION/$(cat version.log)/g" mkdocs.yml
-      - run: sed -i "s/\$RELEASE_VERSION/${{ RELEASE_VERSION }}/g" mkdocs.yml
+      - run: sed -i "s/\$RELEASE_VERSION/$RELEASE_VERSION/g" mkdocs.yml
       - run: mkdocs build -d site/$(cat version.log)
       - run: mvn javadoc:javadoc
       - run: sed -i "s/\$VERSION/$(cat version.log)/g" index.html
@@ -50,8 +50,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ RELEASE_VERSION }}
-          release_name: version ${{ RELEASE_VERSION }}
+          tag_name: v$RELEASE_VERSION
+          release_name: version $RELEASE_VERSION
           draft: false
           prerelease: false
           body_path: CHANGELOG.md
@@ -60,6 +60,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/${{ RELEASE_ARTIFACTID }}-${{ RELEASE_VERSION }}-shaded.jar
-          asset_name: lpbenchgen-${{ RELEASE_VERSION }}.jar
+          asset_path: ./target/$RELEASE_ARTIFACTID-$RELEASE_VERSION-shaded.jar
+          asset_name: lpbenchgen-$RELEASE_VERSION.jar
           asset_content_type: application/zip
