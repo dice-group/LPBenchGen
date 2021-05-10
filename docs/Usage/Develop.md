@@ -36,7 +36,11 @@ import org.dice_group.lpbenchgen.lp.LPGenerator;
 public class MyClass {
     public void createMyBenchmark() {
         LPGenerator generator = new LPGenerator();
-        Configuration conf = Configuration.loadFromFile("my-yaml-config.yml");
+        
+        Configuration conf = new Configuration();
+        conf.setEndpoint("my-abox.ttl");
+        conf.setOwlFile("my-owl.ttl");
+        
         boolean generateABox = true;
         LPBenchmark benchmark = generator.createBenchmark(conf, generateABox);
 

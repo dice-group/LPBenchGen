@@ -35,7 +35,7 @@ public class BaseLineSystem {
 
     public  static void main(String[] args) throws Exception {
         if(args.length!=3){
-            System.out.println("system ONTOLOGY CONTAINMENT_BENCHMARK.ttl OUTPUT.ttl");
+            System.out.println("system ONTOLOGY BENCHMARK.ttl OUTPUT.ttl");
         }
         else {
             Model m = ModelFactory.createDefaultModel();

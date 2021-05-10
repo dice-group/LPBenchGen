@@ -27,4 +27,3 @@ maxConceptLength: 15
 minConceptLength: 2
 positiveLimit: 1000
 negativeLimit: 1000
-maxLateralDepth: 2
