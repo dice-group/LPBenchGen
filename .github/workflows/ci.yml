@@ -40,6 +40,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
           destination_dir: ./
+      - run: mvn package -Dmaven.test.skip=true
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -59,3 +60,7 @@ jobs:
           asset_path: ./target/${{ env.RELEASE_ARTIFACTID }}-${{ env.RELEASE_VERSION }}-shaded.jar
           asset_name: lpbenchgen-${{ env.RELEASE_VERSION }}.jar
           asset_content_type: application/zip
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

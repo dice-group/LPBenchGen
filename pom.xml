@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.dice_group</groupId>
-    <artifactId>LPBenchGen</artifactId>
+    <artifactId>lpbenchgen</artifactId>
     <version>${major.minor.version}.${build.version}</version>
     <licenses>
         <license>
@@ -201,7 +201,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/dice-group/LPBenchGen</url>
+            <url>https://maven.pkg.github.com/dice-group/lpbenchgen</url>
         </repository>
     </distributionManagement>
 
