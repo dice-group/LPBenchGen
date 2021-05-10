@@ -1,9 +1,0 @@
-org.dice_group.lpbenchgen
-org.dice_group.lpbenchgen.cleaner
-org.dice_group.lpbenchgen.config
-org.dice_group.lpbenchgen.dl
-org.dice_group.lpbenchgen.eval
-org.dice_group.lpbenchgen.lp
-org.dice_group.lpbenchgen.sparql
-org.dice_group.lpbenchgen.sparql.retriever
-org.dice_group.lpbenchgen.sparql.visitors

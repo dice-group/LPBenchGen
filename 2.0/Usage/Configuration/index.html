@@ -1,0 +1,1017 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
+    
+    
+      
+        <title>Configuration - LPBenchGen</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bde7dde4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="deep-purple">
+  
+    
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+      <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="LPBenchGen" class="md-header__button md-logo" aria-label="LPBenchGen" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 89 89">
+  <path d="M3.136,17.387l0,42.932l42.932,21.467l-42.932,-64.399Z" />
+  <path d="M21.91,8l42.933,64.398l-18.775,9.388l-42.932,-64.399l18.774,-9.387Z" style="fill-opacity: 0.5" />
+  <path d="M67.535,17.387l-27.262,18.156l21.878,32.818l5.384,2.691l0,-53.665Z" />
+  <path d="M67.535,17.387l0,53.666l18.774,-9.388l0,-53.665l-18.774,9.387Z" style="fill-opacity: 0.25" />
+</svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LPBenchGen
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="deep-purple" type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1 2-2m10-3a5 5 0 0 1 5 5 5 5 0 0 1-5 5H7a5 5 0 0 1-5-5 5 5 0 0 1 5-5h10M7 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3h10a3 3 0 0 0 3-3 3 3 0 0 0-3-3H7z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent="" type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/dice-group/LPBenchGen" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    dice-group/LPBenchGen
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
+      About
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Getting-Started/" class="md-tabs__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Underlying-Model/" class="md-tabs__link">
+        Underlying Model
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link md-tabs__link--active">
+        Usage
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="LPBenchGen" class="md-nav__button md-logo" aria-label="LPBenchGen" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 89 89">
+  <path d="M3.136,17.387l0,42.932l42.932,21.467l-42.932,-64.399Z" />
+  <path d="M21.91,8l42.933,64.398l-18.775,9.388l-42.932,-64.399l18.774,-9.387Z" style="fill-opacity: 0.5" />
+  <path d="M67.535,17.387l-27.262,18.156l21.878,32.818l5.384,2.691l0,-53.665Z" />
+  <path d="M67.535,17.387l0,53.666l18.774,-9.388l0,-53.665l-18.774,9.387Z" style="fill-opacity: 0.25" />
+</svg>
+
+    </a>
+    LPBenchGen
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/dice-group/LPBenchGen" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    dice-group/LPBenchGen
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      <label class="md-nav__link" for="__nav_2">
+        Getting Started
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Getting-Started/" class="md-nav__link">
+        Download
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Getting-Started/Quick-Configuration/" class="md-nav__link">
+        Quick Configuration
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Getting-Started/Run-LPBenchGen/" class="md-nav__link">
+        Generate a Benchmark
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      <label class="md-nav__link" for="__nav_3">
+        Underlying Model
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Underlying Model" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Underlying Model
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Underlying-Model/" class="md-nav__link">
+        Concept Generation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Underlying-Model/ABox-Generation/" class="md-nav__link">
+        ABox Generation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Underlying-Model/Output-Formats/" class="md-nav__link">
+        Output Formats
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      <label class="md-nav__link" for="__nav_4">
+        Usage
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Usage" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Usage
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Configuration
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Configuration
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ways-to-generate-a-benchmark" class="md-nav__link">
+    Ways to Generate a Benchmark
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#allowing-certain-types-to-yield-a-topical-subset-of-the-abox" class="md-nav__link">
+    Allowing certain types to yield a topical subset of the ABox.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods-of-generating-a-benchmark" class="md-nav__link">
+    Methods of generating a Benchmark
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods of generating a Benchmark">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-parameters" class="md-nav__link">
+    General Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-positive-and-negative-concepts" class="md-nav__link">
+    Use Positive and Negative Concepts
+  </a>
+  
+    <nav class="md-nav" aria-label="Use Positive and Negative Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-positive-and-generate-negative-concepts" class="md-nav__link">
+    Use Positive and Generate Negative Concepts
+  </a>
+  
+    <nav class="md-nav" aria-label="Use Positive and Generate Negative Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_1" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-positive-and-negative-concepts" class="md-nav__link">
+    Generate Positive and Negative Concepts
+  </a>
+  
+    <nav class="md-nav" aria-label="Generate Positive and Negative Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_2" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-achieve-good-examples" class="md-nav__link">
+    How to Achieve Good Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Develop/" class="md-nav__link">
+        Develop
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Evaluation/" class="md-nav__link">
+        Evaluation
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="configuration">Configuration</h1>
+<p>In this section we'll explain how to configure the generation of a learning problem  benchmark.</p>
+<h3 id="ways-to-generate-a-benchmark">Ways to Generate a Benchmark</h3>
+<p>There are 3 main ways to generate a LP benchmark.</p>
+<ol>
+<li>
+<p>The first one is to use a gold standard positive concept, which represents one learning problem and furthermore provide concepts which won't fit the positive concept (we call them negative concepts wrt a positive concept).
+   This negative concept should be close to the positive one but yield other individuals. 
+   e.g. <code>Politician and hasParents some Person</code> can have multiple negative concepts such as <code>not Politician and hasParents some Person</code> and <code>Politician and not (hasParents some Person)</code> while the latter obv. wouldn't yield results.</p>
+</li>
+<li>
+<p>However, it might be a lot of work to add for all positive concepts multiple useful negative concepts.
+   Hence, LPBenchGen can generate negative concepts out of positives, and you only provide positive concepts</p>
+</li>
+<li>
+<p>You can also just let LPBenchGen generate concepts from the TBox and ABox. It will first generate all possible concepts in the parameters provided by the configuration, and then check if these concepts yields enough results using the ABox.</p>
+</li>
+</ol>
+<h3 id="allowing-certain-types-to-yield-a-topical-subset-of-the-abox">Allowing certain types to yield a topical subset of the ABox.</h3>
+<p>Further on you can add allowed Types.</p>
+<ul>
+<li>This will be used to only allow Individuals who have a class of this type</li>
+<li>To generate positive concepts only considering these types.</li>
+</ul>
+<h2 id="methods-of-generating-a-benchmark">Methods of generating a Benchmark</h2>
+<h3 id="general-parameters">General Parameters</h3>
+<p>These parameters are set for all three methods.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>Description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>endpoint</code></td>
+<td>Either RDF File or SPARQL endpoint containing the ABox</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>owlFile</code></td>
+<td>The ontology (TBox) file</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td>A seed for every random decision</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>types</code></td>
+<td>The allowed types, whereas empty or not set means every class type is allowed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>percentageOfPositiveExamples</code></td>
+<td>The percentage of positive examples which should be kept from the <code>maxIndividualsPerExampleConcept</code> for the learning problem</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td><code>percentageOfNegativeExamples</code></td>
+<td>The percentage of negative examples which should be kept from the <code>maxIndividualsPerExampleConcept</code> for the learning problem</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td><code>maxNoOfExamples</code></td>
+<td>At most this amount of positive (resp. negative) examples should be kept for the learning problem.</td>
+<td>30</td>
+</tr>
+<tr>
+<td><code>minNoOfExamples</code></td>
+<td>At least this amount of positive (resp. negative) examples should be kept for the learning problem. However if there are less individuals than the value, it will just take the individuals.</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>removeLiterals</code></td>
+<td>If the final TBox+ABox should be pruned from Literals and thus making the file smaller.</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>aboxResultRetrievalLimit</code></td>
+<td>An internal limit for retrieving only this amount of query solutions if the ABox is generated. This will determine how big the ABox will get.</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>splitContainment</code></td>
+<td>The split between training and test dataset. 0 = all problems in test, 1 = all problems in training. 0.5 = split the problems 50/50.</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td><code>openWorldAssumption</code></td>
+<td>If the benchmark should be under the Open World Assumption. Closed World Assumption otherwise. If true will use Reasoner to assure that every problem is correct under OWA.</td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<h3 id="use-positive-and-negative-concepts">Use Positive and Negative Concepts</h3>
+<p>Additional to the above parameters you can set the concepts.
+This is basically just a list of positives and negatives concepts.</p>
+<pre><code class="language-yaml">concepts: 
+   - positive: POSITIVE_CONCEPT
+     negatives:
+       - NEGATIVE_CONCEPT1
+       ...
+   - positive: ...
+     negatives ...
+</code></pre>
+<h4 id="example">Example</h4>
+<pre><code class="language-yaml">endpoint: http://dbpedia.org/sparql
+owlFile: ./dbpedia.owl
+types:
+  - http://dbpedia.org/ontology/Work
+  - http://dbpedia.org/ontology/Band
+  - http://dbpedia.org/ontology/MusicalArtist
+  - http://dbpedia.org/ontology/Album
+  - http://dbpedia.org/ontology/Actor
+  - http://dbpedia.org/ontology/MusicGenre
+maxIndividualsPerExampleConcept: 30
+percentageOfPositiveExamples: 0.5
+percentageOfNegativeExamples: 0.5
+maxNoOfExamples: 30
+minNoOfExamples: 5
+concepts:
+  - positive: Band and hasAlbum some Album
+    negatives: 
+      - not Band and hasAlbum some Album
+      - Band and not (hasAlbum some Album)
+  - positive: Actor and MusicalArtist
+    negatives: 
+      - Actor and not MusicalArtist
+      - not Actor and MusicalArtist
+</code></pre>
+<h3 id="use-positive-and-generate-negative-concepts">Use Positive and Generate Negative Concepts</h3>
+<p>If you want to generate negative concepts for all or just some positive concepts, just remove the negatives.</p>
+<pre><code class="language-yaml">concepts: 
+   - positive: POSITIVE_CONCEPT #here all negatives concepts will be generated
+   - positive: ... #not here though
+     negatives: ...
+</code></pre>
+<h4 id="example_1">Example</h4>
+<pre><code class="language-yaml">endpoint: http://dbpedia.org/sparql
+owlFile: ./dbpedia.owl
+types:
+  - http://dbpedia.org/ontology/Work
+  - http://dbpedia.org/ontology/Band
+  - http://dbpedia.org/ontology/MusicalArtist
+  - http://dbpedia.org/ontology/Album
+  - http://dbpedia.org/ontology/Actor
+  - http://dbpedia.org/ontology/MusicGenre
+maxIndividualsPerExampleConcept: 30
+percentageOfPositiveExamples: 0.5
+percentageOfNegativeExamples: 0.5
+maxNoOfExamples: 30
+minNoOfExamples: 5
+concepts:
+  - positive: Band and hasAlbum some Album
+  - positive: Actor and MusicalArtist
+    negatives: 
+      - Actor and not MusicalArtist
+      - not Actor and MusicalArtist
+</code></pre>
+<h3 id="generate-positive-and-negative-concepts">Generate Positive and Negative Concepts</h3>
+<p>Additional to the general parameters you can set the following parameters which indicate how to generate positive concepts</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>Description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>maxGenerateConcepts</code></td>
+<td>The amount of concepts which should be generated (might be less)</td>
+<td>20</td>
+</tr>
+<tr>
+<td><code>maxConceptLength</code></td>
+<td>The maximum length a concept is allowed to be.</td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>minConceptLength</code></td>
+<td>The minimum length a concept is allowed to be.</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>maxDepth</code></td>
+<td>The recursive depth on how deep a concept should be constructed</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>inferDirectSuperClasses</code></td>
+<td>If direct super Classes (e.g. Person for Artist) should be allowed during the construction of a concept.</td>
+<td>true</td>
+</tr>
+<tr>
+<td><code>namespace</code></td>
+<td>The namespace in which a class or rule/property has to reside in. if empty or not set all are allowed.</td>
+<td>(optional)</td>
+</tr>
+<tr>
+<td><code>strict</code></td>
+<td>Assures that every (positive and negative) concept has at least minNoOfExamples Examples.</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>negationMutationRatio</code></td>
+<td>The ratio in which negative mutation of a class expression happens. Will always add the original class expression as well. If set to <code>1</code> will always add a negated mutation.</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td><code>negativeLimit</code></td>
+<td>Sets the Query limit for negative example retrievals.</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>positiveLimit</code></td>
+<td>Sets the Query limit for positive example retrievals. If set to 0 all results will be retrieved. Note that there might be still a limit if you're using a SPARQL endpoint and the endpoint sets the limit.</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example_2">Example</h4>
+<pre><code class="language-yaml">endpoint: /path/to/my/dataset.ttl
+owlFile: /path/to/my/ontology.owl
+seed: 123
+types: #use all types
+maxIndividualsPerExampleConcept: 30
+percentageOfPositiveExamples: 0.5
+percentageOfNegativeExamples: 0.5
+maxNoOfExamples: 30
+minNoOfExamples: 5
+maxGenerateConcepts: 10
+maxConceptLength: 8
+minConceptLength: 4
+strict: true
+maxDepth: 1
+endpointInfersRules: false
+removeLiterals: true
+negationMutationRatio: 0.5
+namespace: http://example.org/ontology/
+</code></pre>
+<h2 id="how-to-achieve-good-examples">How to Achieve Good Examples</h2>
+<p>To achieve good examples for small concepts like <code>Artist</code> you should allow only types which are semantically near that.
+A negative example with class of <code>Animal</code> wouldn't provide much information, thus it makes sense to allow other super types of the class <code>Person</code> such as <code>Politician</code>.
+Then the negative examples will be much more informative.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Usage
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../Develop/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Develop
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/dice-group/LPBenchGen" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.top", "toc.integrate"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": 2.0}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
+      
+    
+  </body>
+</html>
