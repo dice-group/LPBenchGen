@@ -46,7 +46,7 @@ public class OWLTBoxPositiveCreatorTest {
         conf.setMaxDepth(3);
         conf.setMaxConceptLength(3);
         conf.setMinConceptLength(1);
-        data.add(new Object[]{ 11, conf, Lists.newArrayList("A", "A-1", "B", "B-1", "B-2", "C", "hasRuleAB some B", "hasRuleAB some B-1", "hasRuleAB some B-2", "hasRuleAB-2 some B-2","hasRuleBC some C"), types });
+        data.add(new Object[]{ 7, conf, Lists.newArrayList("A", "A-1", "C", "hasRuleAB some B", "hasRuleAB some B-1", "hasRuleAB some B-2", "hasRuleAB-2 some B-2"), types });
 
         types = Lists.newArrayList("http://example.com#A", "http://example.com#B", "http://example.com#C");
         data.add(new Object[]{ 3, conf, Lists.newArrayList("A", "C", "hasRuleAB some B"), types });

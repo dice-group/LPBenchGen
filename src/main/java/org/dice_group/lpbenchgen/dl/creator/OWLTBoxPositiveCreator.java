@@ -146,15 +146,15 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     private Collection<OWLClassExpression> createConcepts(){
         List<OWLClassExpression> concepts = new ArrayList<>();
         List<String> allowedTypes = new ArrayList<>(this.allowedTypes);
-        allowedTypes.forEach(type -> {
+        for(String type:  allowedTypes){
             if(!type.equals("http://www.w3.org/2002/07/owl#Thing")) {
                 Collection<OWLClassExpression> ret = createConceptsFromClass(dataFactory.getOWLClass(IRI.create(type)));
                 concepts.addAll(ret);
             }
-        });
+        }
+        concepts = concepts.stream().distinct().collect(Collectors.toList());
 
         LOGGER.info("Found {} theoretically possible concepts.", concepts.size());
-
         Collections.shuffle(concepts, new Random(seed));
         return concepts;
     }

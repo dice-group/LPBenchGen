@@ -66,4 +66,21 @@ public class LPProblem {
     public OWLClassExpression getExpr(String nes) {
         return negativeMap.get(nes);
     }
+
+    /**
+     * Creates a copy of this Problem
+     * @return deep copy of this problem
+     */
+    public LPProblem getCopy() {
+        LPProblem prob = new LPProblem();
+        prob.negatives=new HashSet<>(negatives);
+        prob.positives=new HashSet<>(positives);
+        prob.goldStandardConcept=goldStandardConcept;
+        prob.goldStandardConceptExpr=goldStandardConceptExpr.getNNF();
+        prob.negativeGenerated=negativeGenerated;
+        prob.rules=new HashSet<>(rules);
+        prob.dataRules=new HashSet<>(dataRules);
+        prob.negativeMap = new HashMap<>(negativeMap);
+        return prob;
+    }
 }

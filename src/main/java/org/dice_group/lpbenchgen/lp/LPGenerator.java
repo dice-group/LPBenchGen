@@ -284,7 +284,7 @@ public class LPGenerator {
             }
             else{
                 gold.add(problem);
-                test.add(problem);
+                test.add(problem.getCopy());
             }
             count.getAndIncrement();
         });
@@ -482,7 +482,7 @@ public class LPGenerator {
 
     private List<String> keepPercentage(Collection<String> removeFrom, Double percentage) {
         List<String> removed = new ArrayList<String>(removeFrom);
-        Double max = removeFrom.size()*percentage;
+        Double max = Math.max(1, removeFrom.size()*percentage);
         if(max<conf.getMinNoOfExamples() && !conf.isStrict()){
             max=conf.getMinNoOfExamples()*1.0;
         }

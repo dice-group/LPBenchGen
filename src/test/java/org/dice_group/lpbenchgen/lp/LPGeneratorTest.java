@@ -12,6 +12,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.RDF;
 import org.dice_group.lpbenchgen.config.Configuration;
+import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.Parser;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.*;
@@ -32,9 +33,222 @@ public class LPGeneratorTest {
 
 
     @Test
-    public void checkGenerationFlow(){
+    public void checkGenerationFlowCreate() throws IOException, OWLOntologyCreationException {
         LPGenerator generator = new LPGenerator();
+        Configuration conf = createTestConfig();
+        LPBenchmark benchmark = generator.createBenchmark(conf, false);
+        List<LPProblem> complete = createFlowProblems();
+        assertLPContainBenchmark(complete, benchmark.getGold(), true, true);
+        assertLPContainBenchmark(complete, benchmark.getTrain(), true, false);
+        assertLPContainBenchmark(benchmark.getGold(), benchmark.getTest(), false, false);
+        benchmark = generator.createBenchmark(conf, true);
+        assertTrue(benchmark.getAbox()!=null);
+        assertEquals(11, benchmark.getAbox().getIndividualsInSignature().size());
+    }
 
+    private void assertLPContainBenchmark(List<LPProblem> complete, List<LPProblem> test, boolean isFullPos, boolean isGold) {
+        //check split 0.5
+        if(isFullPos){
+            assertEquals(complete.size()/2, test.size());
+            for(LPProblem prob : test){
+                //test concept and
+                assertLPContains(prob, test, isGold);
+            }
+        }
+        else{
+            assertEquals(complete.size(), test.size());
+            for(LPProblem testProb : test){
+                boolean found=false;
+                for(LPProblem completeProb : complete){
+                    if(completeProb.goldStandardConcept.equals(testProb.goldStandardConcept)){
+                        //found
+                        found =true;
+                        assertEquals(Math.max(completeProb.positives.size()/2, 1), testProb.positives.size());
+                        assertEquals(Math.max(completeProb.negatives.size()/2, 1), testProb.negatives.size());
+                        for(String pos : testProb.positives){
+                            assertTrue(completeProb.positives.contains(pos));
+                        }
+                        for(String nes : testProb.negatives){
+                            assertTrue(completeProb.negatives.contains(nes));
+                        }
+
+                    }
+                }
+                assertTrue(found);
+            }
+            //check 0.5 min 1 from gold standard, negatives same size
+        }
+    }
+
+    private List<LPProblem> createFlowProblems() {
+        List<LPProblem> ret = new ArrayList<>();
+        LPProblem problem = new LPProblem();
+        problem.goldStandardConcept="A-1";
+        problem.positives.add("http://example.com#Individual-A1-1");
+        problem.negatives.add("http://example.com#Individual-B1");
+        problem.negatives.add("http://example.com#Individual-C1");
+        problem.negatives.add("http://example.com#Individual-A1");
+        problem.negatives.add("http://example.com#Individual-A2");
+        problem.negatives.add("http://example.com#Individual-B1-2-1");
+        problem.negatives.add("http://example.com#Individual-B2-2-1");
+        problem.negatives.add("http://example.com#Individual-B1-2");
+        problem.negatives.add("http://example.com#Individual-B2-2");
+        problem.negatives.add("http://example.com#Individual-B2-1");
+        problem.negatives.add("http://example.com#Individual-B1-1");
+        ret.add(problem);
+        problem = new LPProblem();
+        problem.goldStandardConcept="B-1";
+        problem.negatives.add("http://example.com#Individual-A1-1");
+        problem.negatives.add("http://example.com#Individual-B1");
+        problem.negatives.add("http://example.com#Individual-C1");
+        problem.negatives.add("http://example.com#Individual-A1");
+        problem.negatives.add("http://example.com#Individual-A2");
+        problem.negatives.add("http://example.com#Individual-B1-2-1");
+        problem.negatives.add("http://example.com#Individual-B2-2-1");
+        problem.negatives.add("http://example.com#Individual-B1-2");
+        problem.negatives.add("http://example.com#Individual-B2-2");
+        problem.positives.add("http://example.com#Individual-B2-1");
+        problem.positives.add("http://example.com#Individual-B1-1");
+        ret.add(problem);
+        problem = new LPProblem();
+        problem.goldStandardConcept="B-2";
+        problem.negatives.add("http://example.com#Individual-A1-1");
+        problem.negatives.add("http://example.com#Individual-B1");
+        problem.negatives.add("http://example.com#Individual-C1");
+        problem.negatives.add("http://example.com#Individual-A1");
+        problem.negatives.add("http://example.com#Individual-A2");
+        problem.positives.add("http://example.com#Individual-B1-2-1");
+        problem.positives.add("http://example.com#Individual-B2-2-1");
+        problem.positives.add("http://example.com#Individual-B1-2");
+        problem.positives.add("http://example.com#Individual-B2-2");
+        problem.negatives.add("http://example.com#Individual-B2-1");
+        problem.negatives.add("http://example.com#Individual-B1-1");
+        ret.add(problem);
+        problem = new LPProblem();
+        problem.goldStandardConcept="A";
+        problem.positives.add("http://example.com#Individual-A1-1");
+        problem.negatives.add("http://example.com#Individual-B1");
+        problem.negatives.add("http://example.com#Individual-C1");
+        problem.positives.add("http://example.com#Individual-A1");
+        problem.positives.add("http://example.com#Individual-A2");
+        problem.negatives.add("http://example.com#Individual-B1-2-1");
+        problem.negatives.add("http://example.com#Individual-B2-2-1");
+        problem.negatives.add("http://example.com#Individual-B1-2");
+        problem.negatives.add("http://example.com#Individual-B2-2");
+        problem.negatives.add("http://example.com#Individual-B2-1");
+        problem.negatives.add("http://example.com#Individual-B1-1");
+        ret.add(problem);
+        problem = new LPProblem();
+        problem.goldStandardConcept="B";
+        problem.negatives.add("http://example.com#Individual-A1-1");
+        problem.positives.add("http://example.com#Individual-B1");
+        problem.negatives.add("http://example.com#Individual-C1");
+        problem.negatives.add("http://example.com#Individual-A1");
+        problem.negatives.add("http://example.com#Individual-A2");
+        problem.positives.add("http://example.com#Individual-B1-2-1");
+        problem.positives.add("http://example.com#Individual-B2-2-1");
+        problem.positives.add("http://example.com#Individual-B1-2");
+        problem.positives.add("http://example.com#Individual-B2-2");
+        problem.positives.add("http://example.com#Individual-B2-1");
+        problem.positives.add("http://example.com#Individual-B1-1");
+        ret.add(problem);
+        problem = new LPProblem();
+        problem.goldStandardConcept="C";
+        problem.negatives.add("http://example.com#Individual-A1-1");
+        problem.negatives.add("http://example.com#Individual-B1");
+        problem.positives.add("http://example.com#Individual-C1");
+        problem.negatives.add("http://example.com#Individual-A1");
+        problem.negatives.add("http://example.com#Individual-A2");
+        problem.negatives.add("http://example.com#Individual-B1-2-1");
+        problem.negatives.add("http://example.com#Individual-B2-2-1");
+        problem.negatives.add("http://example.com#Individual-B1-2");
+        problem.negatives.add("http://example.com#Individual-B2-2");
+        problem.negatives.add("http://example.com#Individual-B2-1");
+        problem.negatives.add("http://example.com#Individual-B1-1");
+        ret.add(problem);
+        return ret;
+    }
+
+    private List<PosNegExample> createPosNegExamples(boolean useNegatives){
+        List<PosNegExample> ret = new ArrayList<>();
+        PosNegExample example = new PosNegExample();
+        example.setPositive("A");
+        if(useNegatives) {
+            example.getNegatives().add("not A");
+        }
+        ret.add(example);
+        example = new PosNegExample();
+        example.setPositive("B");
+        if(useNegatives) {
+            example.getNegatives().add("not B");
+        }
+        ret.add(example);
+        example = new PosNegExample();
+        example.setPositive("C");
+        if(useNegatives) {
+            example.getNegatives().add("not C");
+        }
+        ret.add(example);
+        example = new PosNegExample();
+        example.setPositive("B-1");
+        if(useNegatives) {
+            example.getNegatives().add("not B-1");
+        }
+        ret.add(example);
+        example = new PosNegExample();
+        example.setPositive("B-2");
+        if(useNegatives) {
+            example.getNegatives().add("not B-2");
+        }
+        ret.add(example);
+        example = new PosNegExample();
+        example.setPositive("A-1");
+        if(useNegatives) {
+            example.getNegatives().add("not A-1");
+        }
+        ret.add(example);
+        return ret;
+    }
+
+    @Test
+    public void checkGenerationFlowPosNeg() throws IOException, OWLOntologyCreationException {
+        LPGenerator generator = new LPGenerator();
+        Configuration conf = createTestConfig();
+        conf.setConcepts(createPosNegExamples(true));
+        LPBenchmark benchmark = generator.createBenchmark(conf, false);
+        List<LPProblem> complete = createFlowProblems();
+        assertLPContainBenchmark(complete, benchmark.getGold(), true, true);
+        assertLPContainBenchmark(benchmark.getGold(), benchmark.getTest(), false, false);
+        assertLPContainBenchmark(complete, benchmark.getTrain(), true, false);
+    }
+
+    @Test
+    public void checkGenerationFlowCreatePos() throws IOException, OWLOntologyCreationException {
+        LPGenerator generator = new LPGenerator();
+        Configuration conf = createTestConfig();
+        conf.setConcepts(createPosNegExamples(false));
+        LPBenchmark benchmark = generator.createBenchmark(conf, false);
+        List<LPProblem> complete = createFlowProblems();
+        assertLPContainBenchmark(complete, benchmark.getGold(), true, true);
+        assertLPContainBenchmark(benchmark.getGold(), benchmark.getTest(), false, false);
+        assertLPContainBenchmark(complete, benchmark.getTrain(), true, false);
+    }
+
+    private Configuration createTestConfig(){
+        Configuration conf = new Configuration();
+        conf.setEndpoint("src/test/resources/ontologies/simple.ttl");
+        conf.setOwlFile("src/test/resources/ontologies/simple-tbox.ttl");
+        conf.setMinConceptLength(1);
+        conf.setMaxConceptLength(1);
+        conf.setMinNoOfExamples(1);
+        conf.setMaxNoOfExamples(100);
+        conf.setSeed(1234);
+        conf.setStrict(false);
+        conf.setPercentageOfPositiveExamples(0.5);
+        conf.setPercentageOfNegativeExamples(0.5);
+        conf.setOpenWorldAssumption(false);
+        conf.setMaxGenerateConcepts(40);
+        return conf;
     }
 
     @Test
@@ -197,37 +411,42 @@ public class LPGeneratorTest {
 
     }
 
+    private boolean assertLPContains(LPProblem problem, List<LPProblem> expected, boolean isGold){
+        boolean found=false;
+        for(LPProblem expProblem : expected){
+            if(expProblem.goldStandardConcept != null && problem.goldStandardConcept != null){
+                found = expProblem.goldStandardConcept.equals(problem.goldStandardConcept);
+            }
+            else if(expProblem.goldStandardConcept == null && problem.goldStandardConcept == null){
+                found = true;
+            }
+            else{
+                found =false;
+            }
+            found &= expProblem.positives.size()==problem.positives.size();
+            for(String pos : problem.positives){
+                found &= expProblem.positives.contains(pos);
+            }
+            if(isGold){
+                found &= problem.negatives.isEmpty();
+            }
+            else {
+                found &= expProblem.negatives.size()==problem.negatives.size();
+                for (String nes : problem.negatives) {
+                    found &= expProblem.negatives.contains(nes);
+                }
+            }
+            if(found){
+                break;
+            }
+        }
+        return found;
+    }
+
     private void assertLPBenchmark(List<LPProblem> actual, List<LPProblem> expected, boolean isGold) {
         assertEquals(expected.size(), actual.size());
         for(LPProblem problem : actual){
-            boolean found=false;
-            for(LPProblem expProblem : expected){
-                if(expProblem.goldStandardConcept != null && problem.goldStandardConcept != null){
-                    found = expProblem.goldStandardConcept.equals(problem.goldStandardConcept);
-                }
-                else if(expProblem.goldStandardConcept == null && problem.goldStandardConcept == null){
-                    found = true;
-                }
-                else{
-                    found =false;
-                }
-                found &= expProblem.positives.size()==problem.positives.size();
-                for(String pos : problem.positives){
-                    found &= expProblem.positives.contains(pos);
-                }
-                if(isGold){
-                    found &= problem.negatives.isEmpty();
-                }
-                else {
-                    found &= expProblem.negatives.size()==problem.negatives.size();
-                    for (String nes : problem.negatives) {
-                        found &= expProblem.negatives.contains(nes);
-                    }
-                }
-                if(found){
-                    break;
-                }
-            }
+            boolean found=assertLPContains(problem, expected, isGold);
             assertTrue(found);
         }
     }
