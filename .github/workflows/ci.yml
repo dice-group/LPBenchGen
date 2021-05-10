@@ -34,16 +34,12 @@ jobs:
       - run: mvn javadoc:javadoc
       - run: sed -i "s/\$VERSION/$(cat version.log)/g" index.html
       - run: cp index.html ./site
-      - name: Deploy
+      - name: Deploy Site
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
           destination_dir: ./
-      - name: Publish package
-        run: mvn --batch-mode deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
