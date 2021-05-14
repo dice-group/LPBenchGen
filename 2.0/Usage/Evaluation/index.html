@@ -596,7 +596,7 @@
 <p>IMPORTANT: To assure that the gold standard is correct and complete use <code>positiveLimit: 0</code> in the benchmark generation.
 If you're using a SPARQL endpoint, take care that the endpoint doesn't set a Limit by itself.</p>
 <p>To start the evaluation execute the following:</p>
-<pre><code class="language-bash">java -cp lpbenchgen-2.0.0.jar org.dice_group.lpbenchgen.Evaluation (--pertain-format | --includes-format) GOLD_STANDARD.ttl TEST_BENCHMARK.ttl SYSTEM_ANSWERS.ttl OUTPUT_REPORT_FILE.tsv
+<pre><code class="language-bash">java -cp lpbenchgen-2.0.1.jar org.dice_group.lpbenchgen.Evaluation (--pertain-format | --includes-format) GOLD_STANDARD.ttl TEST_BENCHMARK.ttl SYSTEM_ANSWERS.ttl OUTPUT_REPORT_FILE.tsv
 </code></pre>
 <p>The Benchmark will then remove all examples from the gold standard as well as from the system answers and evaluates on the remaining individuals, which weren't classified in the test benchmark.</p>
 <p>The results will be a TSV file containing for each Learning Problem the true positives, false positives, false negatives, the F1-measure, Precision and Recall.</p>
