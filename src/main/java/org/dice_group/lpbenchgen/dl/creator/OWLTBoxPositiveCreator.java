@@ -1,6 +1,7 @@
 package org.dice_group.lpbenchgen.dl.creator;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.ConceptLengthCalculator;
@@ -72,6 +73,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
         seed=conf.getSeed();
         negationMutationRatio=conf.getNegationMutationRatio();
         inferDirectSuperClasses=conf.getInferDirectSuperClasses();
+        negationMutationRandom = new Random(seed);
 
     }
 
@@ -86,7 +88,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
 
     @Override
     public Collection<PosNegExample> createDistinctConcepts(int noOfConcepts){
-        negationMutationRandom = new Random(seed);
         Set<PosNegExample> ret = new HashSet<>();
         int toSmallCount=0;
         int noResults=0;
@@ -143,7 +144,11 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     }
 
 
-    private Collection<OWLClassExpression> createConcepts(){
+    /**
+     * Creates a list of class expressions
+     * @return a list of class expressions
+     */
+    public Collection<OWLClassExpression> createConcepts(){
         List<OWLClassExpression> concepts = new ArrayList<>();
         List<String> allowedTypes = new ArrayList<>(this.allowedTypes);
         for(String type:  allowedTypes){
@@ -183,37 +188,41 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     }
 
 
-    private Collection<OWLClassExpression> createConceptsFromClass(OWLClass owlClass){
+    /**
+     * Creates a list of class expressions starting at the owlClass
+     * @param owlClass start point of the class expressions
+     * @return list of class expressions
+     */
+    protected Collection<OWLClassExpression> createConceptsFromClass(OWLClass owlClass){
         Collection<OWLClassExpression> ret = new ArrayList<>();
         ret.add(owlClass);
         addNegationMutation(ret, owlClass);
         createConceptFromExpression(owlClass, ret);
         getAxiomsForClass(owlClass).forEach(axiom ->{
             if(axiom instanceof OWLObjectPropertyRangeAxiom){
-                createConceptFromExpression(((OWLObjectPropertyRangeAxiom) axiom), ret);
+                createConceptFromExpression(owlClass, ((OWLObjectPropertyRangeAxiom) axiom), ret);
             }
 
         });
         return ret;
     }
 
-    private void createConceptFromExpression(OWLObjectPropertyRangeAxiom ax, Collection<OWLClassExpression> ret) {
+    private void createConceptFromExpression(OWLClass start, OWLObjectPropertyRangeAxiom ax, Collection<OWLClassExpression> ret) {
         if(1 <= maxDepth) {
             OWLObjectPropertyExpression prop = ax.getProperty();
-            OWLClassExpression owlClass2 = ax.getRange();
-            OWLClassExpression propExpr = new OWLObjectSomeValuesFromImpl(prop, owlClass2);
+            OWLClassExpression propExpr = new OWLObjectSomeValuesFromImpl(prop, start);
             if (getConceptLength(propExpr) <= maxConceptLength) {
                 ret.add(propExpr);
 
                 addNegationMutation(ret, propExpr);
-                for (OWLClassExpression expr : createConceptFromExpression(owlClass2, getRangePropertiesForClass((OWLClass) owlClass2), 1 + 1)) {
+                for (OWLClassExpression expr : createConceptFromExpression(start, getRangePropertiesForClass(start), 1 + 1)) {
                     OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
                     if (getConceptLength(pexpr) <= maxConceptLength) {
                         addNegationMutation(ret, pexpr);
                         ret.add(pexpr);
                     }
                 }
-                for (OWLClass inferredClass : res.getSubClasses(owlClass2).getFlattened()) {
+                for (OWLClass inferredClass : res.getSubClasses(start).getFlattened()) {
                     if (allowedTypes.contains(inferredClass.getIRI().toString())) {
                         OWLClassExpression negationPropExpr = new OWLObjectSomeValuesFromImpl(prop, inferredClass);
                         ret.add(negationPropExpr);
@@ -276,7 +285,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
         }
         return ret;
     }
-
 
 
     private Collection<OWLObjectPropertyExpression> getRangePropertiesForClass(OWLClass owlClass) {

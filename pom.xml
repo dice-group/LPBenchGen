@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.dice_group</groupId>
-    <artifactId>LPBenchGen</artifactId>
+    <artifactId>lpbenchgen</artifactId>
     <version>${major.minor.version}.${build.version}</version>
     <licenses>
         <license>
@@ -29,7 +29,7 @@
         <major.minor.version>${major.version}.${minor.version}</major.minor.version>
         <major.version>2</major.version>
         <minor.version>0</minor.version>
-        <build.version>0</build.version>
+        <build.version>1</build.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <log4j.version>2.13.3</log4j.version>
@@ -201,7 +201,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/dice-group/LPBenchGen</url>
+            <url>https://maven.pkg.github.com/dice-group/lpbenchgen</url>
         </repository>
     </distributionManagement>
 

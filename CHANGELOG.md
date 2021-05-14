@@ -1,3 +1,15 @@
+# CHANGELOG version 2.0.1
+
+## General Changes
+
+## Added Features
+
+## Removed Features
+
+## Issues fixed
+
+* Concept creator threw error if domain/range of property is complex expression fixed.
+
 # CHANGELOG version 2.0.0
 
 ## General Changes 

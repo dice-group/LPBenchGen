@@ -21,6 +21,8 @@ jobs:
       - shell: bash
         run: mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout > artifactid.log
       - name: Set env version
+        run: echo "MM_VERSION=$(cat version.log)" >> $GITHUB_ENV
+      - name: Set env version
         run: echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
       - name: Set env name
         run: echo "RELEASE_ARTIFACTID=$(cat artifactid.log)" >> $GITHUB_ENV
@@ -38,8 +40,9 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
-          destination_dir: ./
+          publish_dir: ./site/${{ env.MM_VERSION }}
+          destination_dir: ./${{ env.MM_VERSION }}
+      - run: mvn package -Dmaven.test.skip=true
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -59,3 +62,7 @@ jobs:
           asset_path: ./target/${{ env.RELEASE_ARTIFACTID }}-${{ env.RELEASE_VERSION }}-shaded.jar
           asset_name: lpbenchgen-${{ env.RELEASE_VERSION }}.jar
           asset_content_type: application/zip
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
