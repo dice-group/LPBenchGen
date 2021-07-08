@@ -92,9 +92,7 @@ public class LPGenerator {
             types=new ArrayList<>();
             Set<OWLClass> classes = parser.getOntology().getClassesInSignature();
             classes.forEach(cl -> {
-                if(!(cl.getIRI().toString().startsWith("http://www.w3.org/2002/07/owl#") ||
-                        cl.getIRI().toString().startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#") ||
-                        cl.getIRI().toString().startsWith("http://www.w3.org/2000/01/rdf-schema#"))) {
+                if(!cl.getIRI().isReservedVocabulary()) {
                     types.add(cl.getIRI().toString());
                 }
             });
