@@ -47,6 +47,7 @@ public class LPGenerator {
     public static final Property RDF_PROPERTY_INCLUDE = ResourceFactory.createProperty(PROPERTY_PREFIX+"includesResource");
     public static final Property RDF_PROPERTY_EXCLUDE = ResourceFactory.createProperty(PROPERTY_PREFIX+"excludesResource");
     public static final Property RDF_PROPERTY_CONCEPT = ResourceFactory.createProperty(PROPERTY_PREFIX+"concept");
+    public static final Property RDF_PROPERTY_CONCEPT_LENGTH = ResourceFactory.createProperty(PROPERTY_PREFIX + "concept_length");
 
 
     protected IndividualRetriever retriever;
@@ -362,7 +363,8 @@ public class LPGenerator {
         Resource res = ResourceFactory.createResource(RDF_PREFIX_LP+id);
         m.add(res, RDF.type, LEARNING_PROBLEM_CLASS);
         if(addConcepts) {
-            m.add(res, RDF_PROPERTY_CONCEPT, problem.goldStandardConcept);
+            m.add(res, RDF_PROPERTY_CONCEPT, problem.manchesterSyntaxNNFString());
+            m.add(res, RDF_PROPERTY_CONCEPT_LENGTH, m.createTypedLiteral(problem.NNFLength()));
         }
         problem.positives.forEach(include ->{
             m.add(res, RDF_PROPERTY_INCLUDE, ResourceFactory.createResource(include));
@@ -376,7 +378,7 @@ public class LPGenerator {
 
 
     private void measure(LPProblem problem, OWLReasoner res, boolean setActualPositives) {
-        LOGGER.info("Checking concept {}.",problem.goldStandardConcept);
+        LOGGER.info("Checking concept {}.",problem.manchesterSyntaxNNFString());
 
         Set<String> rem = new HashSet<>();
         Collection<String> actual = res.getInstances(problem.goldStandardConceptExpr).getFlattened().stream().map(x -> x.getIRI().toString()).collect(Collectors.toList());
@@ -497,7 +499,6 @@ public class LPGenerator {
     private LPProblem generateLPProblem(PosNegExample concept, Parser parser, boolean negativeGenerated) {
         LPProblem problem = new LPProblem();
         problem.negativeGenerated=negativeGenerated;
-        problem.goldStandardConcept=concept.getPositive();
 
         OWLClassExpression pos = parser.parseManchesterConcept(concept.getPositive());
         problem.goldStandardConceptExpr=pos;
@@ -568,7 +569,10 @@ public class LPGenerator {
                     pw.print("\t{\n\t");
                     if(addConcepts){
                         pw.print("\"concept\": \"");
-                        pw.print(problem.goldStandardConcept.replace("\n", " "));
+                        pw.print(problem.manchesterSyntaxNNFString());
+                        pw.print("\",\n\t");
+                        pw.print("\"concept_length\": \"");
+                        pw.print(problem.NNFLength());
                         pw.print("\",\n\t");
                     }
                     pw.print("\"positives\": [\n");

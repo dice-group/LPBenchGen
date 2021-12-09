@@ -1,7 +1,9 @@
 package org.dice_group.lpbenchgen.lp;
 
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.util.DefaultPrefixManager;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,6 +57,24 @@ public class LPProblem {
      */
     public OWLClassExpression goldStandardConceptAsExpr() {
         return goldStandardConceptExpr;
+    }
+
+    /**
+     * Returns the gold standard concept as Manchester Syntax string in negation normal form.
+     * @return Manchester Syntax string representation in nnf
+     */
+    public String manchesterSyntaxNNFString() {
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        renderer.setShortFormProvider(new DefaultPrefixManager());
+        return renderer.render(goldStandardConceptExpr.getNNF()).replace("\n", "");
+    }
+
+    /**
+     * Returns the length of then manchester concept, i.e. the number of keywords and classes used.
+     * @return concept length
+     */
+    public long NNFLength() {
+        return manchesterSyntaxNNFString().chars().filter(ch -> ch == ' ').count() + 1;
     }
 
     /**
