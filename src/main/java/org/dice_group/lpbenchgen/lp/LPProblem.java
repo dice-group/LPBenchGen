@@ -66,7 +66,11 @@ public class LPProblem {
     public String manchesterSyntaxNNFString() {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         renderer.setShortFormProvider(new DefaultPrefixManager());
-        return renderer.render(goldStandardConceptExpr.getNNF()).replace("\n", "");
+        String manchester = renderer.render(goldStandardConceptExpr.getNNF()).replace("\n", "");
+        while (manchester.contains("  ")){
+            manchester = manchester.replace("  ", " ");
+        }
+        return manchester;
     }
 
     /**

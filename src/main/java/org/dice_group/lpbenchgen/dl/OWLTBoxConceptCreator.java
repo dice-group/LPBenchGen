@@ -16,7 +16,7 @@ public interface OWLTBoxConceptCreator {
      * @param noOfConcepts the no of concepts
      * @return the concepts
      */
-    Collection<PosNegExample> createDistinctConcepts(int noOfConcepts);
+    Collection<PosNegExample> createDistinctConcepts(int noOfConcepts, boolean withExamples);
 
     /**
      * Returns the types which are allowed.

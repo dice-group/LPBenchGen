@@ -42,10 +42,11 @@ public class Main {
             name = arguments.get(arguments.indexOf("--name")+1);
             config = arguments.get(arguments.indexOf("--config")+1);
             boolean generateABox = arguments.contains("--generate-abox");
+            boolean withExamples = !arguments.contains("--no-examples");
             format = arguments.get(arguments.indexOf("--format")+1).toLowerCase();
             LPGenerator generator = new LPGenerator();
-            LPBenchmark benchmark = generator.createBenchmark(config, generateABox);
-            generator.saveLPBenchmark(benchmark, name, format);
+            LPBenchmark benchmark = generator.createBenchmark(config, generateABox, withExamples);
+            generator.saveLPBenchmark(benchmark, name, format, withExamples);
         }
     }
 

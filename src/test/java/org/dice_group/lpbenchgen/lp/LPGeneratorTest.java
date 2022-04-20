@@ -375,8 +375,8 @@ public class LPGeneratorTest {
         benchmark.setTest(createTestProblems(generator.parser));
         benchmark.setABox(generator.parser.getOntology());
         String name = UUID.randomUUID().toString();
-        generator.saveLPBenchmark(benchmark, name, "rdf");
-        generator.saveLPBenchmark(benchmark, name, "json");
+        generator.saveLPBenchmark(benchmark, name, "rdf", true);
+        generator.saveLPBenchmark(benchmark, name, "json", true);
         //correctly read rdf
         List<LPProblem> test = readRDF(name+"-test.ttl", true);
         List<LPProblem> train = readRDF(name+"-train.ttl", false);
