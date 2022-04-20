@@ -110,21 +110,23 @@ public class LPGenerator {
         }
     }
 
-    private Collection<LPProblem> generateProblems(List<PosNegExample> concepts, boolean withExamples){
-        Collection<LPProblem> problems = new ArrayList<LPProblem>();
-        int count=0;
-        for(PosNegExample concept : concepts){
-            boolean negativeGenerated=concept.isNegativeGenerated();
+    private Collection<LPProblem> generateProblems(List<PosNegExample> concepts, boolean withExamples) {
+        AtomicInteger count = new AtomicInteger();
+
+        return concepts.parallelStream().map(posNegExample -> {
+            boolean negativeGenerated = posNegExample.isNegativeGenerated();
             try {
-                problems.add(generateLPProblem(concept, parser, negativeGenerated, withExamples));
-                count++;
+                LPProblem lpProblem = generateLPProblem(posNegExample, parser, negativeGenerated, withExamples);
                 if (withExamples)
-                    LOGGER.info("Finished generating examples for {}/{} problem.", count, concepts.size());
-            }catch(Exception e ){
+                    LOGGER.info("Finished generating examples for {}/{} problem.", count.incrementAndGet(), concepts.size());
+                return lpProblem;
+            } catch (Exception e) {
                 LOGGER.error("Could not generate problem. ", e);
+                return new LPProblem();
             }
-        }
-        return problems;
+        }).filter(lpProblem -> {
+            return lpProblem.goldStandardConceptExpr != null;
+        }).collect(Collectors.toList());
     }
 
     private OWLReasoner createReasoner(){
@@ -341,15 +343,18 @@ public class LPGenerator {
             saveLPProblemAsJSON(name+"-test.json", benchmark.getTest(), true, false, withExamples);
         }
         else{
-            saveLPProblemAsRDF(name+"-train.ttl", benchmark.getTrain(), true, true, withExamples);
-            saveLPProblemAsRDF(name+"-test-goldstd.ttl", benchmark.getGold(), false, true, withExamples);
-            saveLPProblemAsRDF(name+"-test.ttl", benchmark.getTest(), true, false, withExamples);
+            AtomicInteger nextLpId = new AtomicInteger(1);
+            saveLPProblemAsRDF(name+"-train.ttl", benchmark.getTrain(), true, true, withExamples, nextLpId);
+            AtomicInteger nextLpIdcpy = new AtomicInteger(nextLpId.get());
+            // TODO: does this make sense?
+            saveLPProblemAsRDF(name+"-test-goldstd.ttl", benchmark.getGold(), false, true, withExamples, nextLpId);
+            saveLPProblemAsRDF(name+"-test.ttl", benchmark.getTest(), true, false, withExamples, nextLpIdcpy);
         }
         LOGGER.info("Benchmark files saved... ");
 
     }
 
-    private void saveLPProblemAsRDF(String out, Collection<LPProblem> problems, boolean includeNegative, boolean addConcepts, boolean withExamples) {
+    private void saveLPProblemAsRDF(String out, Collection<LPProblem> problems, boolean includeNegative, boolean addConcepts, boolean withExamples, AtomicInteger nextLpId) {
         Model m = ModelFactory.createDefaultModel();
         m.setNsPrefix("lpres", RDF_PREFIX+"resource/");
         m.setNsPrefix("lpprop", RDF_PREFIX+"property/");
@@ -359,10 +364,9 @@ public class LPGenerator {
                 m.setNsPrefix(prefix.replace(":",""), parser.getPrefix().getPrefixName2PrefixMap().get(prefix));
             }
         }
-        AtomicInteger count= new AtomicInteger(1);
         problems.forEach(problem -> {
             //System.out.println(count.get()+"\t"+problem.goldStandardConcept);
-            addProblemToModel(m, problem, count.getAndIncrement(), includeNegative, addConcepts);
+            addProblemToModel(m, problem, nextLpId.getAndIncrement(), includeNegative, addConcepts);
 
         });
         try(BufferedOutputStream bos  = new BufferedOutputStream(new FileOutputStream(out))) {

@@ -1,7 +1,6 @@
 package org.dice_group.lpbenchgen.dl.creator;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.ConceptLengthCalculator;
@@ -16,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -89,65 +90,86 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
 
     @Override
     public Collection<PosNegExample> createDistinctConcepts(int noOfConcepts, boolean withExamples) {
-        Set<PosNegExample> ret = new HashSet<>();
-        int tooSmallCount = 0;
-        int noResults = 0;
-        for (OWLClassExpression concept : createConcepts()) {
-            LOGGER.info("Candidate concept: {}", ManchesterRenderer.renderNNF(concept));
-            if (getConceptLength(concept) < minConceptLength) {
-                LOGGER.info("  too short");
-                tooSmallCount++;
-                continue;
+        AtomicInteger tooSmallCount = new AtomicInteger(0);
+        AtomicInteger noResults = new AtomicInteger(0);
+        ArrayList<OWLClassExpression> concepts = (ArrayList<OWLClassExpression>) createConcepts();
+
+        Iterator<OWLClassExpression> iterator = concepts.iterator();
+        List<PosNegExample> ret = new ArrayList<>();
+        while (iterator.hasNext()) {
+            int i = 0;
+            List<OWLClassExpression> part = new ArrayList<>(64);
+            while (iterator.hasNext() && i++ < 64) {
+                part.add(iterator.next());
             }
-            if (withExamples)
-                try {
-                    LOGGER.info("  generating example individuals");
-                    int size = retriever.retrieveIndividualsForConcept(concept, testLimit, 5, true).size();
-                    LOGGER.info("  satisfied by {} individuals", size);
-                    if ((strict && size == testLimit) || (!strict && size > 0)) {
-                        OWLNegationCreator creator = new OWLNegationCreator();
-                        concept.accept(creator);
-                        //creator.prune();
-                        int negativeSize = 0;
-                        LOGGER.info("  {} negative concepts", creator.negationConcepts.size());
-                        for (OWLClassExpression negativeConcept : creator.negationConcepts) {
-                            negativeSize += retriever.retrieveIndividualsForConcept(negativeConcept, testLimit, 5, true).size();
-                        }
-                        LOGGER.info("  {} negative individuals", negativeSize);
-                        if ((strict && negativeSize >= testLimit) || (!strict && negativeSize > 0)) {
-                            PosNegExample example = new PosNegExample();
-                            example.setPositive(parser.render(concept));
-                            example.setNegativeGenerated(true);
-                            example.setNegativesExpr(creator.negationConcepts);
-                            ret.add(example);
-                            LOGGER.info("  concept accepted");
-                            if (ret.size() >= noOfConcepts) {
-                                break;
+
+
+            List<PosNegExample> part_ret = part.parallelStream().map(concept -> {
+                LOGGER.info("Candidate concept: {}", ManchesterRenderer.renderNNF(concept));
+                if (getConceptLength(concept) < minConceptLength) {
+                    LOGGER.info("  too short");
+                    tooSmallCount.incrementAndGet();
+                    return new PosNegExample();
+                } else if (withExamples) {
+                    try {
+                        LOGGER.info("  generating example individuals");
+                        int size = retriever.retrieveIndividualsForConcept(concept, testLimit, 5, true).size();
+                        LOGGER.info("  satisfied by {} individuals", size);
+                        if ((strict && size == testLimit) || (!strict && size > 0)) {
+                            OWLNegationCreator creator = new OWLNegationCreator();
+                            concept.accept(creator);
+                            //creator.prune();
+                            int negativeSize = 0;
+                            LOGGER.info("  {} negative concepts", creator.negationConcepts.size());
+                            for (OWLClassExpression negativeConcept : creator.negationConcepts) {
+                                negativeSize += retriever.retrieveIndividualsForConcept(negativeConcept, testLimit, 5, true).size();
+                            }
+                            LOGGER.info("  {} negative individuals", negativeSize);
+                            if ((strict && negativeSize >= testLimit) || (!strict && negativeSize > 0)) {
+                                PosNegExample example = new PosNegExample();
+                                example.setPositive(parser.render(concept));
+                                example.setNegativeGenerated(true);
+                                example.setNegativesExpr(creator.negationConcepts);
+                                LOGGER.info("  concept accepted");
+                                return example;
+                            } else {
+                                tooSmallCount.incrementAndGet();
+                                LOGGER.info("  concept discarded");
+                                return new PosNegExample();
                             }
                         } else {
-                            noResults++;
+                            tooSmallCount.incrementAndGet();
                             LOGGER.info("  concept discarded");
+                            return new PosNegExample();
                         }
-                    } else {
-                        noResults++;
-                        LOGGER.info("  concept discarded");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        noResults.incrementAndGet();
+                        LOGGER.info("  error");
+                        return new PosNegExample();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    LOGGER.info("  error");
+                } else {
+                    LOGGER.info("  not generating example individuals");
+                    PosNegExample example = new PosNegExample();
+                    example.setPositive(parser.render(concept));
+                    example.setNegativeGenerated(true);
+                    LOGGER.info("  concept accepted");
+                    return example;
                 }
-            else{
-                LOGGER.info("  not generating example individuals");
-                PosNegExample example = new PosNegExample();
-                example.setPositive(parser.render(concept));
-                example.setNegativeGenerated(true);
-                LOGGER.info("  concept accepted");
-                ret.add(example);
+            }).filter(example -> {
+                return example.getPositive() != null && example.getPositive().compareTo("") != 0;
+            }).distinct().collect(Collectors.toList());
+            ret.addAll(part_ret);
+            if (ret.size() >= noOfConcepts) {
+                while (ret.size() > noOfConcepts) {
+                    ret.remove(ret.size() - 1);
+                }
+                break;
             }
         }
-        List<PosNegExample> ret2 = new ArrayList<>(ret);
-        LOGGER.info("Final {} concepts. [{} too small, {} with no results/timeout]", ret2.size(), tooSmallCount, noResults);
-        return ret2;
+
+        LOGGER.info("Final {} concepts. [{} too small, {} with no results/timeout]", ret.size(), tooSmallCount.get(), noResults.get());
+        return ret;
     }
 
     /**
@@ -183,7 +205,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
             }
         }
 
-        int maxChainableLength = maxConceptLength -2;
+        int maxChainableLength = maxConceptLength - 2;
         if (maxChainableLength > 0) {
             ArrayList<AbstractMap.SimpleEntry<Integer, OWLClassExpression>> chainingCandidates = new ArrayList<>();
             for (OWLClassExpression clx : concepts) {
@@ -195,7 +217,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
                 AbstractMap.SimpleEntry<Integer, OWLClassExpression> left = chainingCandidates.get(i);
                 for (int j = i; j < chainingCandidates.size(); j++) {
                     AbstractMap.SimpleEntry<Integer, OWLClassExpression> right = chainingCandidates.get(j);
-                    if (left.getKey() + right.getKey() <= maxConceptLength){
+                    if (left.getKey() + right.getKey() <= maxConceptLength) {
                         concepts.add(new OWLObjectUnionOfImpl(Arrays.asList(left.getValue(), right.getValue())));
                         concepts.add(new OWLObjectIntersectionOfImpl(Arrays.asList(left.getValue(), right.getValue())));
                     }
