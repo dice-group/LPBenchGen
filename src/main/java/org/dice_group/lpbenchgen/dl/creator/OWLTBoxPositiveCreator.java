@@ -177,12 +177,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
             }
         }
 
-        for (String type : allowedTypes) {
-            if (!type.equals("http://www.w3.org/2002/07/owl#Thing")) {
-                createConceptsFromClass(dataFactory.getOWLClass(IRI.create(type)), concepts);
-                concepts = concepts.stream().distinct().collect(Collectors.toList());
-            }
-        }
         int maxChainableLength = maxConceptLength -2;
         if (maxChainableLength > 0) {
             ArrayList<AbstractMap.SimpleEntry<Integer, OWLClassExpression>> chainingCandidates = new ArrayList<>();
@@ -204,7 +198,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
                 }
             }
         }
-
+        concepts = concepts.parallelStream().map(OWLClassExpression::getNNF).distinct().collect(Collectors.toList());
         LOGGER.info("Found {} theoretically possible concepts.", concepts.size());
         Collections.shuffle(concepts, new Random(seed));
         return concepts;
