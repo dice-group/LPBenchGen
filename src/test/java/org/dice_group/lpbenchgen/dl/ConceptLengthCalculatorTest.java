@@ -53,9 +53,7 @@ public class ConceptLengthCalculatorTest {
     @Test
     public void testConceptLength() {
         OWLClassExpression expr = parser.parseManchesterConcept(concept);
-        ConceptLengthCalculator calc = new ConceptLengthCalculator();
-        expr.accept(calc);
-        assertEquals(this.expected, calc.conceptLength);
+        assertEquals(this.expected, ConceptLengthCalculator.calc(expr));
     }
     
 }

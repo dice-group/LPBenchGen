@@ -16,7 +16,17 @@ public class ConceptLengthCalculator extends DLSyntaxObjectRenderer {
     /**
      * The Concept length.
      */
-    public int conceptLength=0;
+    private int conceptLength=0;
+
+    public static int calc(OWLClassExpression ce) {
+        ConceptLengthCalculator clc = new ConceptLengthCalculator();
+        clc.render(ce);
+        return clc.conceptLength;
+    }
+
+    public static int calcNNF(OWLClassExpression ce) {
+        return calc(ce.getNNF());
+    }
 
     public void visit(OWLClass ce) {
         conceptLength++;

@@ -1,5 +1,7 @@
 package org.dice_group.lpbenchgen.lp;
 
+import org.dice_group.lpbenchgen.dl.ConceptLengthCalculator;
+import org.dice_group.lpbenchgen.dl.ManchesterRenderer;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -64,13 +66,7 @@ public class LPProblem {
      * @return Manchester Syntax string representation in nnf
      */
     public String manchesterSyntaxNNFString() {
-        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-        renderer.setShortFormProvider(new DefaultPrefixManager());
-        String manchester = renderer.render(goldStandardConceptExpr.getNNF()).replace("\n", "");
-        while (manchester.contains("  ")){
-            manchester = manchester.replace("  ", " ");
-        }
-        return manchester;
+        return ManchesterRenderer.renderNNF(goldStandardConceptExpr);
     }
 
     /**
@@ -78,7 +74,13 @@ public class LPProblem {
      * @return concept length
      */
     public long NNFLength() {
-        return manchesterSyntaxNNFString().chars().filter(ch -> ch == ' ').count() + 1;
+        // TODO: remove first option of second is fine
+        long value_1 = manchesterSyntaxNNFString().chars().filter(ch -> ch == ' ').count() + 1;
+        long value_2 = ConceptLengthCalculator.calcNNF(goldStandardConceptAsExpr());
+        assert (value_1 == value_2);
+
+
+        return value_1;
     }
 
     /**

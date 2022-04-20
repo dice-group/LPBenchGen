@@ -92,12 +92,14 @@ public class OWLTBoxPositiveCreatorTest {
         OWLOntology ontology = parser.getOntology();
         OWLReasoner reasoner = OpenlletReasonerFactory.getInstance().createReasoner(parser.getOntology());
         OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(conf, retriever, ontology, types, parser, reasoner, null);
+        // TODO: here we limit the amount of returned results. But we have no stable order. so we cannot now which ones will come out of this.
         Collection<PosNegExample> concepts = creator.createDistinctConcepts(noOfConcepts, true);
 
         assertEquals(noOfConcepts, concepts.size());
 
         List<OWLClassExpression> expectedExprs = createExpectedExprs(parser);
 
+        // TODO: we should go through the expected expressions here and check if they are contained
         for(PosNegExample example: concepts){
             String positiveConcept = example.getPositive();
             OWLClassExpression expression = parser.parseManchesterConcept(positiveConcept);

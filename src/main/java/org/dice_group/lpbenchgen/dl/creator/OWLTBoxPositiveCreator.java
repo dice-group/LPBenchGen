@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.ConceptLengthCalculator;
+import org.dice_group.lpbenchgen.dl.ManchesterRenderer;
 import org.dice_group.lpbenchgen.dl.OWLTBoxConceptCreator;
 import org.dice_group.lpbenchgen.dl.Parser;
 import org.dice_group.lpbenchgen.sparql.IndividualRetriever;
@@ -92,7 +93,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
         int tooSmallCount = 0;
         int noResults = 0;
         for (OWLClassExpression concept : createConcepts()) {
-            LOGGER.info("Candidate concept: {}", concept.getNNF().toString());
+            LOGGER.info("Candidate concept: {}", ManchesterRenderer.renderNNF(concept));
             if (getConceptLength(concept) < minConceptLength) {
                 LOGGER.info("  too short");
                 tooSmallCount++;
@@ -156,9 +157,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
      * @return the concept length
      */
     protected Double getConceptLength(OWLClassExpression concept) {
-        ConceptLengthCalculator renderer = new ConceptLengthCalculator();
-        renderer.render(concept);
-        return 1.0 * renderer.conceptLength;
+        return 1.0 * ConceptLengthCalculator.calc(concept);
     }
 
 
@@ -177,14 +176,20 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
             }
         }
 
+        for (String type : allowedTypes) {
+            if (!type.equals("http://www.w3.org/2002/07/owl#Thing")) {
+                createConceptsFromClass(dataFactory.getOWLClass(IRI.create(type)), concepts);
+                concepts = concepts.stream().distinct().collect(Collectors.toList());
+            }
+        }
+
         int maxChainableLength = maxConceptLength -2;
         if (maxChainableLength > 0) {
             ArrayList<AbstractMap.SimpleEntry<Integer, OWLClassExpression>> chainingCandidates = new ArrayList<>();
             for (OWLClassExpression clx : concepts) {
-                ConceptLengthCalculator tmp = new ConceptLengthCalculator();
-                tmp.render(clx);
-                if (tmp.conceptLength <= maxChainableLength)
-                    chainingCandidates.add(new AbstractMap.SimpleEntry<>(tmp.conceptLength, clx));
+                int conceptLength = ConceptLengthCalculator.calc(clx);
+                if (conceptLength <= maxChainableLength)
+                    chainingCandidates.add(new AbstractMap.SimpleEntry<>(conceptLength, clx));
             }
             for (int i = 0; i < chainingCandidates.size(); i++) {
                 AbstractMap.SimpleEntry<Integer, OWLClassExpression> left = chainingCandidates.get(i);
