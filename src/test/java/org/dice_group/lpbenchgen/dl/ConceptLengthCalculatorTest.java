@@ -1,10 +1,8 @@
 package org.dice_group.lpbenchgen.dl;
 
-import org.checkerframework.checker.units.qual.C;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.util.ArrayList;
@@ -52,10 +50,7 @@ public class ConceptLengthCalculatorTest {
 
     @Test
     public void testConceptLength() {
-        OWLClassExpression expr = parser.parseManchesterConcept(concept);
-        ConceptLengthCalculator calc = new ConceptLengthCalculator();
-        expr.accept(calc);
-        assertEquals(this.expected, calc.conceptLength);
+        assertEquals(this.expected, ConceptLengthCalculator.get(parser.parseManchesterConcept(concept)));
     }
     
 }

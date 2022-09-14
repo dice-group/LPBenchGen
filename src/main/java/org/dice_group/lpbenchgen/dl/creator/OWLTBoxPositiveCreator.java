@@ -92,7 +92,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
         int toSmallCount=0;
         int noResults=0;
         for(OWLClassExpression concept : createConcepts()){
-            if(getConceptLength(concept)<minConceptLength){
+            if(ConceptLengthCalculator.get(concept) < minConceptLength){
                 toSmallCount++;
                 continue;
             }
@@ -130,19 +130,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
         LOGGER.info("Final {} concepts. [{} to small, {} with no results/timeout]", ret2.size(), toSmallCount, noResults);
         return ret2;
     }
-
-    /**
-     * Gets the concept length of a class expression
-     *
-     * @param concept the concept
-     * @return the concept length
-     */
-    protected Double getConceptLength(OWLClassExpression concept) {
-        ConceptLengthCalculator renderer = new ConceptLengthCalculator();
-        renderer.render(concept);
-        return 1.0*renderer.conceptLength;
-    }
-
 
     /**
      * Creates a list of class expressions
@@ -211,13 +198,13 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
         if(1 <= maxDepth) {
             OWLObjectPropertyExpression prop = ax.getProperty();
             OWLClassExpression propExpr = new OWLObjectSomeValuesFromImpl(prop, start);
-            if (getConceptLength(propExpr) <= maxConceptLength) {
+            if (ConceptLengthCalculator.get(propExpr) <= maxConceptLength) {
                 ret.add(propExpr);
 
                 addNegationMutation(ret, propExpr);
                 for (OWLClassExpression expr : createConceptFromExpression(start, getRangePropertiesForClass(start), 1 + 1)) {
                     OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
-                    if (getConceptLength(pexpr) <= maxConceptLength) {
+                    if (ConceptLengthCalculator.get(pexpr) <= maxConceptLength) {
                         addNegationMutation(ret, pexpr);
                         ret.add(pexpr);
                     }
@@ -229,7 +216,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
                         addNegationMutation(ret, negationPropExpr);
                         for (OWLClassExpression expr : createConceptFromExpression(inferredClass, getRangePropertiesForClass(inferredClass), 1 + 1)) {
                             OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
-                            if (getConceptLength(pexpr) <= maxConceptLength) {
+                            if (ConceptLengthCalculator.get(pexpr) <= maxConceptLength) {
                                 addNegationMutation(ret, pexpr);
                                 ret.add(pexpr);
                             }
@@ -243,7 +230,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     }
 
     private void addNegationMutation(Collection<OWLClassExpression> ret, OWLClassExpression pexpr) {
-            if (getConceptLength(pexpr)+1 <= maxConceptLength) {
+            if (ConceptLengthCalculator.get(pexpr)+1 <= maxConceptLength) {
                 double mutate = negationMutationRandom.nextDouble();
                 if(mutate <= negationMutationRatio){
                     ret.add(new OWLObjectComplementOfImpl(pexpr).getNNF());
@@ -265,7 +252,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
                     OWLClassExpression propRange2 = new OWLObjectSomeValuesFromImpl(p0, rangeClass);
 
                     OWLClassExpression pexpr = new OWLObjectIntersectionOfImpl(Lists.newArrayList(start, propRange2));
-                    if (getConceptLength(pexpr) <= maxConceptLength) {
+                    if (ConceptLengthCalculator.get(pexpr) <= maxConceptLength) {
                         addNegationMutation(ret, pexpr);
                         ret.add(pexpr);
                     }
@@ -273,7 +260,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
                     for (OWLClassExpression expr : createConceptFromExpression(rangeClass, getRangePropertiesForClass(rangeClass), depth + 1)) {
                         OWLClassExpression propRange3 = new OWLObjectSomeValuesFromImpl(p0, expr);
                         OWLClassExpression pexpr2 = new OWLObjectIntersectionOfImpl(Lists.newArrayList(start, propRange3));
-                        if (getConceptLength(pexpr2) <= maxConceptLength) {
+                        if (ConceptLengthCalculator.get(pexpr2) <= maxConceptLength) {
                             addNegationMutation(ret, pexpr2);
                             ret.add(pexpr2);
                         }
