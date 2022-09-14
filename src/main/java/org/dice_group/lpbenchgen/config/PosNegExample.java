@@ -86,7 +86,7 @@ public class PosNegExample {
     @Override
     public boolean equals(Object anotherObject){
         if(anotherObject instanceof PosNegExample){
-            anotherObject.toString().equals(positive);
+            return anotherObject.toString().equals(positive);
         }
         return false;
     }
