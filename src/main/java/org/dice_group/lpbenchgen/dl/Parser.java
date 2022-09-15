@@ -14,6 +14,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * OWL Ontology Parser
@@ -21,12 +22,13 @@ import java.util.HashSet;
  * @author Lixi Alié Conrads
  */
 public class Parser {
-
-
     private final ManchesterOWLSyntaxPrefixNameShortFormProvider prefix;
-    private OWLOntology ontology;
-    private OWLOntology owlOntology;
-    private BidirectionalShortFormProviderAdapter provider;
+    private final OWLOntology ontology;
+    private final BidirectionalShortFormProviderAdapter provider;
+    private final ManchesterOWLSyntaxClassExpressionParser parser;
+
+    private final ManchesterOWLSyntaxOWLObjectRendererImpl renderer;
+    private final OWLDataFactory owlDataFactory;
 
 
     public ManchesterOWLSyntaxPrefixNameShortFormProvider getPrefix() {
@@ -43,15 +45,6 @@ public class Parser {
     }
 
     /**
-     * Sets ontology.
-     *
-     * @param ontology the ontology
-     */
-    public void setOntology(OWLOntology ontology) {
-        this.ontology = ontology;
-    }
-
-    /**
      * Instantiates a new Parser.
      *
      * @param ontologyFile the ontology file
@@ -60,9 +53,15 @@ public class Parser {
     public Parser(String ontologyFile) throws OWLOntologyCreationException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         ontology = manager.loadOntologyFromOntologyDocument(new File(ontologyFile));
-        owlOntology = manager.loadOntologyFromOntologyDocument(IRI.create("http://www.w3.org/2002/07/owl"));
-        prefix  =new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology);
+        OWLOntology owlOntology = manager.loadOntologyFromOntologyDocument(IRI.create("http://www.w3.org/2002/07/owl"));
+        prefix = new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology);
         provider = new BidirectionalShortFormProviderAdapter(Sets.newHashSet(ontology, owlOntology), prefix);
+        OWLEntityChecker checker = new ShortFormEntityChecker(provider);
+        OWLDataFactory dataFactory = new OWLDataFactoryImpl();
+        parser = new ManchesterOWLSyntaxClassExpressionParser(dataFactory, checker);
+        renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        renderer.setShortFormProvider(provider);
+        owlDataFactory = new OWLDataFactoryImpl();
     }
 
     /**
@@ -71,33 +70,24 @@ public class Parser {
      * @param concept the concept
      * @return the owl class expression
      */
-    public  OWLClassExpression parseManchesterConcept(String concept){
-        OWLEntityChecker checker = new ShortFormEntityChecker(provider);
-
-        OWLDataFactory dataFactory = new OWLDataFactoryImpl();
-
-
-        ManchesterOWLSyntaxClassExpressionParser parser = new ManchesterOWLSyntaxClassExpressionParser(dataFactory, checker);
+    public OWLClassExpression parseManchesterConcept(String concept) {
         return parser.parse(concept);
     }
 
     /**
      * Get rules in expressions.
      *
-     * @param ce        the ce
-     * @param dataRules the data rules
-     * @return the collection
+     * @param ce        the class expression where data and object properties are extracted
+     * @param dataRules data properties in signature if ce are written to dataRules
+     * @return object properties in signature of ce
      */
-    public Collection<String> getRulesInExpr(OWLClassExpression ce, Collection<OWLDataProperty> dataRules){
-        Collection<String> rules = new HashSet<String>();
+    public Collection<String> getRulesInExpr(OWLClassExpression ce, Collection<OWLDataProperty> dataRules) {
+        Collection<String> rules = new HashSet<>();
 
-        //only Object Properties for now.
-        ce.getObjectPropertiesInSignature().forEach(prop -> {
-            rules.add(prop.getIRI().toString());
-        });
-        ce.getDataPropertiesInSignature().forEach(prop->{
-            dataRules.add(prop);
-        });
+        // object properties
+        ce.getObjectPropertiesInSignature().forEach(prop -> rules.add(prop.getIRI().toString()));
+        // data properties
+        dataRules.addAll(ce.getDataPropertiesInSignature());
         return rules;
     }
 
@@ -108,8 +98,6 @@ public class Parser {
      * @return the string
      */
     public String render(OWLClassExpression concept) {
-        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-        renderer.setShortFormProvider(provider);
         return renderer.render(concept);
     }
 
@@ -120,6 +108,6 @@ public class Parser {
      * @return the short name
      */
     public String getShortName(String uri) {
-        return provider.getShortForm(new OWLDataFactoryImpl().getOWLClass(uri));
+        return provider.getShortForm(owlDataFactory.getOWLClass(uri));
     }
 }
