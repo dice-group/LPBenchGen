@@ -13,8 +13,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * OWL Ontology Parser
@@ -82,10 +81,8 @@ public class Parser {
      * @return object properties in signature of ce
      */
     public Collection<String> getRulesInExpr(OWLClassExpression ce, Collection<OWLDataProperty> dataRules) {
-        Collection<String> rules = new HashSet<>();
-
         // object properties
-        ce.getObjectPropertiesInSignature().forEach(prop -> rules.add(prop.getIRI().toString()));
+        Collection<String> rules = ce.getObjectPropertiesInSignature().stream().map(prop -> prop.getIRI().toString()).collect(Collectors.toSet());
         // data properties
         dataRules.addAll(ce.getDataPropertiesInSignature());
         return rules;
