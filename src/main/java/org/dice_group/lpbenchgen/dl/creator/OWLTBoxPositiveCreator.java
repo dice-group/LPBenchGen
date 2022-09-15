@@ -1,7 +1,6 @@
 package org.dice_group.lpbenchgen.dl.creator;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.ConceptLengthCalculator;
@@ -35,7 +34,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     private final List<String> allowedTypes;
     private final Parser parser;
     private final OWLDataFactory dataFactory = new OWLDataFactoryImpl();
-    private Random negationMutationRandom;
+    private final Random negationMutationRandom;
     private final long seed;
     private final int maxDepth;
     private final int maxConceptLength;
@@ -199,34 +198,29 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
             OWLObjectPropertyExpression prop = ax.getProperty();
             OWLClassExpression propExpr = new OWLObjectSomeValuesFromImpl(prop, start);
             if (ConceptLengthCalculator.get(propExpr) <= maxConceptLength) {
-                ret.add(propExpr);
-
-                addNegationMutation(ret, propExpr);
-                for (OWLClassExpression expr : createConceptFromExpression(start, getRangePropertiesForClass(start), 1 + 1)) {
-                    OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
-                    if (ConceptLengthCalculator.get(pexpr) <= maxConceptLength) {
-                        addNegationMutation(ret, pexpr);
-                        ret.add(pexpr);
-                    }
-                }
+                add_property_expression_and_property_restrictions(ret, prop, start, propExpr);
                 for (OWLClass inferredClass : res.getSubClasses(start).getFlattened()) {
                     if (allowedTypes.contains(inferredClass.getIRI().toString())) {
                         OWLClassExpression negationPropExpr = new OWLObjectSomeValuesFromImpl(prop, inferredClass);
-                        ret.add(negationPropExpr);
-                        addNegationMutation(ret, negationPropExpr);
-                        for (OWLClassExpression expr : createConceptFromExpression(inferredClass, getRangePropertiesForClass(inferredClass), 1 + 1)) {
-                            OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
-                            if (ConceptLengthCalculator.get(pexpr) <= maxConceptLength) {
-                                addNegationMutation(ret, pexpr);
-                                ret.add(pexpr);
-                            }
-
-                        }
+                        add_property_expression_and_property_restrictions(ret, prop, inferredClass, negationPropExpr);
                     }
                 }
             }
         }
 
+    }
+
+    private void add_property_expression_and_property_restrictions(Collection<OWLClassExpression> ret, OWLObjectPropertyExpression prop, OWLClass inferredClass, OWLClassExpression propExpr) {
+        ret.add(propExpr);
+        addNegationMutation(ret, propExpr);
+        for (OWLClassExpression expr : createConceptFromExpression(inferredClass, getRangePropertiesForClass(inferredClass), 1 + 1)) {
+            OWLClassExpression pexpr = new OWLObjectSomeValuesFromImpl(prop, expr);
+            if (ConceptLengthCalculator.get(pexpr) <= maxConceptLength) {
+                addNegationMutation(ret, pexpr);
+                ret.add(pexpr);
+            }
+
+        }
     }
 
     private void addNegationMutation(Collection<OWLClassExpression> ret, OWLClassExpression pexpr) {
@@ -294,8 +288,8 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     private Collection<OWLClass> getClassesForProperty(OWLObjectPropertyExpression prop) {
         Collection<OWLClass> ret = res.getObjectPropertyRanges(prop, false).getFlattened().stream().filter(x -> allowedTypes.contains(x.getIRI().toString())).collect(Collectors.toList());
         Collection<OWLClass> tmp = new HashSet<>();
-        for(OWLClass clasz : ret){
-            tmp.addAll(res.getSubClasses(clasz, false).getFlattened().stream().filter(x -> allowedTypes.contains(x.getIRI().toString())).collect(Collectors.toList()));
+        for(OWLClass clazz : ret){
+            tmp.addAll(res.getSubClasses(clazz, false).getFlattened().stream().filter(x -> allowedTypes.contains(x.getIRI().toString())).collect(Collectors.toList()));
         }
         ret.addAll(tmp);
         ret.remove(dataFactory.getOWLClass("http://www.w3.org/2002/07/owl#Nothing"));
