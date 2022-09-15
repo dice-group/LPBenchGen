@@ -1,7 +1,7 @@
 package org.dice_group.lpbenchgen.dl;
 
-import org.semanticweb.owlapi.dlsyntax.renderer.DLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.AbstractCollector;
 
 /**
  * <pre>
@@ -11,14 +11,9 @@ import org.semanticweb.owlapi.model.*;
  * </pre>
  *
  * @author Lixi Alié Conrads
+ * @author Alexander Bigerl
  */
-public class ConceptLengthCalculator extends DLSyntaxObjectRenderer {
-
-    /**
-     * The Concept length.
-     */
-    private int conceptLength = 0;
-
+public class ConceptLengthCalculator {
     /**
      * Get the length of the provided concept. See {@link ConceptLengthCalculator} for limitations.
      *
@@ -26,40 +21,46 @@ public class ConceptLengthCalculator extends DLSyntaxObjectRenderer {
      * @return length of concept
      */
     static public int get(OWLClassExpression concept) {
-        ConceptLengthCalculator renderer = new ConceptLengthCalculator();
-        renderer.render(concept);
-        return renderer.conceptLength;
+        ConceptLengthCalculatorImpl lengthCalculator = new ConceptLengthCalculatorImpl();
+        concept.accept(lengthCalculator);
+        return lengthCalculator.conceptLength;
     }
 
-    public void visit(OWLClass ce) {
-        conceptLength++;
-        super.visit(ce);
+    static private class ConceptLengthCalculatorImpl extends AbstractCollector {
+        /**
+         * The Concept length.
+         */
+        private int conceptLength = 0;
+
+        public void visit(OWLClass ce) {
+            conceptLength++;
+            super.visit(ce);
+        }
+
+        public void visit(OWLObjectIntersectionOf ce) {
+            conceptLength++;
+            super.visit(ce);
+        }
+
+        public void visit(OWLObjectUnionOf ce) {
+            conceptLength++;
+            super.visit(ce);
+
+        }
+
+        public void visit(OWLObjectComplementOf ce) {
+            conceptLength++;
+            super.visit(ce);
+        }
+
+        public void visit(OWLObjectSomeValuesFrom ce) {
+            conceptLength += 2;
+            super.visit(ce);
+        }
+
+        public void visit(OWLObjectAllValuesFrom ce) {
+            conceptLength += 2;
+            super.visit(ce);
+        }
     }
-
-    public void visit(OWLObjectIntersectionOf ce) {
-        conceptLength++;
-        super.visit(ce);
-    }
-
-    public void visit(OWLObjectUnionOf ce) {
-        conceptLength++;
-        super.visit(ce);
-
-    }
-
-    public void visit(OWLObjectComplementOf ce) {
-        conceptLength++;
-        super.visit(ce);
-    }
-
-    public void visit(OWLObjectSomeValuesFrom ce) {
-        conceptLength += 2;
-        super.visit(ce);
-    }
-
-    public void visit(OWLObjectAllValuesFrom ce) {
-        conceptLength += 2;
-        super.visit(ce);
-    }
-
 }
