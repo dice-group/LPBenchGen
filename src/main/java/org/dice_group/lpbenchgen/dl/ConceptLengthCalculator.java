@@ -1,6 +1,5 @@
 package org.dice_group.lpbenchgen.dl;
 
-import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.dlsyntax.renderer.DLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.*;
 
@@ -32,33 +31,33 @@ public class ConceptLengthCalculator extends DLSyntaxObjectRenderer {
         return renderer.conceptLength;
     }
 
-    public void visit(@NotNull OWLClass ce) {
+    public void visit(OWLClass ce) {
         conceptLength++;
         super.visit(ce);
     }
 
-    public void visit(@NotNull OWLObjectIntersectionOf ce) {
+    public void visit(OWLObjectIntersectionOf ce) {
         conceptLength++;
         super.visit(ce);
     }
 
-    public void visit(@NotNull OWLObjectUnionOf ce) {
+    public void visit(OWLObjectUnionOf ce) {
         conceptLength++;
         super.visit(ce);
 
     }
 
-    public void visit(@NotNull OWLObjectComplementOf ce) {
+    public void visit(OWLObjectComplementOf ce) {
         conceptLength++;
         super.visit(ce);
     }
 
-    public void visit(@NotNull OWLObjectSomeValuesFrom ce) {
+    public void visit(OWLObjectSomeValuesFrom ce) {
         conceptLength += 2;
         super.visit(ce);
     }
 
-    public void visit(@NotNull OWLObjectAllValuesFrom ce) {
+    public void visit(OWLObjectAllValuesFrom ce) {
         conceptLength += 2;
         super.visit(ce);
     }
