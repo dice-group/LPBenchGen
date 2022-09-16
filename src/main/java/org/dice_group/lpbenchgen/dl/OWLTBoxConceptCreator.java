@@ -1,6 +1,7 @@
 package org.dice_group.lpbenchgen.dl;
 
 import org.dice_group.lpbenchgen.config.PosNegExample;
+import org.semanticweb.owlapi.model.OWLClass;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,5 +25,5 @@ public interface OWLTBoxConceptCreator {
      *
      * @return all allowed types
      */
-    List<String> getAllowedTypes();
+    List<OWLClass> getAllowedTypes();
 }

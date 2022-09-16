@@ -10,15 +10,15 @@ import org.dice_group.lpbenchgen.sparql.retriever.ModelOpenWorldIndividualRetrie
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,7 +30,7 @@ public class OWLTBoxPositiveCreatorTest {
     private final List<String> expected;
     private final int noOfConcepts;
     private final Configuration conf;
-    private final List<String> types;
+    private final List<OWLClass> types;
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -40,26 +40,26 @@ public class OWLTBoxPositiveCreatorTest {
         conf.setMinConceptLength(2);
         conf.setMaxConceptLength(3);
         List<String> types = Lists.newArrayList("http://example.com#A", "http://example.com#A-1", "http://example.com#B", "http://example.com#B-1", "http://example.com#B-2", "http://example.com#C");
-        data.add(new Object[]{ 3, conf, Lists.newArrayList("hasRuleAB some B", "hasRuleAB some B-1", "hasRuleAB some B-2", "hasRuleAB-2 some B-2","hasRuleBC some C"), types });
+        data.add(new Object[]{3, conf, Lists.newArrayList("hasRuleAB some B", "hasRuleAB some B-1", "hasRuleAB some B-2", "hasRuleAB-2 some B-2", "hasRuleBC some C"), types});
 
         conf = createConfig();
         conf.setMaxDepth(3);
         conf.setMaxConceptLength(3);
         conf.setMinConceptLength(1);
-        data.add(new Object[]{ 7, conf, Lists.newArrayList("A", "A-1", "C", "hasRuleAB some B", "hasRuleAB some B-1", "hasRuleAB some B-2", "hasRuleAB-2 some B-2"), types });
+        data.add(new Object[]{7, conf, Lists.newArrayList("A", "A-1", "C", "hasRuleAB some B", "hasRuleAB some B-1", "hasRuleAB some B-2", "hasRuleAB-2 some B-2"), types});
 
         types = Lists.newArrayList("http://example.com#A", "http://example.com#B", "http://example.com#C");
-        data.add(new Object[]{ 3, conf, Lists.newArrayList("A", "C", "hasRuleAB some B"), types });
+        data.add(new Object[]{3, conf, Lists.newArrayList("A", "C", "hasRuleAB some B"), types});
         conf = createConfig();
         conf.setMaxDepth(3);
         conf.setMaxConceptLength(40);
         conf.setMinConceptLength(4);
-        data.add(new Object[]{ 4, conf, Lists.newArrayList(
+        data.add(new Object[]{4, conf, Lists.newArrayList(
                 "hasRuleAB some (B and hasRuleBC some C)",
                 "A and (hasRuleAB some (B and hasRuleBC some C))",
                 "A and (hasRuleAB some B)",
                 "A and (hasRuleAB-2 some B)"
-                ), types });
+        ), types});
 
         types = Lists.newArrayList("http://example.com#B", "http://example.com#C");
         conf = createConfig();
@@ -67,28 +67,28 @@ public class OWLTBoxPositiveCreatorTest {
         conf.setMaxConceptLength(4);
         conf.setMinConceptLength(1);
         conf.setNegationMutationRatio(1.0);
-        data.add(new Object[]{ 4, conf, Lists.newArrayList(
+        data.add(new Object[]{4, conf, Lists.newArrayList(
                 "not C",
                 "not (hasRuleAB some B)",
                 "C",
                 "hasRuleAB some B"
-        ), types });
+        ), types});
 
 
         return data;
     }
 
-    public OWLTBoxPositiveCreatorTest(int concepts, Configuration conf, List<String> expected, List<String> types){
-        this.noOfConcepts=concepts;
+    public OWLTBoxPositiveCreatorTest(int concepts, Configuration conf, List<String> expected, List<String> types) {
+        this.noOfConcepts = concepts;
         this.conf = conf;
-        this.expected=expected;
-        this.types = types;
+        this.expected = expected;
+        this.types = types.stream().map(str -> new OWLClassImpl(IRI.create(str))).collect(Collectors.toList());
     }
 
     @Test
     public void testCreation() throws FileNotFoundException, OWLOntologyCreationException {
         IndividualRetriever retriever = new ModelOpenWorldIndividualRetriever(conf.getEndpoint());
-        Parser parser =  new Parser(conf.getOwlFile());
+        Parser parser = new Parser(conf.getOwlFile());
         OWLOntology ontology = parser.getOntology();
         OWLReasoner reasoner = OpenlletReasonerFactory.getInstance().createReasoner(parser.getOntology());
         OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(conf, retriever, ontology, types, parser, reasoner, null);
@@ -98,7 +98,7 @@ public class OWLTBoxPositiveCreatorTest {
 
         List<OWLClassExpression> expectedExprs = createExpectedExprs(parser);
 
-        for(PosNegExample example: concepts){
+        for (PosNegExample example : concepts) {
             String positiveConcept = example.getPositive();
             OWLClassExpression expression = parser.parseManchesterConcept(positiveConcept);
             assertTrue(expectedExprs.contains(expression));
@@ -116,7 +116,7 @@ public class OWLTBoxPositiveCreatorTest {
 
     private List<OWLClassExpression> createExpectedExprs(Parser parser) {
         List<OWLClassExpression> ret = new ArrayList<>();
-        for(String concept: expected){
+        for (String concept : expected) {
             ret.add(parser.parseManchesterConcept(concept).getNNF());
         }
         return ret;

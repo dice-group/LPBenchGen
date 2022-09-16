@@ -4,48 +4,62 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.rdf.model.Literal;
 import org.dice_group.lpbenchgen.dl.OWL2SPARQL;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
+import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.owl.owlapi.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Abstract Class for using Jena SPARQL Queries to retrieve Individuals
  */
-public abstract class AbstractSPARQLIndividualRetriever implements IndividualRetriever{
+public abstract class AbstractSPARQLIndividualRetriever implements IndividualRetriever {
 
     public static final String DEFAULT_VARIABLE_NAME = "var";
 
+    protected static OWLIndividual string2OWLIndividual(String individual_identifier) {
+        if (NodeID.isAnonymousNodeID(individual_identifier))
+            return new OWLAnonymousIndividualImpl(NodeID.getNodeID(individual_identifier));
+        else
+            return new OWLNamedIndividualImpl(IRI.create(individual_identifier));
+    }
+
 
     @Override
-    public List<String> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning){
+    public List<OWLIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning) {
         String sparqlQuery = createQuery(concept, limit, reasoning);
         Query q = QueryFactory.create(sparqlQuery);
-        if(limit>0){
+        if (limit > 0) {
             q.setLimit(limit);
         }
 
-        return createRequest(q.serialize(), timeOut );
+        return createRequest(q.serialize(), timeOut)
+                .map(AbstractSPARQLIndividualRetriever::string2OWLIndividual)
+                .collect(Collectors.toList());
     }
 
-    private String createTypesQuery(String uriIndividual) {
-        return "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?"+DEFAULT_VARIABLE_NAME+" { <"+uriIndividual+"> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>/<http://www.w3.org/2000/01/rdf-schema#subClassOf>* ?"+DEFAULT_VARIABLE_NAME+"}";
-    }
-
-    @Override
-    public Collection<String> retrieveTypesForIndividual(String uri) {
-        return createRequest(createTypesQuery(uri), 180);
+    private String createTypesQuery(OWLNamedIndividual individual) {
+        return "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?" + DEFAULT_VARIABLE_NAME + " { " + individual + " <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>/<http://www.w3.org/2000/01/rdf-schema#subClassOf>* ?" + DEFAULT_VARIABLE_NAME + "}";
     }
 
     @Override
-    public List<String> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning){
+    public Collection<OWLClass> retrieveTypesForIndividual(OWLNamedIndividual individual) {
+        return createRequest(createTypesQuery(individual), 180)
+                .map(iri_str -> new OWLClassImpl(IRI.create(iri_str)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OWLIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning) {
         String sparqlQuery = createQuery(concept, reasoning);
-        return createRequest(sparqlQuery, 180);
+        return createRequest(sparqlQuery, 180)
+                .map(AbstractSPARQLIndividualRetriever::string2OWLIndividual)
+                .collect(Collectors.toList());
     }
 
-    protected abstract List<String> createRequest(String sparqlQuery, int timeLimit);
+    protected abstract Stream<String> createRequest(String sparqlQuery, int timeLimit);
 
     private String createQuery(OWLClassExpression concept, boolean reasoning) {
         return createQuery(concept, 10000, reasoning);
@@ -54,8 +68,8 @@ public abstract class AbstractSPARQLIndividualRetriever implements IndividualRet
     private String createQuery(OWLClassExpression concept, int limit, boolean reasoning) {
         OWL2SPARQL converter = new OWL2SPARQL();
         converter.setUseReasoning(reasoning);
-        Query q  = converter.asQuery(concept, "?var");
-        if(limit>0)
+        Query q = converter.asQuery(concept, "?var");
+        if (limit > 0)
             q.setLimit(limit);
         return q.serialize();
     }

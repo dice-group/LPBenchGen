@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLOb
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxPrefixNameShortFormProvider;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
+import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.File;
@@ -71,6 +72,14 @@ public class Parser {
      */
     public OWLClassExpression parseManchesterConcept(String concept) {
         return parser.parse(concept);
+    }
+
+    public OWLClass parseOWLClass(IRI iri) {
+        return new OWLClassImpl(iri);
+    }
+
+    public OWLClass parseOWLClass(String iri_string) {
+        return new OWLClassImpl(IRI.create(iri_string));
     }
 
     /**

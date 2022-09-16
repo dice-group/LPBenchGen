@@ -42,33 +42,34 @@ public class LPGeneratorTest {
         assertLPContainBenchmark(complete, benchmark.getTrain(), true, false);
         assertLPContainBenchmark(benchmark.getGold(), benchmark.getTest(), false, false);
         benchmark = generator.createBenchmark(conf, true);
-        assertTrue(benchmark.getAbox()!=null);
-        assertEquals(11, benchmark.getAbox().getIndividualsInSignature().size());
+        OWLOntology abox = benchmark.getAbox();
+        assertNotNull(abox);
+        int size = abox.getIndividualsInSignature().size();
+        assertEquals(11, size);
     }
 
     private void assertLPContainBenchmark(List<LPProblem> complete, List<LPProblem> test, boolean isFullPos, boolean isGold) {
         //check split 0.5
-        if(isFullPos){
-            assertEquals(complete.size()/2, test.size());
-            for(LPProblem prob : test){
+        if (isFullPos) {
+            assertEquals(complete.size() / 2, test.size());
+            for (LPProblem prob : test) {
                 //test concept and
                 assertLPContains(prob, test, isGold);
             }
-        }
-        else{
+        } else {
             assertEquals(complete.size(), test.size());
-            for(LPProblem testProb : test){
-                boolean found=false;
-                for(LPProblem completeProb : complete){
-                    if(completeProb.goldStandardConcept.equals(testProb.goldStandardConcept)){
+            for (LPProblem testProb : test) {
+                boolean found = false;
+                for (LPProblem completeProb : complete) {
+                    if (completeProb.goldStandardConcept.equals(testProb.goldStandardConcept)) {
                         //found
-                        found =true;
-                        assertEquals(Math.max(completeProb.positives.size()/2, 1), testProb.positives.size());
-                        assertEquals(Math.max(completeProb.negatives.size()/2, 1), testProb.negatives.size());
-                        for(String pos : testProb.positives){
+                        found = true;
+                        assertEquals(Math.max(completeProb.positives.size() / 2, 1), testProb.positives.size());
+                        assertEquals(Math.max(completeProb.negatives.size() / 2, 1), testProb.negatives.size());
+                        for (String pos : testProb.positives) {
                             assertTrue(completeProb.positives.contains(pos));
                         }
-                        for(String nes : testProb.negatives){
+                        for (String nes : testProb.negatives) {
                             assertTrue(completeProb.negatives.contains(nes));
                         }
 
@@ -83,7 +84,7 @@ public class LPGeneratorTest {
     private List<LPProblem> createFlowProblems() {
         List<LPProblem> ret = new ArrayList<>();
         LPProblem problem = new LPProblem();
-        problem.goldStandardConcept="A-1";
+        problem.goldStandardConcept = "A-1";
         problem.positives.add("http://example.com#Individual-A1-1");
         problem.negatives.add("http://example.com#Individual-B1");
         problem.negatives.add("http://example.com#Individual-C1");
@@ -97,7 +98,7 @@ public class LPGeneratorTest {
         problem.negatives.add("http://example.com#Individual-B1-1");
         ret.add(problem);
         problem = new LPProblem();
-        problem.goldStandardConcept="B-1";
+        problem.goldStandardConcept = "B-1";
         problem.negatives.add("http://example.com#Individual-A1-1");
         problem.negatives.add("http://example.com#Individual-B1");
         problem.negatives.add("http://example.com#Individual-C1");
@@ -111,7 +112,7 @@ public class LPGeneratorTest {
         problem.positives.add("http://example.com#Individual-B1-1");
         ret.add(problem);
         problem = new LPProblem();
-        problem.goldStandardConcept="B-2";
+        problem.goldStandardConcept = "B-2";
         problem.negatives.add("http://example.com#Individual-A1-1");
         problem.negatives.add("http://example.com#Individual-B1");
         problem.negatives.add("http://example.com#Individual-C1");
@@ -125,7 +126,7 @@ public class LPGeneratorTest {
         problem.negatives.add("http://example.com#Individual-B1-1");
         ret.add(problem);
         problem = new LPProblem();
-        problem.goldStandardConcept="A";
+        problem.goldStandardConcept = "A";
         problem.positives.add("http://example.com#Individual-A1-1");
         problem.negatives.add("http://example.com#Individual-B1");
         problem.negatives.add("http://example.com#Individual-C1");
@@ -139,7 +140,7 @@ public class LPGeneratorTest {
         problem.negatives.add("http://example.com#Individual-B1-1");
         ret.add(problem);
         problem = new LPProblem();
-        problem.goldStandardConcept="B";
+        problem.goldStandardConcept = "B";
         problem.negatives.add("http://example.com#Individual-A1-1");
         problem.positives.add("http://example.com#Individual-B1");
         problem.negatives.add("http://example.com#Individual-C1");
@@ -153,7 +154,7 @@ public class LPGeneratorTest {
         problem.positives.add("http://example.com#Individual-B1-1");
         ret.add(problem);
         problem = new LPProblem();
-        problem.goldStandardConcept="C";
+        problem.goldStandardConcept = "C";
         problem.negatives.add("http://example.com#Individual-A1-1");
         problem.negatives.add("http://example.com#Individual-B1");
         problem.positives.add("http://example.com#Individual-C1");
@@ -169,41 +170,41 @@ public class LPGeneratorTest {
         return ret;
     }
 
-    private List<PosNegExample> createPosNegExamples(boolean useNegatives){
+    private List<PosNegExample> createPosNegExamples(boolean useNegatives) {
         List<PosNegExample> ret = new ArrayList<>();
         PosNegExample example = new PosNegExample();
         example.setPositive("A");
-        if(useNegatives) {
+        if (useNegatives) {
             example.getNegatives().add("not A");
         }
         ret.add(example);
         example = new PosNegExample();
         example.setPositive("B");
-        if(useNegatives) {
+        if (useNegatives) {
             example.getNegatives().add("not B");
         }
         ret.add(example);
         example = new PosNegExample();
         example.setPositive("C");
-        if(useNegatives) {
+        if (useNegatives) {
             example.getNegatives().add("not C");
         }
         ret.add(example);
         example = new PosNegExample();
         example.setPositive("B-1");
-        if(useNegatives) {
+        if (useNegatives) {
             example.getNegatives().add("not B-1");
         }
         ret.add(example);
         example = new PosNegExample();
         example.setPositive("B-2");
-        if(useNegatives) {
+        if (useNegatives) {
             example.getNegatives().add("not B-2");
         }
         ret.add(example);
         example = new PosNegExample();
         example.setPositive("A-1");
-        if(useNegatives) {
+        if (useNegatives) {
             example.getNegatives().add("not A-1");
         }
         ret.add(example);
@@ -234,7 +235,7 @@ public class LPGeneratorTest {
         assertLPContainBenchmark(complete, benchmark.getTrain(), true, false);
     }
 
-    private Configuration createTestConfig(){
+    private Configuration createTestConfig() {
         Configuration conf = new Configuration();
         conf.setEndpoint("src/test/resources/ontologies/simple.ttl");
         conf.setOwlFile("src/test/resources/ontologies/simple-tbox.ttl");
@@ -300,7 +301,7 @@ public class LPGeneratorTest {
     private List<LPProblem> createTrainProblems(Parser parser) {
         List<LPProblem> problems = new ArrayList<>();
         LPProblem problem = new LPProblem();
-        problem.goldStandardConceptExpr=new OWLClassImpl(IRI.create("http://example.com#C"));
+        problem.goldStandardConceptExpr = new OWLClassImpl(IRI.create("http://example.com#C"));
         problem.goldStandardConcept = parser.render(problem.goldStandardConceptExpr);
         problem.positives.add("http://example.com#Individual-C1");
         problem.negatives.add("http://example.com#Individual-A1-1");
@@ -310,7 +311,7 @@ public class LPGeneratorTest {
         problems.add(problem);
 
         problem = new LPProblem();
-        problem.goldStandardConceptExpr=new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#hasRuleAB-2")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
+        problem.goldStandardConceptExpr = new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#hasRuleAB-2")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
         problem.goldStandardConcept = parser.render(problem.goldStandardConceptExpr);
         problem.positives.add("http://example.com#Individual-A2");
         problem.negatives.add("http://example.com#Individual-A1-1");
@@ -324,7 +325,7 @@ public class LPGeneratorTest {
     private List<LPProblem> createGoldProblems(Parser parser) {
         List<LPProblem> problems = new ArrayList<>();
         LPProblem problem = new LPProblem();
-        problem.goldStandardConceptExpr=new OWLClassImpl(IRI.create("http://example.com#B"));
+        problem.goldStandardConceptExpr = new OWLClassImpl(IRI.create("http://example.com#B"));
         problem.goldStandardConcept = parser.render(problem.goldStandardConceptExpr);
         problem.positives.add("http://example.com#Individual-B1");
         problem.positives.add("http://example.com#Individual-B2");
@@ -333,27 +334,27 @@ public class LPGeneratorTest {
         problems.add(problem);
 
         problem = new LPProblem();
-        problem.goldStandardConceptExpr=new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#A")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
+        problem.goldStandardConceptExpr = new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#A")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
         problem.goldStandardConcept = parser.render(problem.goldStandardConceptExpr);
         problem.positives.add("http://example.com#Individual-A1");
         problem.positives.add("http://example.com#Individual-A1-1");
         problem.positives.add("http://example.com#Individual-A2");
         problem.negatives.add("http://example.com#Individual-C1");
         problem.negatives.add("http://example.com#Individual-B1");
-       problems.add(problem);
+        problems.add(problem);
         return problems;
     }
 
-    private List<LPProblem> createTestProblems(Parser parser) {
+    private List<LPProblem> createTestProblems(Parser ignore) {
         List<LPProblem> problems = new ArrayList<>();
         LPProblem problem = new LPProblem();
-        problem.goldStandardConceptExpr=new OWLClassImpl(IRI.create("http://example.com#B"));
+        problem.goldStandardConceptExpr = new OWLClassImpl(IRI.create("http://example.com#B"));
         problem.positives.add("http://example.com#Individual-B1");
         problem.negatives.add("http://example.com#Individual-A1-1");
         problems.add(problem);
 
         problem = new LPProblem();
-        problem.goldStandardConceptExpr=new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#A")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
+        problem.goldStandardConceptExpr = new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#A")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
         problem.positives.add("http://example.com#Individual-A1");
         problem.positives.add("http://example.com#Individual-A1-1");
         problem.negatives.add("http://example.com#Individual-C1");
@@ -378,65 +379,63 @@ public class LPGeneratorTest {
         generator.saveLPBenchmark(benchmark, name, "rdf");
         generator.saveLPBenchmark(benchmark, name, "json");
         //correctly read rdf
-        List<LPProblem> test = readRDF(name+"-test.ttl", true);
-        List<LPProblem> train = readRDF(name+"-train.ttl", false);
-        List<LPProblem> gold = readRDF(name+"-test-goldstd.ttl", false);
+        List<LPProblem> test = readRDF(name + "-test.ttl", true);
+        List<LPProblem> train = readRDF(name + "-train.ttl", false);
+        List<LPProblem> gold = readRDF(name + "-test-goldstd.ttl", false);
 
         assertLPBenchmark(test, benchmark.getTest(), false);
         assertLPBenchmark(train, benchmark.getTrain(), false);
         assertLPBenchmark(gold, benchmark.getGold(), true);
 
         //correctly read json
-        test = readJSON(name+"-test.json", true, false);
-        train = readJSON(name+"-train.json", false, false);
-        gold = readJSON(name+"-test-goldstd.json", false, true);
+        test = readJSON(name + "-test.json", true, false);
+        train = readJSON(name + "-train.json", false, false);
+        gold = readJSON(name + "-test-goldstd.json", false, true);
 
 
         assertLPBenchmark(test, benchmark.getTest(), false);
         assertLPBenchmark(train, benchmark.getTrain(), false);
         assertLPBenchmark(gold, benchmark.getGold(), true);
 
-        Parser p = new Parser(name+"-ontology.ttl");
+        Parser p = new Parser(name + "-ontology.ttl");
         assertEquals(1, p.getOntology().getIndividualsInSignature().size());
         assertEquals("http://example.com#IndividualA", p.getOntology().getIndividualsInSignature().stream().findAny().get().getIRI().toString());
 
         //Cleanup
-        new File(name+"-test.ttl").delete();
-        new File(name+"-train.ttl").delete();
-        new File(name+"-test-goldstd.ttl").delete();
-        new File(name+"-test.json").delete();
-        new File(name+"-train.json").delete();
-        new File(name+"-test-goldstd.json").delete();
-        new File(name+"-ontology.ttl").delete();
+        new File(name + "-test.ttl").delete();
+        new File(name + "-train.ttl").delete();
+        new File(name + "-test-goldstd.ttl").delete();
+        new File(name + "-test.json").delete();
+        new File(name + "-train.json").delete();
+        new File(name + "-test-goldstd.json").delete();
+        new File(name + "-ontology.ttl").delete();
 
     }
 
-    private boolean assertLPContains(LPProblem problem, List<LPProblem> expected, boolean isGold){
-        boolean found=false;
-        for(LPProblem expProblem : expected){
-            if(expProblem.goldStandardConcept != null && problem.goldStandardConcept != null){
+    private boolean assertLPContains(LPProblem problem, List<LPProblem> expected, boolean isGold) {
+        // TODO: here something is obviously wrong
+        boolean found = false;
+        for (LPProblem expProblem : expected) {
+            if (expProblem.goldStandardConcept != null && problem.goldStandardConcept != null) {
                 found = expProblem.goldStandardConcept.equals(problem.goldStandardConcept);
-            }
-            else if(expProblem.goldStandardConcept == null && problem.goldStandardConcept == null){
+            } else if (expProblem.goldStandardConcept == null && problem.goldStandardConcept == null) {
                 found = true;
+            } else {
+                found = false;
             }
-            else{
-                found =false;
-            }
-            found &= expProblem.positives.size()==problem.positives.size();
-            for(String pos : problem.positives){
+            found &= expProblem.positives.size() == problem.positives.size();
+            for (String pos : problem.positives) {
                 found &= expProblem.positives.contains(pos);
             }
-            if(isGold){
+            if (isGold) {
                 found &= problem.negatives.isEmpty();
-            }
-            else {
-                found &= expProblem.negatives.size()==problem.negatives.size();
+            } else {
+                found &= expProblem.negatives.size() == problem.negatives.size();
                 for (String nes : problem.negatives) {
                     found &= expProblem.negatives.contains(nes);
                 }
             }
-            if(found){
+            if (found) {
                 break;
             }
         }
@@ -445,24 +444,24 @@ public class LPGeneratorTest {
 
     private void assertLPBenchmark(List<LPProblem> actual, List<LPProblem> expected, boolean isGold) {
         assertEquals(expected.size(), actual.size());
-        for(LPProblem problem : actual){
-            boolean found=assertLPContains(problem, expected, isGold);
+        for (LPProblem problem : actual) {
+            boolean found = assertLPContains(problem, expected, isGold);
             assertTrue(found);
         }
     }
 
     private List<LPProblem> readJSON(String name, boolean isTest, boolean isGold) throws IOException {
         String fullJsonStr = FileUtils.readFileToString(new File(name), Charset.defaultCharset());
-        JsonArray json = JSON.parse("{ \"array\": "+fullJsonStr+" }").get("array").getAsArray();
+        JsonArray json = JSON.parse("{ \"array\": " + fullJsonStr + " }").get("array").getAsArray();
 
         List<LPProblem> ret = new ArrayList<>();
         json.forEach(prob -> {
             LPProblem problem = new LPProblem();
-            if(!isTest){
+            if (!isTest) {
                 problem.goldStandardConcept = prob.getAsObject().get("concept").getAsString().value();
             }
             prob.getAsObject().get("positives").getAsArray().forEach(pos -> problem.positives.add(pos.getAsString().value()));
-            if(!isGold) {
+            if (!isGold) {
                 prob.getAsObject().get("negatives").getAsArray().forEach(nes -> problem.negatives.add(nes.getAsString().value()));
             }
             ret.add(problem);
@@ -476,9 +475,9 @@ public class LPGeneratorTest {
         List<LPProblem> ret = new ArrayList<>();
         List<Resource> problems = new ArrayList<>();
         m.listStatements(null, RDF.type, LPGenerator.LEARNING_PROBLEM_CLASS).forEachRemaining(problem -> problems.add(problem.getSubject()));
-        for(Resource res : problems){
+        for (Resource res : problems) {
             LPProblem problem = new LPProblem();
-            if(!isTest){
+            if (!isTest) {
                 problem.goldStandardConcept = m.listStatements(res, LPGenerator.RDF_PROPERTY_CONCEPT, (RDFNode) null).next().getObject().toString();
             }
             m.listStatements(res, LPGenerator.RDF_PROPERTY_INCLUDE, (RDFNode) null).forEachRemaining(triple -> problem.positives.add(triple.getObject().asResource().getURI()));
@@ -494,8 +493,8 @@ public class LPGeneratorTest {
         Parser parser = new Parser("src/test/resources/ontologies/simple-tbox.ttl");
         OWLDataFactory factory = new OWLDataFactoryImpl();
         List<OWLAxiom> axioms = Lists.newArrayList(factory.getOWLClassAssertionAxiom(
-                factory.getOWLClass("http://example#A"),
-                factory.getOWLNamedIndividual("http://example#Individual-A123")),
+                        factory.getOWLClass("http://example#A"),
+                        factory.getOWLNamedIndividual("http://example#Individual-A123")),
                 factory.getOWLClassAssertionAxiom(
                         factory.getOWLClass("http://example#B"),
                         factory.getOWLNamedIndividual("http://example#Individual-B123")
