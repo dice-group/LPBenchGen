@@ -2,6 +2,7 @@ package org.dice_group.lpbenchgen.lp;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,11 +18,11 @@ public class LPProblem {
     /**
      * The Negatives.
      */
-    public Collection<String> negatives = new HashSet<>();
+    public Collection<OWLNamedIndividual> negatives = new HashSet<>();
     /**
      * The Positives.
      */
-    public Collection<String> positives = new HashSet<>();
+    public Collection<OWLNamedIndividual> positives = new HashSet<>();
     /**
      * The Gold standard concept.
      */
@@ -42,7 +43,7 @@ public class LPProblem {
     /**
      * The Negative map containing the examples 2 classExpression map.
      */
-    public Map<String, OWLClassExpression> negativeMap = new HashMap<>();
+    public Map<OWLNamedIndividual, OWLClassExpression> negativeMap = new HashMap<>();
     /**
      * Are negative examples derived from generated Class Expressions
      */
@@ -63,7 +64,7 @@ public class LPProblem {
      * @param nes the nes
      * @return the expr
      */
-    public OWLClassExpression getExpr(String nes) {
+    public OWLClassExpression getExpr(OWLNamedIndividual nes) {
         return negativeMap.get(nes);
     }
 

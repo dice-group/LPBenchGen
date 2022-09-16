@@ -22,7 +22,6 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
 import java.io.*;
 import java.net.URI;
@@ -362,9 +361,9 @@ public class LPGenerator {
         if (addConcepts) {
             m.add(res, RDF_PROPERTY_CONCEPT, problem.goldStandardConcept);
         }
-        problem.positives.forEach(include -> m.add(res, RDF_PROPERTY_INCLUDE, ResourceFactory.createResource(include)));
+        problem.positives.forEach(include -> m.add(res, RDF_PROPERTY_INCLUDE, ResourceFactory.createResource(include.getIRI().toString())));
         if (includeNegative) {
-            problem.negatives.forEach(exclude -> m.add(res, RDF_PROPERTY_EXCLUDE, ResourceFactory.createResource(exclude)));
+            problem.negatives.forEach(exclude -> m.add(res, RDF_PROPERTY_EXCLUDE, ResourceFactory.createResource(exclude.getIRI().toString())));
         }
     }
 
@@ -372,57 +371,56 @@ public class LPGenerator {
     private void measure(LPProblem problem, OWLReasoner res, boolean setActualPositives) {
         LOGGER.info("Checking concept {}.", problem.goldStandardConcept);
 
-        Set<String> rem = new HashSet<>();
-        Collection<String> actual = res.getInstances(problem.goldStandardConceptExpr).getFlattened().stream().map(x -> x.getIRI().toString()).collect(Collectors.toList());
-        for (String pos : problem.positives) {
-            if (!actual.contains(pos)) {
-                LOGGER.warn("FP: {}", pos);
-                rem.add(pos);
-            }
-        }
+        Set<OWLNamedIndividual> actual = res.getInstances(problem.goldStandardConceptExpr).getFlattened();
+
         if (setActualPositives) {
             problem.positives = actual;
         } else {
-            problem.positives.removeAll(rem);
+            problem.positives.removeAll(problem.positives.stream()
+                    .filter(pos -> {
+                        if (!actual.contains(pos)) {
+                            LOGGER.warn("FP: {}", pos);
+                            return true;
+                        }
+                        return false;
+
+                    }).collect(Collectors.toSet()));
         }
-        rem.clear();
-        for (String nes : problem.negatives) {
-            if (actual.contains(nes)) {
-                LOGGER.warn("FN: {}", nes);
-                LOGGER.warn("Negative concept: {}", parser.render(problem.negativeMap.get(nes).getNNF()));
-                rem.add(nes);
-            }
-        }
-        problem.negatives.removeAll(rem);
+        problem.negatives.removeAll(
+                problem.negatives.stream()
+                        .filter(nes -> {
+                            if (actual.contains(nes)) {
+                                LOGGER.warn("FN: {}", nes);
+                                LOGGER.warn("Negative concept: {}", parser.render(problem.negativeMap.get(nes).getNNF()));
+                                return true;
+                            }
+                            return false;
+
+                        })
+                        .collect(Collectors.toSet())
+        );
     }
 
     private void fillABoxForProblem(LPProblem problem, ABoxFiller filler, OWLOntology onto) {
-        //problem.positives = getRandom(new ArrayList<>(problem.positives), maxIndividualsPerExampleConcept);
-        //problem.negatives = getRandom(new ArrayList<>(problem.negatives), maxIndividualsPerExampleConcept);
-        ArrayList<String> rem = new ArrayList<>();
-        problem.positives.forEach(pos -> {
-            // TODO: this is only a workaround until OWLNamedIndividual is used in LPProblem
-            OWLNamedIndividual posIndividual = new OWLNamedIndividualImpl((!pos.startsWith("<")) ? IRI.create(pos) : IRI.create(pos.substring(1, pos.length() - 1)));
-            if (!filler.addIndividualsFromConcept(problem.goldStandardConceptAsExpr(), posIndividual, onto)) {
-                rem.add(pos);
+        { // add individuals from positive concepts
+            List<OWLNamedIndividual> rem = problem.positives
+                    .stream()
+                    .filter(pos -> !filler.addIndividualsFromConcept(problem.goldStandardConceptAsExpr(), pos, onto))
+                    .collect(Collectors.toList());
+
+            if (!rem.isEmpty()) {
+                LOGGER.info("Errors occurred at individuals, removing {} from positives.", rem);
+                problem.positives.removeAll(rem);
             }
-        });
-        if (!rem.isEmpty()) {
-            LOGGER.info("Errors occured at individuals, removing {} from positives.", rem);
-            problem.positives.removeAll(rem);
         }
-        rem.clear();
-        problem.negatives.forEach(nes -> {
-            OWLClassExpression negativeExpr = problem.getExpr(nes);
-            OWLNamedIndividual nesIndividual = new OWLNamedIndividualImpl((!nes.startsWith("<")) ? IRI.create(nes) : IRI.create(nes.substring(1, nes.length() - 1)));
-            if (!filler.addIndividualsFromConcept(negativeExpr, nesIndividual, onto)) {
-                rem.add(nes);
+        { // add individual from negatives
+            List<OWLNamedIndividual> rem = problem.negatives.stream()
+                    .filter(nes -> !filler.addIndividualsFromConcept(problem.getExpr(nes), nes, onto))
+                    .collect(Collectors.toList());
+            if (!rem.isEmpty()) {
+                LOGGER.info("Errors occurred at individuals, removing {} from negatives.", rem);
+                problem.negatives.removeAll(rem);
             }
-        });
-        if (!rem.isEmpty()) {
-            LOGGER.info("Errors occured at individuals, removing {} from negatives.", rem);
-            problem.negatives.removeAll(rem);
-            rem.clear();
         }
     }
 
@@ -456,11 +454,11 @@ public class LPGenerator {
         keepPercentage(problem.negatives, percentageOfNegativeExamples);
     }
 
-    private Collection<String> getRandom(List<String> list, Integer max) {
+    private Collection<OWLNamedIndividual> getRandom(List<OWLNamedIndividual> list, Integer max) {
         int maxNoOfIndividuals = Math.min(max, list.size());
         Random rand = new Random(conf.getSeed());
         Collections.shuffle(list, rand);
-        Collection<String> ret = new HashSet<>();
+        Collection<OWLNamedIndividual> ret = new HashSet<>();
         int i = 0;
         while (ret.size() < maxNoOfIndividuals) {
             ret.add(list.get(i++));
@@ -468,8 +466,8 @@ public class LPGenerator {
         return ret;
     }
 
-    private List<String> keepPercentage(Collection<String> removeFrom, Double percentage) {
-        List<String> removed = new ArrayList<>(removeFrom);
+    private List<OWLNamedIndividual> keepPercentage(Collection<OWLNamedIndividual> removeFrom, Double percentage) {
+        List<OWLNamedIndividual> removed = new ArrayList<>(removeFrom);
         double max = Math.max(1, removeFrom.size() * percentage);
         if (max < conf.getMinNoOfExamples() && !conf.isStrict()) {
             max = conf.getMinNoOfExamples() * 1.0;
@@ -478,7 +476,7 @@ public class LPGenerator {
             max = conf.getMaxNoOfExamples() * 1.0;
         }
 
-        Collection<String> keep = getRandom(new ArrayList<>(removeFrom), (int) max);
+        Collection<OWLNamedIndividual> keep = getRandom(new ArrayList<>(removeFrom), (int) max);
         removed.removeAll(keep);
         removeFrom.removeAll(removed);
         return removed;
@@ -494,18 +492,18 @@ public class LPGenerator {
         problem.rules = parser.getRulesInExpr(pos, problem.dataRules);
 
         // TODO: use OWLIndividual in positives
-        problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos, conf.getPositiveLimit(), 180, true).stream().map(Object::toString).collect(Collectors.toList()));
+        problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos, conf.getPositiveLimit(), 180, true));
         for (OWLClassExpression neg : concept.getNegativesExpr()) {
             // TODO: this looks wrong and especially as if this is intended to be a copy
             OWLClassExpression conc = neg;
 
-            List<String> retrieved = retriever.retrieveIndividualsForConcept(conc, conf.getNegativeLimit(), 180, true).stream().map(Object::toString).collect(Collectors.toList());
+            List<OWLNamedIndividual> retrieved = retriever.retrieveIndividualsForConcept(conc, conf.getNegativeLimit(), 180, true);
             problem.negatives.addAll(retrieved);
             problem.rules.addAll(parser.getRulesInExpr(neg, problem.dataRules));
             OWLClassExpression finalConc = conc;
             retrieved.forEach(retr -> problem.negativeMap.put(retr, finalConc));
         }
-        List<String> negativeShuffle = new ArrayList<>(problem.negatives);
+        List<OWLNamedIndividual> negativeShuffle = new ArrayList<>(problem.negatives);
         Collections.shuffle(negativeShuffle, new Random(conf.getSeed()));
         problem.negatives = new HashSet<>(negativeShuffle);
         return problem;
@@ -580,11 +578,11 @@ public class LPGenerator {
         }
     }
 
-    private void writeCollection(Collection<String> collection, PrintWriter pw) {
+    private void writeCollection(Collection<OWLNamedIndividual> collection, PrintWriter pw) {
         int count = 0;
-        for (String uri : collection) {
+        for (OWLNamedIndividual individual : collection) {
             pw.print("\t\t\"");
-            pw.print(uri);
+            pw.print(individual.getIRI());
             pw.print("\"");
             count++;
             if (count < collection.size()) {

@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.dice_group.lpbenchgen.sparql.retriever.SPARQLClosedWorldIndividualRetriever.LOGGER;
+
 /**
  * Abstract Class for using Jena SPARQL Queries to retrieve Individuals
  */
@@ -19,16 +21,17 @@ public abstract class AbstractSPARQLIndividualRetriever implements IndividualRet
 
     public static final String DEFAULT_VARIABLE_NAME = "var";
 
-    protected static OWLIndividual string2OWLIndividual(String individual_identifier) {
-        if (NodeID.isAnonymousNodeID(individual_identifier))
-            return new OWLAnonymousIndividualImpl(NodeID.getNodeID(individual_identifier));
-        else
-            return new OWLNamedIndividualImpl(IRI.create(individual_identifier));
+    protected static OWLNamedIndividual string2OWLNamedIndividual(String individual_identifier) {
+        if (NodeID.isAnonymousNodeID(individual_identifier)) {
+            LOGGER.error("Found OWLAnonymousIndividual {}. OWLAnonymousIndividual are not supported at the moment.", individual_identifier);
+            System.exit(-1);
+        }
+        return new OWLNamedIndividualImpl(IRI.create(individual_identifier));
     }
 
 
     @Override
-    public List<OWLIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning) {
+    public List<OWLNamedIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning) {
         String sparqlQuery = createQuery(concept, limit, reasoning);
         Query q = QueryFactory.create(sparqlQuery);
         if (limit > 0) {
@@ -36,7 +39,7 @@ public abstract class AbstractSPARQLIndividualRetriever implements IndividualRet
         }
 
         return createRequest(q.serialize(), timeOut)
-                .map(AbstractSPARQLIndividualRetriever::string2OWLIndividual)
+                .map(AbstractSPARQLIndividualRetriever::string2OWLNamedIndividual)
                 .collect(Collectors.toList());
     }
 
@@ -52,10 +55,10 @@ public abstract class AbstractSPARQLIndividualRetriever implements IndividualRet
     }
 
     @Override
-    public List<OWLIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning) {
+    public List<OWLNamedIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning) {
         String sparqlQuery = createQuery(concept, reasoning);
         return createRequest(sparqlQuery, 180)
-                .map(AbstractSPARQLIndividualRetriever::string2OWLIndividual)
+                .map(AbstractSPARQLIndividualRetriever::string2OWLNamedIndividual)
                 .collect(Collectors.toList());
     }
 

@@ -26,6 +26,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -66,10 +68,10 @@ public class LPGeneratorTest {
                         found = true;
                         assertEquals(Math.max(completeProb.positives.size() / 2, 1), testProb.positives.size());
                         assertEquals(Math.max(completeProb.negatives.size() / 2, 1), testProb.negatives.size());
-                        for (String pos : testProb.positives) {
+                        for (OWLNamedIndividual pos : testProb.positives) {
                             assertTrue(completeProb.positives.contains(pos));
                         }
-                        for (String nes : testProb.negatives) {
+                        for (OWLNamedIndividual nes : testProb.negatives) {
                             assertTrue(completeProb.negatives.contains(nes));
                         }
 
@@ -85,87 +87,68 @@ public class LPGeneratorTest {
         List<LPProblem> ret = new ArrayList<>();
         LPProblem problem = new LPProblem();
         problem.goldStandardConcept = "A-1";
-        problem.positives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-B1");
-        problem.negatives.add("http://example.com#Individual-C1");
-        problem.negatives.add("http://example.com#Individual-A1");
-        problem.negatives.add("http://example.com#Individual-A2");
-        problem.negatives.add("http://example.com#Individual-B1-2-1");
-        problem.negatives.add("http://example.com#Individual-B2-2-1");
-        problem.negatives.add("http://example.com#Individual-B1-2");
-        problem.negatives.add("http://example.com#Individual-B2-2");
-        problem.negatives.add("http://example.com#Individual-B2-1");
-        problem.negatives.add("http://example.com#Individual-B1-1");
+        List<OWLNamedIndividualImpl> individuals = Stream.of(
+                        "http://example.com#Individual-A1-1",
+                        "http://example.com#Individual-B1",
+                        "http://example.com#Individual-C1",
+                        "http://example.com#Individual-A1",
+                        "http://example.com#Individual-A2",
+                        "http://example.com#Individual-B1-2-1",
+                        "http://example.com#Individual-B2-2-1",
+                        "http://example.com#Individual-B1-2",
+                        "http://example.com#Individual-B2-2",
+                        "http://example.com#Individual-B2-1",
+                        "http://example.com#Individual-B1-1"
+                )
+                .map(str -> new OWLNamedIndividualImpl(IRI.create(str))).collect(Collectors.toList());
+
+        for (int i = 0; i < individuals.size(); i++)
+            if (i < 1)
+                problem.positives.add(individuals.get(i));
+            else
+                problem.negatives.add(individuals.get(i));
         ret.add(problem);
+
         problem = new LPProblem();
         problem.goldStandardConcept = "B-1";
-        problem.negatives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-B1");
-        problem.negatives.add("http://example.com#Individual-C1");
-        problem.negatives.add("http://example.com#Individual-A1");
-        problem.negatives.add("http://example.com#Individual-A2");
-        problem.negatives.add("http://example.com#Individual-B1-2-1");
-        problem.negatives.add("http://example.com#Individual-B2-2-1");
-        problem.negatives.add("http://example.com#Individual-B1-2");
-        problem.negatives.add("http://example.com#Individual-B2-2");
-        problem.positives.add("http://example.com#Individual-B2-1");
-        problem.positives.add("http://example.com#Individual-B1-1");
+        for (int i = 0; i < individuals.size(); i++)
+            if (i < 9)
+                problem.negatives.add(individuals.get(i));
+            else
+                problem.positives.add(individuals.get(i));
         ret.add(problem);
+
         problem = new LPProblem();
         problem.goldStandardConcept = "B-2";
-        problem.negatives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-B1");
-        problem.negatives.add("http://example.com#Individual-C1");
-        problem.negatives.add("http://example.com#Individual-A1");
-        problem.negatives.add("http://example.com#Individual-A2");
-        problem.positives.add("http://example.com#Individual-B1-2-1");
-        problem.positives.add("http://example.com#Individual-B2-2-1");
-        problem.positives.add("http://example.com#Individual-B1-2");
-        problem.positives.add("http://example.com#Individual-B2-2");
-        problem.negatives.add("http://example.com#Individual-B2-1");
-        problem.negatives.add("http://example.com#Individual-B1-1");
+        problem.negatives = new ArrayList<>(individuals);
+        for (int i = 0; i < individuals.size(); i++)
+            if (i < 5 || i >= 9)
+                problem.negatives.add(individuals.get(i));
+            else
+                problem.positives.add(individuals.get(i));
         ret.add(problem);
         problem = new LPProblem();
         problem.goldStandardConcept = "A";
-        problem.positives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-B1");
-        problem.negatives.add("http://example.com#Individual-C1");
-        problem.positives.add("http://example.com#Individual-A1");
-        problem.positives.add("http://example.com#Individual-A2");
-        problem.negatives.add("http://example.com#Individual-B1-2-1");
-        problem.negatives.add("http://example.com#Individual-B2-2-1");
-        problem.negatives.add("http://example.com#Individual-B1-2");
-        problem.negatives.add("http://example.com#Individual-B2-2");
-        problem.negatives.add("http://example.com#Individual-B2-1");
-        problem.negatives.add("http://example.com#Individual-B1-1");
+        problem.positives = new ArrayList<>(individuals);
+
         ret.add(problem);
         problem = new LPProblem();
         problem.goldStandardConcept = "B";
-        problem.negatives.add("http://example.com#Individual-A1-1");
-        problem.positives.add("http://example.com#Individual-B1");
-        problem.negatives.add("http://example.com#Individual-C1");
-        problem.negatives.add("http://example.com#Individual-A1");
-        problem.negatives.add("http://example.com#Individual-A2");
-        problem.positives.add("http://example.com#Individual-B1-2-1");
-        problem.positives.add("http://example.com#Individual-B2-2-1");
-        problem.positives.add("http://example.com#Individual-B1-2");
-        problem.positives.add("http://example.com#Individual-B2-2");
-        problem.positives.add("http://example.com#Individual-B2-1");
-        problem.positives.add("http://example.com#Individual-B1-1");
+        for (int i = 0; i < individuals.size(); i++)
+            if (i == 1 || i >= 5)
+                problem.positives.add(individuals.get(i));
+            else
+                problem.negatives.add(individuals.get(i));
         ret.add(problem);
+
         problem = new LPProblem();
         problem.goldStandardConcept = "C";
-        problem.negatives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-B1");
-        problem.positives.add("http://example.com#Individual-C1");
-        problem.negatives.add("http://example.com#Individual-A1");
-        problem.negatives.add("http://example.com#Individual-A2");
-        problem.negatives.add("http://example.com#Individual-B1-2-1");
-        problem.negatives.add("http://example.com#Individual-B2-2-1");
-        problem.negatives.add("http://example.com#Individual-B1-2");
-        problem.negatives.add("http://example.com#Individual-B2-2");
-        problem.negatives.add("http://example.com#Individual-B2-1");
-        problem.negatives.add("http://example.com#Individual-B1-1");
+        for (int i = 0; i < individuals.size(); i++)
+            if (i == 2)
+                problem.positives.add(individuals.get(i));
+            else
+                problem.negatives.add(individuals.get(i));
+
         ret.add(problem);
         return ret;
     }
@@ -303,21 +286,21 @@ public class LPGeneratorTest {
         LPProblem problem = new LPProblem();
         problem.goldStandardConceptExpr = new OWLClassImpl(IRI.create("http://example.com#C"));
         problem.goldStandardConcept = parser.render(problem.goldStandardConceptExpr);
-        problem.positives.add("http://example.com#Individual-C1");
-        problem.negatives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-A1");
-        problem.negativeMap.put("http://example.com#Individual-A1", new OWLClassImpl(IRI.create("http://example.com#C")).getObjectComplementOf());
-        problem.negativeMap.put("http://example.com#Individual-A1-1", new OWLClassImpl(IRI.create("http://example.com#C")).getObjectComplementOf());
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-C1")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1-1")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1")));
+        problem.negativeMap.put(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1")), new OWLClassImpl(IRI.create("http://example.com#C")).getObjectComplementOf());
+        problem.negativeMap.put(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1-1")), new OWLClassImpl(IRI.create("http://example.com#C")).getObjectComplementOf());
         problems.add(problem);
 
         problem = new LPProblem();
         problem.goldStandardConceptExpr = new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#hasRuleAB-2")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
         problem.goldStandardConcept = parser.render(problem.goldStandardConceptExpr);
-        problem.positives.add("http://example.com#Individual-A2");
-        problem.negatives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-A1");
-        problem.negativeMap.put("http://example.com#Individual-A1", problem.goldStandardConceptExpr.getObjectComplementOf());
-        problem.negativeMap.put("http://example.com#Individual-A1-1", problem.goldStandardConceptExpr.getObjectComplementOf());
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A2")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1-1")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1")));
+        problem.negativeMap.put(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1")), problem.goldStandardConceptExpr.getObjectComplementOf());
+        problem.negativeMap.put(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1-1")), problem.goldStandardConceptExpr.getObjectComplementOf());
         problems.add(problem);
         return problems;
     }
@@ -327,20 +310,20 @@ public class LPGeneratorTest {
         LPProblem problem = new LPProblem();
         problem.goldStandardConceptExpr = new OWLClassImpl(IRI.create("http://example.com#B"));
         problem.goldStandardConcept = parser.render(problem.goldStandardConceptExpr);
-        problem.positives.add("http://example.com#Individual-B1");
-        problem.positives.add("http://example.com#Individual-B2");
-        problem.negatives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-A1");
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-B1")));
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-B2")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1-1")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1")));
         problems.add(problem);
 
         problem = new LPProblem();
         problem.goldStandardConceptExpr = new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#A")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
         problem.goldStandardConcept = parser.render(problem.goldStandardConceptExpr);
-        problem.positives.add("http://example.com#Individual-A1");
-        problem.positives.add("http://example.com#Individual-A1-1");
-        problem.positives.add("http://example.com#Individual-A2");
-        problem.negatives.add("http://example.com#Individual-C1");
-        problem.negatives.add("http://example.com#Individual-B1");
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1")));
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1-1")));
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A2")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-C1")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-B1")));
         problems.add(problem);
         return problems;
     }
@@ -349,15 +332,15 @@ public class LPGeneratorTest {
         List<LPProblem> problems = new ArrayList<>();
         LPProblem problem = new LPProblem();
         problem.goldStandardConceptExpr = new OWLClassImpl(IRI.create("http://example.com#B"));
-        problem.positives.add("http://example.com#Individual-B1");
-        problem.negatives.add("http://example.com#Individual-A1-1");
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-B1")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1-1")));
         problems.add(problem);
 
         problem = new LPProblem();
         problem.goldStandardConceptExpr = new OWLObjectSomeValuesFromImpl(new OWLObjectPropertyImpl(IRI.create("http://example.com#A")), new OWLClassImpl(IRI.create("http://example.com#B-2")));
-        problem.positives.add("http://example.com#Individual-A1");
-        problem.positives.add("http://example.com#Individual-A1-1");
-        problem.negatives.add("http://example.com#Individual-C1");
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1")));
+        problem.positives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-A1-1")));
+        problem.negatives.add(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-C1")));
         problems.add(problem);
         return problems;
     }
@@ -424,14 +407,14 @@ public class LPGeneratorTest {
                 found = false;
             }
             found &= expProblem.positives.size() == problem.positives.size();
-            for (String pos : problem.positives) {
+            for (OWLNamedIndividual pos : problem.positives) {
                 found &= expProblem.positives.contains(pos);
             }
             if (isGold) {
                 found &= problem.negatives.isEmpty();
             } else {
                 found &= expProblem.negatives.size() == problem.negatives.size();
-                for (String nes : problem.negatives) {
+                for (OWLNamedIndividual nes : problem.negatives) {
                     found &= expProblem.negatives.contains(nes);
                 }
             }
@@ -460,9 +443,9 @@ public class LPGeneratorTest {
             if (!isTest) {
                 problem.goldStandardConcept = prob.getAsObject().get("concept").getAsString().value();
             }
-            prob.getAsObject().get("positives").getAsArray().forEach(pos -> problem.positives.add(pos.getAsString().value()));
+            prob.getAsObject().get("positives").getAsArray().forEach(pos -> problem.positives.add(new OWLNamedIndividualImpl(IRI.create(pos.getAsString().value()))));
             if (!isGold) {
-                prob.getAsObject().get("negatives").getAsArray().forEach(nes -> problem.negatives.add(nes.getAsString().value()));
+                prob.getAsObject().get("negatives").getAsArray().forEach(nes -> problem.negatives.add(new OWLNamedIndividualImpl(IRI.create(nes.getAsString().value()))));
             }
             ret.add(problem);
         });
@@ -480,8 +463,10 @@ public class LPGeneratorTest {
             if (!isTest) {
                 problem.goldStandardConcept = m.listStatements(res, LPGenerator.RDF_PROPERTY_CONCEPT, (RDFNode) null).next().getObject().toString();
             }
-            m.listStatements(res, LPGenerator.RDF_PROPERTY_INCLUDE, (RDFNode) null).forEachRemaining(triple -> problem.positives.add(triple.getObject().asResource().getURI()));
-            m.listStatements(res, LPGenerator.RDF_PROPERTY_EXCLUDE, (RDFNode) null).forEachRemaining(triple -> problem.negatives.add(triple.getObject().asResource().getURI()));
+            m.listStatements(res, LPGenerator.RDF_PROPERTY_INCLUDE, (RDFNode) null).forEachRemaining(triple -> problem.positives.add(
+                    new OWLNamedIndividualImpl(IRI.create(triple.getObject().asResource().getURI().toString()))));
+            m.listStatements(res, LPGenerator.RDF_PROPERTY_EXCLUDE, (RDFNode) null).forEachRemaining(triple -> problem.negatives.add(
+                    new OWLNamedIndividualImpl(IRI.create(triple.getObject().asResource().getURI().toString()))));
             ret.add(problem);
         }
         return ret;

@@ -80,7 +80,7 @@ public class IndividualRetrieverTest {
                         "http://example.com#Individual-B2-2-1")
                 .map(str -> new OWLNamedIndividualImpl(IRI.create(str)))
                 .collect(Collectors.toList());
-        List<OWLIndividual> actual = retriever.retrieveIndividualsForConcept(new OWLClassImpl(IRI.create("http://example.com#B")), true);
+        List<OWLNamedIndividual> actual = retriever.retrieveIndividualsForConcept(new OWLClassImpl(IRI.create("http://example.com#B")), true);
         assertEquals(7, actual.size());
         Collections.sort(expected);
         Collections.sort(actual);
@@ -126,7 +126,7 @@ public class IndividualRetrieverTest {
                 .collect(Collectors.toList());
 
         OWLClass classB = new OWLClassImpl(IRI.create("http://example.com#B"));
-        List<OWLIndividual> actual = retriever.retrieveIndividualsForConcept(classB, 3, 180, true);
+        List<OWLNamedIndividual> actual = retriever.retrieveIndividualsForConcept(classB, 3, 180, true);
         assertEquals(3, actual.size());
         for (OWLIndividual individual : actual) {
             assertTrue(expected.contains(individual));
@@ -202,7 +202,7 @@ public class IndividualRetrieverTest {
 
     @Test
     public void correctAssumptionRetrieval() {
-        List<OWLIndividual> individuals = retriever.retrieveIndividualsForConcept(new OWLObjectComplementOfImpl(new OWLClassImpl(IRI.create("http://example.com#A"))), true);
+        List<OWLNamedIndividual> individuals = retriever.retrieveIndividualsForConcept(new OWLObjectComplementOfImpl(new OWLClassImpl(IRI.create("http://example.com#A"))), true);
         if (isOpenWorldAssumption) {
             assertEquals(1, individuals.size());
             assertEquals(new OWLNamedIndividualImpl(IRI.create("http://example.com#Individual-C1")), individuals.get(0));

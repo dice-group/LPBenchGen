@@ -4,7 +4,6 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.ResultSet;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import java.util.Collection;
@@ -25,7 +24,7 @@ public interface IndividualRetriever {
      * @param reasoning should be always true, but allows to use direct instead of reasoned answers
      * @return List of Individuals fitting to the concept
      */
-    List<OWLIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning);
+    List<OWLNamedIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning);
 
     /**
      * Retrieve Individuals for the concept
@@ -34,7 +33,7 @@ public interface IndividualRetriever {
      * @param reasoning should be always true, but allows to use direct instead of reasoned answers
      * @return List of Individuals fitting to the concept
      */
-    List<OWLIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning);
+    List<OWLNamedIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning);
 
     /**
      * Retrieves all Types for an Individual

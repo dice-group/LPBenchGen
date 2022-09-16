@@ -59,6 +59,7 @@ public class ABoxFiller {
      * @return true if addition was successful, false otherwise
      */
     public boolean addIndividualsFromConcept(OWLClassExpression concept, OWLNamedIndividual startIndividual, OWLOntology ontology) {
+        // TODO: still not sure what this is doing
         OWL2SPARQL sparql = new OWL2SPARQL();
         sparql.setUseReasoning(true);
         Query q = sparql.asQuery(concept, "?var");
@@ -90,9 +91,8 @@ public class ABoxFiller {
                 ElementWalker.walk(query.getQueryPattern(), visitor);
                 visitor.patternToMap(res);
                 Set<OWLAxiom> axioms = createAxiomsFromMap(visitor.getMap());
+                axioms.addAll(createAxiomsFromMap(visitor2.triples));
                 ontology.addAxioms(axioms);
-                Set<OWLAxiom> axioms2 = createAxiomsFromMap(visitor2.triples);
-                ontology.addAxioms(axioms2);
             }
         } catch (Exception e) {
             String id = UUID.randomUUID().toString();

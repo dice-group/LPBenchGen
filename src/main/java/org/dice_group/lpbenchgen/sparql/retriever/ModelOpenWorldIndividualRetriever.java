@@ -53,8 +53,8 @@ public class ModelOpenWorldIndividualRetriever implements IndividualRetriever {
 
 
     @Override
-    public List<OWLIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning) {
-        List<OWLIndividual> ret = retrieveIndividualsForConcept(concept, reasoning);
+    public List<OWLNamedIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, int limit, int timeOut, boolean reasoning) {
+        List<OWLNamedIndividual> ret = retrieveIndividualsForConcept(concept, reasoning);
         if (ret.size() > limit && limit != 0) {
             return ret.subList(0, limit);
         }
@@ -62,7 +62,7 @@ public class ModelOpenWorldIndividualRetriever implements IndividualRetriever {
     }
 
     @Override
-    public List<OWLIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning) {
+    public List<OWLNamedIndividual> retrieveIndividualsForConcept(OWLClassExpression concept, boolean reasoning) {
         return new ArrayList<>(this.reasoner.getInstances(concept, false)
                 .getFlattened());
 
