@@ -91,7 +91,7 @@ public class OWLTBoxPositiveCreatorTest {
         Parser parser = new Parser(conf.getOwlFile());
         OWLOntology ontology = parser.getOntology();
         OWLReasoner reasoner = OpenlletReasonerFactory.getInstance().createReasoner(parser.getOntology());
-        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(conf, retriever, ontology, types, parser, reasoner, null);
+        OWLTBoxPositiveCreator creator = new OWLTBoxPositiveCreator(conf, retriever, ontology, types, reasoner, null);
         Collection<PosNegExample> concepts = creator.createDistinctConcepts(noOfConcepts);
 
         assertEquals(noOfConcepts, concepts.size());

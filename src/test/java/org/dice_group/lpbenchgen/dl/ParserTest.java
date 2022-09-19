@@ -75,6 +75,18 @@ public class ParserTest {
     }
 
     @Test
+    public void parseClassExpressionUsingShortForm() throws OWLOntologyCreationException {
+        Parser parser = new Parser("src/test/resources/ontologies/simple.ttl");
+        parser.parseManchesterConcept("A");
+    }
+
+    @Test
+    public void parseClassExpressionUsingLongForm() throws OWLOntologyCreationException {
+        Parser parser = new Parser("src/test/resources/ontologies/simple.ttl");
+        parser.parseManchesterConcept("<http://example.com#A>");
+    }
+
+    @Test
     public void getShortNameTest() throws OWLOntologyCreationException{
         Parser parser = new Parser("src/test/resources/ontologies/simple.ttl");
         assertEquals("", parser.getShortName("http://example.com#"));

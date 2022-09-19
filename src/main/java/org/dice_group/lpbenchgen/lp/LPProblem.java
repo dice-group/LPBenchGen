@@ -25,10 +25,6 @@ public class LPProblem {
      */
     public Collection<OWLNamedIndividual> positives = new HashSet<>();
     /**
-     * The Gold standard concept.
-     */
-    public String goldStandardConcept = "";
-    /**
      * The Gold standard concept expr.
      */
     public OWLClassExpression goldStandardConceptExpr;
@@ -78,7 +74,6 @@ public class LPProblem {
         LPProblem prob = new LPProblem();
         prob.negatives = new HashSet<>(negatives);
         prob.positives = new HashSet<>(positives);
-        prob.goldStandardConcept = goldStandardConcept;
         prob.goldStandardConceptExpr = goldStandardConceptExpr.getNNF();
         prob.negativeGenerated = negativeGenerated;
         prob.objectProperties = new HashSet<>(objectProperties);

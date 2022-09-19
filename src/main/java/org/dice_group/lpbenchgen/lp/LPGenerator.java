@@ -9,6 +9,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.ABoxFiller;
+import org.dice_group.lpbenchgen.dl.ManchesterRenderer;
 import org.dice_group.lpbenchgen.dl.OWLTBoxConceptCreator;
 import org.dice_group.lpbenchgen.dl.creator.OWLNegationCreator;
 import org.dice_group.lpbenchgen.dl.creator.OWLTBoxPositiveCreator;
@@ -102,7 +103,7 @@ public class LPGenerator {
 
     private boolean validUrl(String endpoint) {
         try {
-            URI.create(endpoint);
+            URI ignore = URI.create(endpoint);
             return true;
         } catch (Exception e) {
             return false;
@@ -359,7 +360,7 @@ public class LPGenerator {
         Resource res = ResourceFactory.createResource(RDF_PREFIX_LP + id);
         m.add(res, RDF.type, LEARNING_PROBLEM_CLASS);
         if (addConcepts) {
-            m.add(res, RDF_PROPERTY_CONCEPT, problem.goldStandardConcept);
+            m.add(res, RDF_PROPERTY_CONCEPT, ManchesterRenderer.render(problem.goldStandardConceptExpr));
         }
         problem.positives.forEach(include -> m.add(res, RDF_PROPERTY_INCLUDE, ResourceFactory.createResource(include.getIRI().toString())));
         if (includeNegative) {
@@ -369,7 +370,7 @@ public class LPGenerator {
 
 
     private void measure(LPProblem problem, OWLReasoner res, boolean setActualPositives) {
-        LOGGER.info("Checking concept {}.", problem.goldStandardConcept);
+        LOGGER.info("Checking concept {}.", ManchesterRenderer.render(problem.goldStandardConceptExpr));
 
         Set<OWLNamedIndividual> actual = res.getInstances(problem.goldStandardConceptExpr).getFlattened();
 
@@ -391,7 +392,7 @@ public class LPGenerator {
                         .filter(nes -> {
                             if (actual.contains(nes)) {
                                 LOGGER.warn("FN: {}", nes);
-                                LOGGER.warn("Negative concept: {}", parser.render(problem.negativeMap.get(nes).getNNF()));
+                                LOGGER.warn("Negative concept: {}", ManchesterRenderer.render(problem.negativeMap.get(nes).getNNF()));
                                 return true;
                             }
                             return false;
@@ -442,7 +443,7 @@ public class LPGenerator {
 
     private List<PosNegExample> generateConcepts(Integer maxGenerateConcepts, String namespace) {
 
-        OWLTBoxConceptCreator creator = new OWLTBoxPositiveCreator(conf, retriever, parser.getOntology(), types, parser, res, namespace);
+        OWLTBoxConceptCreator creator = new OWLTBoxPositiveCreator(conf, retriever, parser.getOntology(), types, res, namespace);
         List<PosNegExample> examples = new ArrayList<>(creator.createDistinctConcepts(maxGenerateConcepts));
         this.types = creator.getAllowedTypes();
         return examples;
@@ -485,7 +486,6 @@ public class LPGenerator {
     private LPProblem generateLPProblem(PosNegExample concept, Parser parser, boolean negativeGenerated) {
         LPProblem problem = new LPProblem();
         problem.negativeGenerated = negativeGenerated;
-        problem.goldStandardConcept = concept.getPositive();
 
         OWLClassExpression pos = parser.parseManchesterConcept(concept.getPositive());
         problem.goldStandardConceptExpr = pos;
@@ -554,7 +554,7 @@ public class LPGenerator {
                 pw.print("\t{\n\t");
                 if (addConcepts) {
                     pw.print("\"concept\": \"");
-                    pw.print(problem.goldStandardConcept.replace("\n", " "));
+                    pw.print(ManchesterRenderer.render(problem.goldStandardConceptExpr));
                     pw.print("\",\n\t");
                 }
                 pw.print("\"positives\": [\n");

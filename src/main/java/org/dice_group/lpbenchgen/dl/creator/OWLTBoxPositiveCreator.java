@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import org.dice_group.lpbenchgen.config.Configuration;
 import org.dice_group.lpbenchgen.config.PosNegExample;
 import org.dice_group.lpbenchgen.dl.ConceptLengthCalculator;
+import org.dice_group.lpbenchgen.dl.ManchesterRenderer;
 import org.dice_group.lpbenchgen.dl.OWLTBoxConceptCreator;
-import org.dice_group.lpbenchgen.dl.Parser;
 import org.dice_group.lpbenchgen.sparql.IndividualRetriever;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -32,7 +32,6 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
     private final IndividualRetriever retriever;
     private final OWLOntology onto;
     private final List<OWLClass> allowedTypes;
-    private final Parser parser;
     private final OWLDataFactory dataFactory = new OWLDataFactoryImpl();
     private final Random negationMutationRandom;
     private final long seed;
@@ -50,16 +49,14 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
      * @param retriever    the retriever
      * @param ontology     the onto
      * @param allowedTypes the allowed types
-     * @param parser       the parser
      * @param res          the res
      * @param namespace    the allowed namespace
      */
-    public OWLTBoxPositiveCreator(Configuration conf, IndividualRetriever retriever, OWLOntology ontology, List<OWLClass> allowedTypes, Parser parser, OWLReasoner res, String namespace) {
+    public OWLTBoxPositiveCreator(Configuration conf, IndividualRetriever retriever, OWLOntology ontology, List<OWLClass> allowedTypes, OWLReasoner res, String namespace) {
         this.retriever = retriever;
         this.onto = ontology;
         this.originalTypes = new ArrayList<>(allowedTypes);
         this.allowedTypes = new ArrayList<>(this.originalTypes);
-        this.parser = parser;
         this.res = res;
         this.namespace = namespace;
         if (conf.isStrict()) {
@@ -107,7 +104,7 @@ public class OWLTBoxPositiveCreator implements OWLTBoxConceptCreator {
                     }
                     if ((strict && negativeSize >= testLimit) || (!strict && negativeSize > 0)) {
                         PosNegExample example = new PosNegExample();
-                        example.setPositive(parser.render(concept));
+                        example.setPositive(ManchesterRenderer.render(concept));
                         example.setNegativeGenerated(true);
                         example.setNegativesExpr(creator.negationConcepts);
                         ret.add(example);

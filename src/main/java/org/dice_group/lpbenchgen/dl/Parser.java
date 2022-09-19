@@ -1,19 +1,18 @@
 package org.dice_group.lpbenchgen.dl;
 
-import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
-import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxPrefixNameShortFormProvider;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
+import org.semanticweb.owlapi.util.mansyntax.ManchesterOWLSyntaxParser;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * OWL Ontology Parser
@@ -24,10 +23,8 @@ public class Parser {
     private final ManchesterOWLSyntaxPrefixNameShortFormProvider prefix;
     private final OWLOntology ontology;
     private final BidirectionalShortFormProviderAdapter provider;
-    private final ManchesterOWLSyntaxClassExpressionParser parser;
-
+    private final ManchesterOWLSyntaxParser parser;
     private final ManchesterOWLSyntaxOWLObjectRendererImpl renderer;
-    private final OWLDataFactory owlDataFactory;
 
 
     public ManchesterOWLSyntaxPrefixNameShortFormProvider getPrefix() {
@@ -51,16 +48,30 @@ public class Parser {
      */
     public Parser(String ontologyFile) throws OWLOntologyCreationException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        ontology = manager.loadOntologyFromOntologyDocument(new File(ontologyFile));
-        OWLOntology owlOntology = manager.loadOntologyFromOntologyDocument(IRI.create("http://www.w3.org/2002/07/owl"));
-        prefix = new ManchesterOWLSyntaxPrefixNameShortFormProvider(ontology);
-        provider = new BidirectionalShortFormProviderAdapter(Sets.newHashSet(ontology, owlOntology), prefix);
-        OWLEntityChecker checker = new ShortFormEntityChecker(provider);
-        OWLDataFactory dataFactory = new OWLDataFactoryImpl();
-        parser = new ManchesterOWLSyntaxClassExpressionParser(dataFactory, checker);
-        renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-        renderer.setShortFormProvider(provider);
-        owlDataFactory = new OWLDataFactoryImpl();
+        this.ontology = manager.loadOntologyFromOntologyDocument(new File(ontologyFile));
+        try {
+            OWLOntology ignore = manager.loadOntologyFromOntologyDocument(IRI.create("http://www.w3.org/2002/07/owl"));
+        } catch (OWLOntologyCreationException ignore) {// never hit
+        }
+
+        {
+            Set<OWLOntology> ontologies = manager.getOntologies(); // my OWLOntologyManager
+            prefix = new ManchesterOWLSyntaxPrefixNameShortFormProvider(
+                    manager.getOntologyFormat(ontology));
+            provider = new BidirectionalShortFormProviderAdapter(
+                    ontologies, prefix);
+        }
+
+        {
+            parser = OWLManager.createManchesterParser();
+            parser.setDefaultOntology(ontology); // my ontology
+            ShortFormEntityChecker checker = new ShortFormEntityChecker(provider);
+            parser.setOWLEntityChecker(checker);
+        }
+        {
+            renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+            renderer.setShortFormProvider(provider);
+        }
     }
 
     /**
@@ -69,12 +80,9 @@ public class Parser {
      * @param concept the concept
      * @return the owl class expression
      */
-    public OWLClassExpression parseManchesterConcept(String concept) {
-        return parser.parse(concept);
-    }
-
-    public OWLClass parseOWLClass(IRI iri) {
-        return new OWLClassImpl(iri);
+    public OWLClassExpression parseManchesterConcept(String concept) throws ParserException {
+        parser.setStringToParse(concept);
+        return parser.parseClassExpression();
     }
 
     public OWLClass parseOWLClass(String iri_string) {
@@ -97,7 +105,7 @@ public class Parser {
     }
 
     /**
-     * Render a Class Expression to Manchester Syntax.
+     * Render a Class Expression to Manchester Syntax. This uses the PrefixManager from the Parser and abbreviates all IRIs possible.
      *
      * @param concept the concept
      * @return the string
@@ -113,6 +121,6 @@ public class Parser {
      * @return the short name
      */
     public String getShortName(String uri) {
-        return provider.getShortForm(owlDataFactory.getOWLClass(uri));
+        return provider.getShortForm(new OWLClassImpl(IRI.create(uri)));
     }
 }
