@@ -3,6 +3,7 @@ package org.dice_group.lpbenchgen.lp;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,11 +36,11 @@ public class LPProblem {
     /**
      * The Rules.
      */
-    public Collection<String> rules;
+    public Collection<OWLObjectProperty> objectProperties;
     /**
      * The Data rules.
      */
-    public Collection<OWLDataProperty> dataRules = new HashSet<>();
+    public Collection<OWLDataProperty> dataProperties = new HashSet<>();
     /**
      * The Negative map containing the examples 2 classExpression map.
      */
@@ -80,8 +81,8 @@ public class LPProblem {
         prob.goldStandardConcept = goldStandardConcept;
         prob.goldStandardConceptExpr = goldStandardConceptExpr.getNNF();
         prob.negativeGenerated = negativeGenerated;
-        prob.rules = new HashSet<>(rules);
-        prob.dataRules = new HashSet<>(dataRules);
+        prob.objectProperties = new HashSet<>(objectProperties);
+        prob.dataProperties = new HashSet<>(dataProperties);
         prob.negativeMap = new HashMap<>(negativeMap);
         return prob;
     }

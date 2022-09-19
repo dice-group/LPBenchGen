@@ -14,7 +14,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * OWL Ontology Parser
@@ -89,12 +88,12 @@ public class Parser {
      * @param dataRules data properties in signature if ce are written to dataRules
      * @return object properties in signature of ce
      */
-    public Collection<String> getRulesInExpr(OWLClassExpression ce, Collection<OWLDataProperty> dataRules) {
-        // object properties
-        Collection<String> rules = ce.getObjectPropertiesInSignature().stream().map(prop -> prop.getIRI().toString()).collect(Collectors.toSet());
+    public Collection<OWLObjectProperty> getRulesInExpr(OWLClassExpression ce, Collection<OWLDataProperty> dataRules) {
         // data properties
         dataRules.addAll(ce.getDataPropertiesInSignature());
-        return rules;
+        // object properties
+        return ce.getObjectPropertiesInSignature();
+
     }
 
     /**

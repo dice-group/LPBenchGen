@@ -489,9 +489,8 @@ public class LPGenerator {
 
         OWLClassExpression pos = parser.parseManchesterConcept(concept.getPositive());
         problem.goldStandardConceptExpr = pos;
-        problem.rules = parser.getRulesInExpr(pos, problem.dataRules);
+        problem.objectProperties = parser.getRulesInExpr(pos, problem.dataProperties);
 
-        // TODO: use OWLIndividual in positives
         problem.positives.addAll(retriever.retrieveIndividualsForConcept(pos, conf.getPositiveLimit(), 180, true));
         for (OWLClassExpression neg : concept.getNegativesExpr()) {
             // TODO: this looks wrong and especially as if this is intended to be a copy
@@ -499,7 +498,7 @@ public class LPGenerator {
 
             List<OWLNamedIndividual> retrieved = retriever.retrieveIndividualsForConcept(conc, conf.getNegativeLimit(), 180, true);
             problem.negatives.addAll(retrieved);
-            problem.rules.addAll(parser.getRulesInExpr(neg, problem.dataRules));
+            problem.objectProperties.addAll(parser.getRulesInExpr(neg, problem.dataProperties));
             OWLClassExpression finalConc = conc;
             retrieved.forEach(retr -> problem.negativeMap.put(retr, finalConc));
         }

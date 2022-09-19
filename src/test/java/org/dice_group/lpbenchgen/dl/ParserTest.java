@@ -3,10 +3,7 @@ package org.dice_group.lpbenchgen.dl;
 import com.google.common.collect.Lists;
 import openllet.owlapi.XSD;
 import org.junit.Test;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.*;
 
 import java.util.ArrayList;
@@ -20,13 +17,12 @@ public class ParserTest {
 
 
     private OWLClassExpression createExpression(){
-        OWLClassExpression expected = new OWLObjectIntersectionOfImpl(Lists.newArrayList(
+        return new OWLObjectIntersectionOfImpl(Lists.newArrayList(
                 new OWLClassImpl(IRI.create("http://example.com#A")),
                 new OWLObjectSomeValuesFromImpl(
                         new OWLObjectPropertyImpl(IRI.create("http://example.com#hasRuleAB")),
                         new OWLClassImpl(IRI.create("http://example.com#B")))
         ));
-        return expected;
     }
 
     @Test
@@ -70,9 +66,9 @@ public class ParserTest {
         ));
 
         List<OWLDataProperty> dataRules = new ArrayList<>();
-        Collection<String> objectRules = parser.getRulesInExpr(expr, dataRules);
-        assertTrue(objectRules.contains("http://example.com#hasRuleAB"));
-        assertEquals(1, objectRules.size());
+        Collection<OWLObjectProperty> objectProperties = parser.getRulesInExpr(expr, dataRules);
+        assertTrue(objectProperties.contains(new OWLObjectPropertyImpl(IRI.create("http://example.com#hasRuleAB"))));
+        assertEquals(1, objectProperties.size());
         assertTrue(dataRules.contains(dataPropertyInt));
         assertTrue(dataRules.contains(dataPropertyBoolean));
         assertEquals(2, dataRules.size());
