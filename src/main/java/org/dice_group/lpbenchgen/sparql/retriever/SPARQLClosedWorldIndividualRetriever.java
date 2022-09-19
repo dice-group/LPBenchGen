@@ -2,32 +2,22 @@ package org.dice_group.lpbenchgen.sparql.retriever;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
-import org.apache.jena.query.*;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.ResultSetMgr;
-import org.apache.jena.riot.WebContent;
-import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.dice_group.lpbenchgen.sparql.AbstractSPARQLIndividualRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -57,8 +47,9 @@ public class SPARQLClosedWorldIndividualRetriever extends AbstractSPARQLIndividu
      */
     public SPARQLClosedWorldIndividualRetriever(String endpoint) {
         this.endpoint = endpoint;
-        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, "SELECT ?s WHERE { ?s <" + RDF.type + "> <" + OWL.Ontology + "> } LIMIT 1");
-        ResultSet res = qexec.execSelect();
+        RDFConnection connect = RDFConnection.connect(endpoint);
+        QueryExecution query = connect.query("SELECT ?s WHERE { ?s <" + RDF.type + "> <" + OWL.Ontology + "> } LIMIT 1");
+        ResultSet res = query.execSelect();
         if (res.hasNext()) {
             ontologyResource = res.next().get("s").toString();
         } else {
@@ -68,28 +59,12 @@ public class SPARQLClosedWorldIndividualRetriever extends AbstractSPARQLIndividu
 
 
     protected Stream<String> createRequest(String sparqlQuery, int timeOut) {
-        // TODO: this needs heavy cleanup
-
         try {
             int timeout = timeOut * 1000;
-            RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout)
-                    .setSocketTimeout(timeout).build();
-            CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
-            //HttpClient client = HttpClients.custom().setConnectionManager(new BasicHttpClientConnectionManager()).build();
-            HttpGet get = new HttpGet(endpoint + "?query=" + URLEncoder.encode(sparqlQuery, StandardCharsets.UTF_8));
-
-            get.addHeader(HttpHeaders.ACCEPT, QueryEngineHTTP.defaultSelectHeader());
-            HttpResponse resp = client.execute(get);
-            String actualContentType = resp.getEntity().getContentType().getValue().replace("; charset=utf-8", "");
-            if (actualContentType.isEmpty()) {
-                actualContentType = QueryEngineHTTP.defaultSelectHeader();
-            }
-            Lang lang = WebContent.contentTypeToLangResultSet(actualContentType);
-            String test = read(resp.getEntity().getContent());
-            InputStream is = new ByteArrayInputStream(test.getBytes(StandardCharsets.UTF_8));
-            Spliterator<QuerySolution> querySolutionSpliterator = Spliterators.spliteratorUnknownSize(ResultSetMgr.read(is, lang), 0);
+            RDFConnection connect = RDFConnection.connect(endpoint);
+            QueryExecution query = connect.query(sparqlQuery);
+            query.setTimeout(timeout);
+            Spliterator<QuerySolution> querySolutionSpliterator = Spliterators.spliteratorUnknownSize(query.execSelect(), 0);
 
             return StreamSupport
                     .stream(querySolutionSpliterator, false)
@@ -107,7 +82,7 @@ public class SPARQLClosedWorldIndividualRetriever extends AbstractSPARQLIndividu
     private String read(InputStream content) {
         ByteSource byteSource = new ByteSource() {
             @Override
-            public InputStream openStream() throws IOException {
+            public InputStream openStream() {
                 return content;
             }
         };
@@ -124,18 +99,9 @@ public class SPARQLClosedWorldIndividualRetriever extends AbstractSPARQLIndividu
     @Override
     public ResultSet getResultMap(Query q) {
         try {
-            HttpClient client = HttpClients.custom().setConnectionManager(new BasicHttpClientConnectionManager()).build();
-            HttpGet get = new HttpGet(endpoint + "?query=" + URLEncoder.encode(q.serialize(), StandardCharsets.UTF_8));
-            get.addHeader(HttpHeaders.ACCEPT, QueryEngineHTTP.defaultSelectHeader());
-            HttpResponse resp = client.execute(get);
-            String actualContentType = resp.getEntity().getContentType().getValue();
-            if (actualContentType == null || actualContentType.isEmpty()) {
-                actualContentType = QueryEngineHTTP.defaultSelectHeader();
-            }
-            Lang lang = WebContent.contentTypeToLangResultSet(actualContentType.replace("; charset=utf-8", ""));
-            String test = read(resp.getEntity().getContent());
-            InputStream is = new ByteArrayInputStream(test.getBytes(StandardCharsets.UTF_8));
-            return ResultSetMgr.read(is, lang);
+            RDFConnection connect = RDFConnection.connect(endpoint);
+            QueryExecution query = connect.query(q);
+            return query.execSelect();
         } catch (Exception e) {
             LOGGER.error("Could not retrieve result map due to ", e);
         }
